@@ -1,0 +1,60 @@
+{
+    "usuarios":[
+        {
+            "nome": "mauricio dall onder",
+            "cpf": "03100300050",
+            "nascimento": "1993-10-27",
+            "estadoCivil": "solteiro",
+            "naturalidade": {
+                "cidade": "caxaias",
+                "uf": "rs"
+            },
+            "endereco": {
+                "logradouro": "teste multiplas modalidades",
+                "numero": "teste multiplas modalidades",
+                "complemento": "rs",
+                "cidade": "caxas",
+                "cep": "95088333",
+                "uf": "rs"
+            },
+            "contato": {
+                "telefone": "54992151131",
+                "email": "teste@tete.com"
+            },
+            "associacao": {
+                "tipo": [
+                    "estudante"
+                ],
+                "diaVinculo": [
+                    "Segunda",
+                    "Terça",
+                    "Quarta",
+                    "Sexta",
+                    "Quinta",
+                    "Sábado"
+                ],
+                "dataEntrada": "1993-10-27"
+            },
+            "contribuicao": [
+                {
+                    "tipo": "NaoContribuiu",
+                    "valor": 0,
+                    "data": "-"
+                }
+            ],
+            "possuiDebito": [
+                {
+                    "tipo": "NaoPossuiDébito",
+                    "valor": 0,
+                    "data": "-"
+                }
+            ],
+            "turmaEstudo": "tt",
+            "contribuiu": "nao",
+            "debito": "nao",
+            "observacoes": "aaaa",
+            "numeroRegistroAssociado": "12",
+            "id": "792723b8-dfe1-4698-a117-ed5186d68496"
+        }
+    ]
+}
