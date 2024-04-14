@@ -87,11 +87,11 @@ export default function FinanceReport() {
 
   const columns: GridColDef[] = [
     { field: 'month', headerName: 'Mês', width: 150 },
-    { field: 'totalContribuicoes', headerName: 'Valor Total de Contribuições', type: 'number', width: 200 },
     { field: 'pix', headerName: 'Valor Total em Pix', type: 'number', width: 200 },
     { field: 'dinheiro', headerName: 'Valor Total em Dinheiro', type: 'number', width: 200 },
     { field: 'cartao', headerName: 'Valor Total em Cartão', type: 'number', width: 200 },
     { field: 'valePresente', headerName: 'Valor Total em Vale Presente', type: 'number', width: 200 },
+    { field: 'totalContribuicoes', headerName: 'Valor Total de Contribuições', type: 'number', width: 200 },
     { field: 'totalDebitos', headerName: 'Valor Total em Débitos', type: 'number', width: 200 },
   ];
 

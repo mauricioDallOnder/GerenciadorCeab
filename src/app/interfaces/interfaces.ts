@@ -28,17 +28,19 @@ export const associadoSchema = z.object({
     dataEntrada: z.string().min(1, { message: "O campo data de entrada é obrigatório" }),
   }),
   GrupoEstudoInfoField: z.object({
-    diaEstuda:z.array(z.string()).optional(), 
+    diaEstuda:z.string(), 
     turmaEstudo: z.string(),
     nomeFacilitador:z.string(),
     numeroSala:z.string()
   }),
-  trabahadorInfoField: z.object({
-    diaTrabalha:z.array(z.string()).optional(), 
+  trabahadorInfoField: z.array(z.object({
+    id:z.string(),
+    diaTrabalha:z.string(),
     funcao: z.string().min(1, { message: "A função é obrigatória" }),
-    nomeDiregente:z.string().min(1, { message: "O nome do diregente é obrigatório" }),
-  }),
-  // Torna os campos de contribuição e débito opcional, podendo ser um array vazio
+    nomeDirigente:z.string().min(1, { message: "O nome do diregente é obrigatório" }),
+    turnoDeTrabalho:z.string(),
+    horarioDeTrabalho:z.string()
+  })).optional(),
   contribuicao: z.array(z.object({
     tipoContribuicao: z.string(),
     valorContribuicao: z.string(),
@@ -50,10 +52,31 @@ export const associadoSchema = z.object({
     dataDebito: z.string(),
   })).optional(),
   contribuiu: z.string(),
-  debito: z.string(), 
+  debito: z.string(),  
   observacoes:z.string().optional(),
   numeroRegistroAssociado:z.string().optional()
 });
 
 export type Associado = z.infer<typeof associadoSchema>;
 
+export type DynamicDataType = {
+  [key: string]: any;
+};
+
+export type FieldCountType = { [key: string]: number };
+
+
+export interface TrabahadorInfoField {
+  id: string;
+  diaTrabalha: string;
+  funcao: string;
+  nomeDirigente: string;
+  turnoDeTrabalho: string;
+  horarioDeTrabalho: string;
+}
+
+export interface WorkerDetailsModalProps {
+  open: boolean;
+  onClose: () => void;
+  details: TrabahadorInfoField[];
+}

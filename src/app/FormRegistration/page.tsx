@@ -42,12 +42,7 @@ export default function FormRegistration() {
       associacao: {
         diaVinculo: [], // array vazio
       },
-      trabahadorInfoField:{
-       diaTrabalha:[]
-      },
-      GrupoEstudoInfoField:{
-        diaEstuda:[]
-      }
+
     },
   });
 
@@ -71,9 +66,14 @@ export default function FormRegistration() {
     name: "possuiDebito",
   });
 
+  const { fields: trabahadorInfoField, append: appendtrabahadorInfo, remove: removetrabahadorInfo } = useFieldArray({
+    control,
+    name: "trabahadorInfoField",
+  });
+
   const [estadoCivil, setEstadoCivil] = React.useState('');
   const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
-  const [DiaEstudoTrabalho, setDiaEstudoTrabalho] = React.useState<string[]>([]);
+
 
   const handleChangeSelect = (event: SelectChangeEvent) => {
     const value = event.target.value;
@@ -92,31 +92,14 @@ export default function FormRegistration() {
     setValue('associacao.diaVinculo', newValue);
   };
 
-  const handleChangeDiaTrabalho = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
-    const {
-      target: { value },
-    } = event;
-    //console.log("Before split:", value); // Veja o que está recebendo antes do split
-    const newValue = typeof value === 'string' ? value.split(',') : value;
-    //console.log("After split:", newValue); // Confira o novo valor após o split
-    setDiaEstudoTrabalho(newValue);
-    setValue('trabahadorInfoField.diaTrabalha', newValue);
-  };
-  const handleChangeDiaEstudo = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
-    const {
-      target: { value },
-    } = event;
-    //console.log("Before split:", value); // Veja o que está recebendo antes do split
-    const newValue = typeof value === 'string' ? value.split(',') : value;
-    //console.log("After split:", newValue); // Confira o novo valor após o split
-    setDiaEstudoTrabalho(newValue);
-    setValue('GrupoEstudoInfoField.diaEstuda', newValue);
-  };
 
 
 
-  watch("contribuiu", "nao"); // 'nao' é o valor padrão
-  watch("debito", "nao"); // 'nao' é o valor padrão
+
+
+  watch("contribuiu", "nao");
+  watch("debito", "nao");
+
 
   const onSubmit = (data: Associado) => {
     let geraUUid = uuidv4()
@@ -231,38 +214,43 @@ export default function FormRegistration() {
 
               </Grid>
             </FormSection >
-         
+
             {/* Campos de Associação */}
             <FormSection title="Seção 4 - Dados de Associação">
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <InputLabel>Tipo de vinculo com a casa</InputLabel>
-                  <Select
-                    {...register("associacao.tipo.0")}
-                    fullWidth
-                    error={!!errors.associacao?.tipo}
-                    defaultValue="">
-                    <MenuItem value="">Selecione</MenuItem>
-                    <MenuItem value="trabalhador">Trabalhador</MenuItem>
-                    <MenuItem value="estudante">Estudante</MenuItem>
-                    <MenuItem value="estudante e trabalhador">Estudante e Trabalhador</MenuItem>
-                    <MenuItem value="frequentador">Frequentador</MenuItem>
-                  </Select>
-                  {errors.associacao?.tipo && (
-                    <p>{errors.associacao.tipo.message}</p>
-                  )}
+                  <FormControl fullWidth>
+                    <InputLabel>Tipo de vinculo com a casa</InputLabel>
+                    <Select
+                      {...register("associacao.tipo.0")}
+                      label='Tipo de vinculo com a casa'
+                      fullWidth
+                      error={!!errors.associacao?.tipo}
+                      defaultValue="">
+                      <MenuItem value="">Selecione</MenuItem>
+                      <MenuItem value="trabalhador">Trabalhador</MenuItem>
+                      <MenuItem value="estudante">Estudante</MenuItem>
+                      <MenuItem value="estudante e trabalhador">Estudante e Trabalhador</MenuItem>
+                      <MenuItem value="frequentador">Frequentador</MenuItem>
+                    </Select>
+                    {errors.associacao?.tipo && (
+                      <p>{errors.associacao.tipo.message}</p>
+                    )}
+                  </FormControl>
                 </Grid>
                 {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                 <Grid item xs={12} sm={6}>
-                  <InputLabel>Dia(s) que frenquenta a casa</InputLabel>
+
                   <Controller
                     control={control}
                     name="associacao.diaVinculo"
                     render={({ field, fieldState: { error } }) => (
                       <FormControl fullWidth error={!!error}>
+                        <InputLabel>Dia(s) que frenquenta a casa</InputLabel>
                         <Select
                           {...field}
                           multiple
+                          label='Dia(s) que frenquenta a casa'
                           value={field.value} // Use `field.value` em vez de `defaultValue`
                           onChange={handleChangeDiaSemanaFrequentado}
                           input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
@@ -286,86 +274,124 @@ export default function FormRegistration() {
                   />
                 </Grid>
                 <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
-                <InputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='text' />
+                <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
               </Grid>
             </FormSection>
-              {/* Campos estudante */}
-              <FormSection title="Seção 5 - Dados do Estudante">
+            {/* Campos estudante */}
+            <FormSection title="Seção 5 - Dados do Estudante">
               <Grid container spacing={2}>
                 <InputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
                 <InputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
                 <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
                 <Grid item xs={12} sm={6}>
-                  <InputLabel>Dia(s) que estuda na casa</InputLabel>
-                  <Controller
-                    control={control}
-                    name="GrupoEstudoInfoField.diaEstuda"
-                    render={({ field, fieldState: { error } }) => (
-                      <FormControl fullWidth error={!!error}>
-                        <Select
-                          {...field}
-                          multiple
-                          value={field.value} // Use `field.value` em vez de `defaultValue`
-                          onChange={handleChangeDiaEstudo}
-                          input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
-                          renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                              {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                              ))}
-                            </Box>
-                          )}
-                          MenuProps={MenuPropsDiasSemanas}>
-                          {DiasSemanas.map((name) => (
-                            <MenuItem key={name} value={name}>
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        {error && <FormHelperText>{error.message}</FormHelperText>}
-                      </FormControl>
-                    )}
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia do Estudo</InputLabel>
+                    <Select
+                      label="Selecione o Dia do Estudo"
+                      {...register("GrupoEstudoInfoField.diaEstuda")}
+                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                      defaultValue="nao">
+                      <MenuItem value="Segunda">Segunda</MenuItem>
+                      <MenuItem value="Terça">Terça</MenuItem>
+                      <MenuItem value="Quarta">Quarta</MenuItem>
+                      <MenuItem value="Quinta">Quinta</MenuItem>
+                      <MenuItem value="Sexta">Sexta</MenuItem>
+                      <MenuItem value="Sábado">Sábado</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
             </FormSection >
-              {/* Campos trabalhador/voluntário */}
-              <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
+            {/* Campos trabalhador/voluntário */}
+            <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
               <Grid container spacing={2}>
-                <InputField register={register} name="trabahadorInfoField.funcao" label="Função do trabalhador" type='text' />
-                <InputField register={register} name="trabahadorInfoField.nomeDiregente" label="Nome do dirigente" type='text' />
-                <Grid item xs={12} sm={6}>
-                  <InputLabel>Dia(s) de Trabalho na casa</InputLabel>
-                  <Controller
-                    control={control}
-                    name="trabahadorInfoField.diaTrabalha"
-                    render={({ field, fieldState: { error } }) => (
-                      <FormControl fullWidth error={!!error}>
-                        <Select
-                          {...field}
-                          multiple
-                          value={field.value} // Use `field.value` em vez de `defaultValue`
-                          onChange={handleChangeDiaTrabalho}
-                          input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
-                          renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                              {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                              ))}
-                            </Box>
-                          )}
-                          MenuProps={MenuPropsDiasSemanas}>
-                          {DiasSemanas.map((name) => (
-                            <MenuItem key={name} value={name}>
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        {error && <FormHelperText>{error.message}</FormHelperText>}
-                      </FormControl>
-                    )}
-                  />
-                </Grid>
+                <Container >
+                  {trabahadorInfoField.map((field, index) => (
+                    <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
+                      <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12} sx={{ width: "100%" }}>
+                            <FormControl fullWidth>
+                              <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
+                              <Select
+                                label="Selecione o Dia de Trabalho"
+                                {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
+                                sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                defaultValue="nao">
+                                <MenuItem value="Segunda">Segunda</MenuItem>
+                                <MenuItem value="Terça">Terça</MenuItem>
+                                <MenuItem value="Quarta">Quarta</MenuItem>
+                                <MenuItem value="Quinta">Quinta</MenuItem>
+                                <MenuItem value="Sexta">Sexta</MenuItem>
+                                <MenuItem value="Sábado">Sábado</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sx={{ width: '100%' }}>
+                            <TextField
+                              {...register(`trabahadorInfoField.${index}.funcao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                              label="Função que Exerce"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              variant="outlined"
+                            />
+                          </Grid>
+
+                          <Grid item xs={12} sx={{ width: '100%' }}>
+                            <TextField
+                              {...register(`trabahadorInfoField.${index}.nomeDirigente` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                              label="Nome do Dirigente do Trabalho"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              variant="outlined"
+                            />
+                          </Grid>
+                          <Grid item xs={12} sx={{ width: "100%" }}>
+                            <FormControl fullWidth>
+                              <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                              <Select
+                                label='Selecione o Turno de Trabalho'
+                                {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
+                                sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                defaultValue="nao">
+                                <MenuItem value="Manhã">Manhã</MenuItem>
+                                <MenuItem value="Tarde">Tarde</MenuItem>
+                                <MenuItem value="Noite">Noite</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sx={{ width: '100%' }}>
+                            <TextField
+                              {...register(`trabahadorInfoField.${index}.horarioDeTrabalho` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                              label="Horário de Trabalho"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              type='time'
+                              variant="outlined"
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                      <CardActions>
+                        <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
+                          <DeleteIcon />
+                          <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
+                        </IconButton>
+                      </CardActions>
+                    </Card>
+                  ))}
+                  <Button
+                    startIcon={<AddCircleOutlineIcon />}
+                    variant="contained"
+                    color="success"
+                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "",id:uuidv4() })}
+                    sx={{ mt: 2, width: '100%' }}
+                  >
+                    Adicionar dia de trabalho
+                  </Button>
+                </Container>
+
+
               </Grid>
             </FormSection >
 
@@ -373,10 +399,12 @@ export default function FormRegistration() {
             <FormSection title="Seção 6 - Dados referentes a débitos">
               <Grid container spacing={2}>
                 <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px' }}>O associado possui débitos com a casa?</InputLabel>
+                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px',textAlign:"center" }}>O associado possui débitos com a casa?</InputLabel>
                   <Select
+                  variant="filled"
+                  fullWidth
                     {...register("debito")}
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px',textAlign:"center" }}
                     defaultValue="nao">
                     <MenuItem value="sim">Sim</MenuItem>
                     <MenuItem value="nao">Não</MenuItem>
@@ -409,11 +437,11 @@ export default function FormRegistration() {
                             </Grid>
                             <Grid item xs={12} sx={{ width: '100%' }}>
                               <FormControl fullWidth>
-                             
+
                                 <TextField
-                                label='Adicione aqui observações ou descrições sobre o débito'
-                                InputLabelProps={{ shrink: true }}
-                                fullWidth
+                                  label='Adicione aqui observações ou descrições sobre o débito'
+                                  InputLabelProps={{ shrink: true }}
+                                  fullWidth
                                   id={`tipo-debito-${index}`}
                                   {...register(`possuiDebito.${index}.tipoDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
                                 >
@@ -449,8 +477,10 @@ export default function FormRegistration() {
                 <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px' }}>O associado ajudou a casa com algum valor?</InputLabel>
                   <Select
+                   variant="filled"
+                   fullWidth
                     {...register("contribuiu")}
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px',textAlign:"center" }}
                     defaultValue="nao"
                   >
                     <MenuItem value="sim">Sim</MenuItem>
@@ -471,7 +501,7 @@ export default function FormRegistration() {
                                   fullWidth
                                   id='forma de pagamento'
                                   label="Tipo de Contribuição"
-                                  defaultValue="forma de pagamento"
+                                  defaultValue="Dinheiro"
                                 >
                                   <MenuItem value="pix">Pix</MenuItem>
                                   <MenuItem value="dinheiro">Dinheiro</MenuItem>

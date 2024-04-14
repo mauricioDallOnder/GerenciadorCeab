@@ -4,6 +4,7 @@ import { useForm, SubmitHandler, useFieldArray, FormProvider, Controller } from 
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
 import { Associado } from '../interfaces/interfaces';
+import { v4 as uuidv4 } from 'uuid';
 import {
     Container,
     Box,
@@ -30,20 +31,17 @@ import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, Typevincul
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
+
 export default function UserUpdateForm() {
     const { register, handleSubmit, setValue, reset, control, getValues } = useForm<Associado>({
         defaultValues: {
             associacao: {
                 diaVinculo: [], // array vazio
             },
-            trabahadorInfoField: {
-                diaTrabalha: []
-            },
-            GrupoEstudoInfoField: {
-                diaEstuda: []
-            }
+
         },
     });
+
     // Dentro de FormRegistration
     const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
         control,
@@ -54,10 +52,14 @@ export default function UserUpdateForm() {
         control,
         name: "possuiDebito",
     });
+    const { fields: trabahadorInfoField, append: appendtrabahadorInfo, remove: removetrabahadorInfo } = useFieldArray({
+        control,
+        name: "trabahadorInfoField",
+    });
     const [usuarios, setUsuarios] = useState<Associado[]>([]);
     const [loading, setLoading] = useState(false);
     const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
-    const [DiaEstudoTrabalho, setDiaEstudoTrabalho] = React.useState<string[]>([]);
+
 
 
     useEffect(() => {
@@ -90,26 +92,8 @@ export default function UserUpdateForm() {
         setValue('associacao.diaVinculo', newValue);
     };
 
-    const handleChangeDiaTrabalho = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
-        const {
-            target: { value },
-        } = event;
-        //console.log("Before split:", value); // Veja o que está recebendo antes do split
-        const newValue = typeof value === 'string' ? value.split(',') : value;
-        //console.log("After split:", newValue); // Confira o novo valor após o split
-        setDiaEstudoTrabalho(newValue);
-        setValue('trabahadorInfoField.diaTrabalha', newValue);
-    };
-    const handleChangeDiaEstudo = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
-        const {
-            target: { value },
-        } = event;
-        //console.log("Before split:", value); // Veja o que está recebendo antes do split
-        const newValue = typeof value === 'string' ? value.split(',') : value;
-        //console.log("After split:", newValue); // Confira o novo valor após o split
-        setDiaEstudoTrabalho(newValue);
-        setValue('GrupoEstudoInfoField.diaEstuda', newValue);
-    };
+
+
 
 
     const onSubmit: SubmitHandler<Associado> = data => {
@@ -240,84 +224,124 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='text' />
                         </Grid>
                     </FormSection>
+
                     {/* Campos estudante */}
-                    <FormSection title="Seção 4 - Dados do Estudante">
+                    <FormSection title="Seção 5 - Dados do Estudante">
                         <Grid container spacing={2}>
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
                             <Grid item xs={12} sm={6}>
-                                <InputLabel>Dia(s) que estuda na casa</InputLabel>
-                                <Controller
-                                    control={control}
-                                    name="GrupoEstudoInfoField.diaEstuda"
-                                    render={({ field, fieldState: { error } }) => (
-                                        <FormControl fullWidth error={!!error}>
-                                            <Select
-                                                {...field}
-                                                multiple
-                                                value={field.value} // Use `field.value` em vez de `defaultValue`
-                                                onChange={handleChangeDiaEstudo}
-                                                input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
-                                                renderValue={(selected) => (
-                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                        {selected.map((value) => (
-                                                            <Chip key={value} label={value} />
-                                                        ))}
-                                                    </Box>
-                                                )}
-                                                MenuProps={MenuPropsDiasSemanas}>
-                                                {DiasSemanas.map((name) => (
-                                                    <MenuItem key={name} value={name}>
-                                                        {name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
+                                <FormControl fullWidth>
+                                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia do Estudo</InputLabel>
+                                    <Select
+                                        label="Selecione o Dia do Estudo"
+                                        {...register("GrupoEstudoInfoField.diaEstuda")}
+                                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                        defaultValue="nao">
+                                        <MenuItem value="Segunda">Segunda</MenuItem>
+                                        <MenuItem value="Terça">Terça</MenuItem>
+                                        <MenuItem value="Quarta">Quarta</MenuItem>
+                                        <MenuItem value="Quinta">Quinta</MenuItem>
+                                        <MenuItem value="Sexta">Sexta</MenuItem>
+                                        <MenuItem value="Sábado">Sábado</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
                         </Grid>
                     </FormSection >
                     {/* Campos trabalhador/voluntário */}
-                    <FormSection title="Seção 5 - Dados do Trabalhador/Voluntário">
+                    <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
                         <Grid container spacing={2}>
-                            <UpdateInputField register={register} name="trabahadorInfoField.funcao" label="Função do trabalhador" type='text' />
-                            <UpdateInputField register={register} name="trabahadorInfoField.nomeDiregente" label="Nome do dirigente" type='text' />
-                            <Grid item xs={12} sm={6}>
-                                <InputLabel>Dia(s) de Trabalho na casa</InputLabel>
-                                <Controller
-                                    control={control}
-                                    name="trabahadorInfoField.diaTrabalha"
-                                    render={({ field, fieldState: { error } }) => (
-                                        <FormControl fullWidth error={!!error}>
-                                            <Select
-                                                {...field}
-                                                multiple
-                                                value={field.value} // Use `field.value` em vez de `defaultValue`
-                                                onChange={handleChangeDiaTrabalho}
-                                                input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
-                                                renderValue={(selected) => (
-                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                        {selected.map((value) => (
-                                                            <Chip key={value} label={value} />
-                                                        ))}
-                                                    </Box>
-                                                )}
-                                                MenuProps={MenuPropsDiasSemanas}>
-                                                {DiasSemanas.map((name) => (
-                                                    <MenuItem key={name} value={name}>
-                                                        {name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>
-                                    )}
-                                />
-                            </Grid>
+                            <Container >
+                                {trabahadorInfoField.map((field, index) => (
+                                    <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
+                                        <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12} sx={{ width: "100%" }}>
+                                                    <FormControl fullWidth>
+                                                        <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
+                                                        <Select
+                                                            label="Selecione o Dia de Trabalho"
+                                                            {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
+                                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                            defaultValue="nao">
+                                                            <MenuItem value="Segunda">Segunda</MenuItem>
+                                                            <MenuItem value="Terça">Terça</MenuItem>
+                                                            <MenuItem value="Quarta">Quarta</MenuItem>
+                                                            <MenuItem value="Quinta">Quinta</MenuItem>
+                                                            <MenuItem value="Sexta">Sexta</MenuItem>
+                                                            <MenuItem value="Sábado">Sábado</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item xs={12} sx={{ width: '100%' }}>
+                                                    <TextField
+                                                        {...register(`trabahadorInfoField.${index}.funcao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        label="Função que Exerce"
+                                                        InputLabelProps={{ shrink: true }}
+                                                        fullWidth
+                                                        variant="outlined"
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={12} sx={{ width: '100%' }}>
+                                                    <TextField
+                                                        {...register(`trabahadorInfoField.${index}.nomeDirigente` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        label="Nome do Dirigente do Trabalho"
+                                                        InputLabelProps={{ shrink: true }}
+                                                        fullWidth
+                                                        variant="outlined"
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sx={{ width: "100%" }}>
+                                                    <FormControl fullWidth>
+                                                        <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                                                        <Select
+                                                            label='Selecione o Turno de Trabalho'
+                                                            {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
+                                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                            defaultValue="nao">
+                                                            <MenuItem value="Manhã">Manhã</MenuItem>
+                                                            <MenuItem value="Tarde">Tarde</MenuItem>
+                                                            <MenuItem value="Noite">Noite</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item xs={12} sx={{ width: '100%' }}>
+                                                    <TextField
+                                                        {...register(`trabahadorInfoField.${index}.horarioDeTrabalho` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        label="Horário de Trabalho"
+                                                        InputLabelProps={{ shrink: true }}
+                                                        fullWidth
+                                                        type='time'
+                                                        variant="outlined"
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        </CardContent>
+                                        <CardActions>
+                                            <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
+                                                <DeleteIcon />
+                                                <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
+                                            </IconButton>
+                                        </CardActions>
+                                    </Card>
+                                ))}
+                                <Button
+                                    startIcon={<AddCircleOutlineIcon />}
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "",id:uuidv4()})}
+                                    sx={{ mt: 2, width: '100%' }}
+                                >
+                                    Adicionar dia de trabalho
+                                </Button>
+                            </Container>
+
+
                         </Grid>
                     </FormSection >
-
 
                     <FormSection title="Seção 6 - Possui Débitos?">
                         <Grid container spacing={2}>
