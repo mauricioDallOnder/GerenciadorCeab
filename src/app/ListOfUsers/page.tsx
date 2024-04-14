@@ -49,9 +49,9 @@ export default function ListOfUsers() {
         setSelectedWorkers(usuarios[0].trabahadorInfoField || []);  // Garantir que seja um array
         setModalOpen(true);
     };
-    
+
     const rows: GridRowsProp = usuarios.map(
-        ({ id, numeroRegistroAssociado, nome, endereco, nascimento, cpf, trabahadorInfoField,associacao,GrupoEstudoInfoField }) => {
+        ({ id, numeroRegistroAssociado, nome, endereco, nascimento, cpf, trabahadorInfoField, associacao, GrupoEstudoInfoField }) => {
             return {
                 id: id,
                 col1: numeroRegistroAssociado,
@@ -62,10 +62,10 @@ export default function ListOfUsers() {
                 col6: endereco.numero,
                 col7: endereco.telefone,
                 col8: endereco.email,
-                col9:GrupoEstudoInfoField.turmaEstudo,
+                col9: GrupoEstudoInfoField.turmaEstudo,
                 col10: GrupoEstudoInfoField.diaEstuda,
-                col11:GrupoEstudoInfoField.numeroSala,
-                col12:GrupoEstudoInfoField.nomeFacilitador,
+                col11: GrupoEstudoInfoField.numeroSala,
+                col12: GrupoEstudoInfoField.nomeFacilitador,
                 col13: associacao.diaVinculo,
                 col14: associacao.dataEntrada,
                 col15: associacao.tipo,
@@ -93,7 +93,7 @@ export default function ListOfUsers() {
         {
             field: "details",
             headerName: "Consultar dias de trabalho",
-            width: 200 ,
+            width: 200,
             sortable: false,
             renderCell: (params) => (
                 <Button
@@ -110,10 +110,10 @@ export default function ListOfUsers() {
 
 
     return (
-        <Box sx={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
-           
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+
             <Box
-                style={{marginTop:"100px",height: "auto", width: "90%"}}
+                style={{ marginTop: "100px", height: "auto", width: "90%" }}
             >
                 <StyledDataGrid
                     checkboxSelection
@@ -134,10 +134,10 @@ export default function ListOfUsers() {
                 />
             </Box>
             <WorkerDetailsModal
-    open={modalOpen}
-    onClose={() => setModalOpen(false)}
-    details={selectedWorkers}
-/>
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                details={selectedWorkers}
+            />
         </Box>
     );
 
