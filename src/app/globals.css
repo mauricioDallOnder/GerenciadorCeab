@@ -211,11 +211,8 @@ textarea {
     page-break-inside: avoid;
   }
   
-  /* Força a impressão de cores de fundo e texto */
-  * {
-    -webkit-print-color-adjust: exact;
-    color-adjust: exact;
-  }
+ 
+  
 }
 @page {
   size: landscape;
