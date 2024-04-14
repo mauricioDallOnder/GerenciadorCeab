@@ -17,7 +17,7 @@ export const BoxStyleCadastro = {
     display: "flex",
     flexDirection: "column",
     padding: "2.5em",
-    marginTop:"100px",
+    marginTop:"40px",
     '@media (max-width: 600px)': { 
       width: '90%', 
       padding: '1em',
