@@ -14,7 +14,7 @@ export const associadoSchema = z.object({
   }),
   endereco: z.object({
     logradouro: z.string().min(1, { message: "O campo logradouro é obrigatório" }),
-    numero: z.string().min(1, { message: "O campo número é obrigatório" }),
+    numero: z.number().min(1, { message: "O campo número é obrigatório" }),
     complemento: z.string().optional(),
     cidade: z.string().min(1, { message: "O campo cidade é obrigatório" }),
     cep: z.string().min(1, { message: "O campo CEP é obrigatório" }),
@@ -31,7 +31,7 @@ export const associadoSchema = z.object({
     diaEstuda:z.string(), 
     turmaEstudo: z.string(),
     nomeFacilitador:z.string(),
-    numeroSala:z.string()
+    numeroSala:z.number()
   }),
   trabahadorInfoField: z.array(z.object({
     id:z.string(),
@@ -54,7 +54,7 @@ export const associadoSchema = z.object({
   contribuiu: z.string(),
   debito: z.string(),  
   observacoes:z.string().optional(),
-  numeroRegistroAssociado:z.string().optional()
+  numeroRegistroAssociado:z.number().optional()
 });
 
 export type Associado = z.infer<typeof associadoSchema>;

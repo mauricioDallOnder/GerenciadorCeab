@@ -199,7 +199,7 @@ export default function UserUpdateForm() {
                     <FormSection title="Seção 2 - Dados de Endereço e Contato">
                         <Grid container spacing={2}>
                             <UpdateInputField register={register} name="endereco.logradouro" label="Rua" type='text' />
-                            <UpdateInputField register={register} name="endereco.numero" label="Número" type='text' />
+                            <UpdateInputField register={register} name="endereco.numero" label="Número" type='number' />
                             <UpdateInputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                             <UpdateInputField register={register} name="endereco.cep" label="CEP" type='text' />
                             <UpdateInputField register={register} name="endereco.uf" label="UF" type='text' />
@@ -246,7 +246,7 @@ export default function UserUpdateForm() {
                             </Grid>
 
                             <UpdateInputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
-                            <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='text' />
+                            <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='number' />
                         </Grid>
                     </FormSection>
 
@@ -255,7 +255,7 @@ export default function UserUpdateForm() {
                         <Grid container spacing={2}>
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
-                            <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
+                            <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='number' />
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth >
                                     <InputLabel sx={{ mb: '2px', mt: '16px' }} >Dia que estuda na casa:</InputLabel>

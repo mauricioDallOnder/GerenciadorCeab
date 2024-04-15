@@ -246,7 +246,7 @@ export default function FormRegistration() {
             <FormSection title="Seção 2 - Dados de Endereço e Contato">
               <Grid container spacing={2}>
                 <InputField register={register} name="endereco.logradouro" label="Rua" type='text' />
-                <InputField register={register} name="endereco.numero" label="Número" type='text' />
+                <InputField register={register} name="endereco.numero" label="Número" type='number' />
                 <InputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                 <InputField register={register} name="endereco.cep" label="CEP" type='text' />
                 <Grid item xs={12} sm={6}>
@@ -283,8 +283,8 @@ export default function FormRegistration() {
                       label='Tipo de vinculo com a casa'
                       fullWidth
                       error={!!errors.associacao?.tipo}
-                      defaultValue="">
-                      <MenuItem value="">Selecione</MenuItem>
+                      defaultValue="-">
+                      <MenuItem value="-">-</MenuItem>
                       <MenuItem value="trabalhador">Trabalhador</MenuItem>
                       <MenuItem value="estudante">Estudante</MenuItem>
                       <MenuItem value="estudante e trabalhador">Estudante e Trabalhador</MenuItem>
@@ -331,7 +331,7 @@ export default function FormRegistration() {
                   />
                 </Grid>
                 <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
-                <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
+                <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='number' />
               </Grid>
             </FormSection>
             {/* Campos estudante */}
@@ -339,10 +339,10 @@ export default function FormRegistration() {
               <Grid container spacing={2}>
                 <InputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
                 <InputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
-                <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
+                <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='number' />
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
-                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia do Estudo</InputLabel>
+                    <InputLabel sx={{ mb: '2px', mt: '12px' }}>Selecione o Dia do Estudo</InputLabel>
                     <Select
                       label="Selecione o Dia do Estudo"
                       {...register("GrupoEstudoInfoField.diaEstuda")}
@@ -462,6 +462,7 @@ export default function FormRegistration() {
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px',textAlign:"center" }}>O associado possui débitos com a casa?</InputLabel>
                   <Select
                   variant="filled"
+                  disabled
                   fullWidth
                     {...register("debito")}
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px',textAlign:"center" }}
@@ -542,6 +543,7 @@ export default function FormRegistration() {
                     {...register("contribuiu")}
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px',textAlign:"center" }}
                     defaultValue="nao"
+                    disabled
                   >
                     <MenuItem value="sim">Sim</MenuItem>
                     <MenuItem value="nao">Não</MenuItem>
