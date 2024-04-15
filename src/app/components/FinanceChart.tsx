@@ -16,14 +16,14 @@ interface ChartProps {
   data: MonthlyReport[];
 }
 
-const FinanceChart: React.FC<ChartProps> = ({ data }) => {
+// Here we assume that `data` can have a default empty array if not provided
+const FinanceChart: React.FC<ChartProps> = ({ data = [] }) => {
   return (
-    <Box sx={{ width: "90%",backgroundColor:'rgba(255, 255, 255, 0.9)',mt:"8px" }}>
-      <Typography variant="h6" component="h2" style={{ textAlign: 'center', marginBottom: '16px',color:"black" }}>
+    <Box sx={{ width: "90%", backgroundColor: 'rgba(255, 255, 255, 0.9)', mt: "8px" }}>
+      <Typography variant="h6" component="h2" style={{ textAlign: 'center', marginBottom: '16px', color: "black" }}>
         Relatório Financeiro Mensal
       </Typography>
       <ResponsiveContainer height={400} style={{ background: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px' }}>
-        
         <BarChart
           data={data}
           margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
