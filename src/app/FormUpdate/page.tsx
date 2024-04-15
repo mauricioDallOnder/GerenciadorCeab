@@ -33,7 +33,7 @@ import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
 
 export default function UserUpdateForm() {
-    const { register, handleSubmit, setValue, reset, control, getValues,formState: { errors,isSubmitted } } = useForm<Associado>({
+    const { register, handleSubmit, setValue, reset, control, getValues, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
                 diaVinculo: [], // array vazio
@@ -42,7 +42,6 @@ export default function UserUpdateForm() {
         },
     });
 
-    // Dentro de FormRegistration
     const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
         control,
         name: "contribuicao",
@@ -59,6 +58,18 @@ export default function UserUpdateForm() {
     const [usuarios, setUsuarios] = useState<Associado[]>([]);
     const [loading, setLoading] = useState(false);
     const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
+    const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
+
+    useEffect(() => {
+        if (selectedUser) {
+            // Reset de todos os campos
+            reset(selectedUser);
+            // Configuração individual dos campos
+            setValue('estadoCivil', selectedUser.estadoCivil);
+            setValue('GrupoEstudoInfoField.diaEstuda',selectedUser.GrupoEstudoInfoField.diaEstuda)
+            // Repita para outros campos conforme necessário
+        }
+    }, [selectedUser, reset, setValue]);
 
 
 
@@ -91,9 +102,6 @@ export default function UserUpdateForm() {
         setDiaSemanaFrequentado(newValue);
         setValue('associacao.diaVinculo', newValue);
     };
-
-
-
 
 
     const onSubmit: SubmitHandler<Associado> = data => {
@@ -146,16 +154,13 @@ export default function UserUpdateForm() {
                         options={usuarios}
                         getOptionLabel={(option) => option.nome}
                         onChange={(event, value) => {
-                            if (value) {
-                                reset(value); // Automaticamente seta todos os valores do formulário
-                            }
+                            setSelectedUser(value); // Atualiza o usuário selecionado
                         }}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                label="Nome do Trabalhador"
+                                label="Buscar Usuário"
                                 variant="outlined"
-                                {...register('nome')}
                                 fullWidth
                             />
                         )}
@@ -165,7 +170,27 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="nome" label="Nome Completo" type='text' />
                             <UpdateInputField register={register} name="cpf" label="CPF" type='text' />
                             <UpdateInputField register={register} name="nascimento" label="Data de Nascimento" type='date' />
-                            <UpdateInputField register={register} name="estadoCivil" label="Estado Civil" type='text' />
+                            
+                                <Controller
+                                    name="estadoCivil"
+                                    control={control}
+                                    render={({ field }) => (
+                                       
+                                        <Select
+                                            {...field}
+                                            label="Estado Civil"
+                                            sx={{marginLeft:"16px",mt:"16px",width:"47%"}}
+                                        >
+                                            <MenuItem value="solteiro">Solteiro(a)</MenuItem>
+                                            <MenuItem value="casado">Casado(a)</MenuItem>
+                                            <MenuItem value="divorciado">Divorciado(a)</MenuItem>
+                                            <MenuItem value="viuvo">Viúvo(a)</MenuItem>
+                                        </Select>
+                                        
+                                    )}
+                                />
+                            
+
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                             <UpdateInputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
                         </Grid>
@@ -232,20 +257,28 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
                             <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth>
-                                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia do Estudo</InputLabel>
-                                    <Select
-                                        label="Selecione o Dia do Estudo"
-                                        {...register("GrupoEstudoInfoField.diaEstuda")}
-                                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                        defaultValue="nao">
-                                        <MenuItem value="Segunda">Segunda</MenuItem>
-                                        <MenuItem value="Terça">Terça</MenuItem>
-                                        <MenuItem value="Quarta">Quarta</MenuItem>
-                                        <MenuItem value="Quinta">Quinta</MenuItem>
-                                        <MenuItem value="Sexta">Sexta</MenuItem>
-                                        <MenuItem value="Sábado">Sábado</MenuItem>
-                                    </Select>
+                            <FormControl fullWidth >
+                            <InputLabel  sx={{ mb: '2px', mt: '16px' }} >Dia que estuda na casa:</InputLabel>
+                            <Controller
+                                    name="GrupoEstudoInfoField.diaEstuda"
+                                    control={control}
+                                    render={({ field }) => (
+                                       
+                                        <Select
+                                            {...field}
+                                            label="Dia que estuda na casa:"
+                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                            fullWidth
+                                        >
+                                             {DiasSemanas.map((name) => (
+                                                    <MenuItem key={name} value={name}>
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                        </Select>
+                                        
+                                    )}
+                                />
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -332,7 +365,7 @@ export default function UserUpdateForm() {
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
                                     color="success"
-                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "",id:uuidv4()})}
+                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "", id: uuidv4() })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
                                     Adicionar dia de trabalho
@@ -506,14 +539,14 @@ export default function UserUpdateForm() {
                         </Grid>
                     </FormSection>
                     <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              disabled={isSubmitted}
-              sx={{ width: "100%" }}
-            >
-              {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
-            </Button>
+                        type="submit"
+                        variant="contained"
+                        color="secondary"
+                        disabled={isSubmitted}
+                        sx={{ width: "100%" }}
+                    >
+                        {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
+                    </Button>
                 </Box>
             </form>
 

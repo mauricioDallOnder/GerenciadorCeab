@@ -1,5 +1,5 @@
 export const DiasSemanas=[
-    'Segunda','Terça','Quarta','Quinta','Sexta','Sábado'
+    'Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
 ]
 export const Typevinculo=['estudante','trabalhador','frequentador']
 export const normalizeFloatInputValue = (value: string): number => {
