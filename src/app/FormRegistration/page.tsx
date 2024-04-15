@@ -246,7 +246,7 @@ export default function FormRegistration() {
             <FormSection title="Seção 2 - Dados de Endereço e Contato">
               <Grid container spacing={2}>
                 <InputField register={register} name="endereco.logradouro" label="Rua" type='text' />
-                <InputField register={register} name="endereco.numero" label="Número" type='number' />
+                <InputField register={register} name="endereco.numero" label="Número" type='text' />
                 <InputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                 <InputField register={register} name="endereco.cep" label="CEP" type='text' />
                 <Grid item xs={12} sm={6}>
@@ -331,7 +331,7 @@ export default function FormRegistration() {
                   />
                 </Grid>
                 <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
-                <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='number' />
+                <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
               </Grid>
             </FormSection>
             {/* Campos estudante */}
