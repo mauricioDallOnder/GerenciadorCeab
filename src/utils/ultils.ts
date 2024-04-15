@@ -25,3 +25,10 @@ export const MenuPropsDiasSemanas = {
 
 
 
+export function normalizeString(str: string): string {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+}
+
+export function compareNames(name1: string, name2: string): boolean {
+  return normalizeString(name1) === normalizeString(name2);
+}

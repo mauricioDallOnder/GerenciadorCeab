@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -26,13 +26,13 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, normalizeString, Typevinculo } from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { InputField } from "../components/InputField";
-import { Associado, associadoSchema } from "../interfaces/interfaces";
+import { Associado, associadoSchema, AssociadosResponse } from "../interfaces/interfaces";
 
 
 export default function FormRegistration() {
@@ -53,7 +53,7 @@ export default function FormRegistration() {
     setValue,
     watch,
     getValues,
-    formState: { errors },
+    formState: { errors},
   } = methods;
   // Dentro de FormRegistration
   const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
@@ -71,9 +71,10 @@ export default function FormRegistration() {
     name: "trabahadorInfoField",
   });
 
-  const [estadoCivil, setEstadoCivil] = React.useState('');
-  const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
-
+  const [estadoCivil, setEstadoCivil] = useState('');
+  const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = useState<string[]>([]);
+  const [usuarios, setUsuarios] = useState<{ id: string, nome: string }[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChangeSelect = (event: SelectChangeEvent) => {
     const value = event.target.value;
@@ -92,16 +93,37 @@ export default function FormRegistration() {
     setValue('associacao.diaVinculo', newValue);
   };
 
-
-
-
-
+  useEffect(() => {
+    axios.get<AssociadosResponse>('/api/getDataFromFirebase')
+      .then(response => {
+        const transformed = Object.entries(response.data).map(([key, value]) => {
+          if (typeof value === 'object' && value.nome) { // Verifica se value é um objeto e possui a propriedade nome
+            return { id: key, nome: value.nome };
+          }
+          return null; // ou retornar um valor padrão ou manipular de alguma outra forma
+        }).filter((item): item is { id: string; nome: string } => item !== null);
+        setUsuarios(transformed);
+      })
+      .catch(error => console.error('Erro ao buscar usuários:', error));
+  }, []);
+  
 
   watch("contribuiu", "nao");
   watch("debito", "nao");
 
 
   const onSubmit = (data: Associado) => {
+     // Verificar se o nome já existe na lista de usuários
+  const nomeJaExiste = usuarios.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
+
+
+  if (nomeJaExiste) {
+    alert("Nome já cadastrado.");
+    setIsSubmitting(false); // Resetar o estado de submissão
+    console.log(nomeJaExiste)
+    return; // Interrompe a execução da função se o nome já existir
+  }
+    setIsSubmitting(true); // Iniciar a submissão
     let geraUUid = uuidv4()
 
     let dadosParaSubmissao;
@@ -152,14 +174,18 @@ export default function FormRegistration() {
       };
     }
     console.log("Dados para submissão:", dadosParaSubmissao);
+
     axios.post('/api/createDataOnFirebase', dadosParaSubmissao)
       .then(function (response) {
         console.log(response);
       })
       .catch(function (error) {
         console.log(error);
+        setIsSubmitting(false); // Resetar o estado de submissão
       });
     alert('dados cadastrados com sucesso')
+    methods.reset(); // Limpar os campos após o envio bem sucedido
+    setIsSubmitting(false); // Resetar o estado de submissão
   };
 
 
@@ -324,6 +350,7 @@ export default function FormRegistration() {
                                 <MenuItem value="Quinta">Quinta</MenuItem>
                                 <MenuItem value="Sexta">Sexta</MenuItem>
                                 <MenuItem value="Sábado">Sábado</MenuItem>
+                                <MenuItem value="Domingo">Domingo</MenuItem>
                               </Select>
                             </FormControl>
                           </Grid>
@@ -587,14 +614,16 @@ export default function FormRegistration() {
               </Grid>
             </FormSection>
             <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                sx={{ width: "100%" }}
-              >
-                Cadastrar Associado
-              </Button>
+            <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            disabled={isSubmitting}
+            sx={{ width: "100%" }}
+          >
+            {isSubmitting ? "Enviando dados, aguarde..." : "Cadastrar Associado"}
+          </Button>
+              
             </Box>
           </Box>
         </form>

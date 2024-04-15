@@ -80,3 +80,7 @@ export interface WorkerDetailsModalProps {
   onClose: () => void;
   details: TrabahadorInfoField[];
 }
+
+export interface AssociadosResponse {
+  [key: string]: Associado;
+}

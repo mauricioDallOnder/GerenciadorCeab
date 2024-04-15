@@ -33,7 +33,7 @@ import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
 
 export default function UserUpdateForm() {
-    const { register, handleSubmit, setValue, reset, control, getValues } = useForm<Associado>({
+    const { register, handleSubmit, setValue, reset, control, getValues,formState: { errors,isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
                 diaVinculo: [], // array vazio
@@ -505,9 +505,15 @@ export default function UserUpdateForm() {
                             </Box>
                         </Grid>
                     </FormSection>
-                    <Button type="submit" variant="contained" color="primary" disabled={loading}>
-                        Atualizar
-                    </Button>
+                    <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              disabled={isSubmitted}
+              sx={{ width: "100%" }}
+            >
+              {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
+            </Button>
                 </Box>
             </form>
 
