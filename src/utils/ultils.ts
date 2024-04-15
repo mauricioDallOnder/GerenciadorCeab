@@ -1,5 +1,5 @@
 export const DiasSemanas=[
-    'Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
+    '-','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
 ]
 
 export const siglas = [

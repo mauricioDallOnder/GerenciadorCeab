@@ -31,7 +31,7 @@ export const associadoSchema = z.object({
     diaEstuda:z.string(), 
     turmaEstudo: z.string(),
     nomeFacilitador:z.string(),
-    numeroSala:z.number()
+    numeroSala:z.string()
   }),
   trabahadorInfoField: z.array(z.object({
     id:z.string(),

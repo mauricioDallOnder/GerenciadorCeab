@@ -301,7 +301,7 @@ export default function UserUpdateForm() {
                                                                 <Select
                                                                     {...field}
                                                                     label="Dia de Trabalho"
-                                                                    defaultValue=""
+                                                                    defaultValue="-"
                                                                 >
                                                                     {DiasSemanas.map((name) => (
                                                                         <MenuItem key={name} value={name}>{name}</MenuItem>

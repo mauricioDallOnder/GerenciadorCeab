@@ -339,7 +339,7 @@ export default function FormRegistration() {
               <Grid container spacing={2}>
                 <InputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
                 <InputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
-                <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='number' />
+                <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel sx={{ mb: '2px', mt: '12px' }}>Selecione o Dia do Estudo</InputLabel>
@@ -394,6 +394,7 @@ export default function FormRegistration() {
                               InputLabelProps={{ shrink: true }}
                               fullWidth
                               variant="outlined"
+                              defaultValue="-"
                             />
                           </Grid>
 
@@ -404,6 +405,7 @@ export default function FormRegistration() {
                               InputLabelProps={{ shrink: true }}
                               fullWidth
                               variant="outlined"
+                              defaultValue="-"
                             />
                           </Grid>
                           <Grid item xs={12} sx={{ width: "100%" }}>
@@ -413,7 +415,8 @@ export default function FormRegistration() {
                                 label='Selecione o Turno de Trabalho'
                                 {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
                                 sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                defaultValue="nao">
+                                defaultValue="-">
+                                   <MenuItem value="-">-</MenuItem>
                                 <MenuItem value="Manhã">Manhã</MenuItem>
                                 <MenuItem value="Tarde">Tarde</MenuItem>
                                 <MenuItem value="Noite">Noite</MenuItem>
