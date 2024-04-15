@@ -26,7 +26,7 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, normalizeString, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, normalizeString, siglas, Typevinculo } from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
@@ -76,7 +76,7 @@ export default function FormRegistration() {
   const [usuarios, setUsuarios] = useState<{ id: string, nome: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChangeSelect = (event: SelectChangeEvent) => {
+  const handleChangeSelectEstadoCivil = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setEstadoCivil(value);
     setValue("estadoCivil", value); // Sincroniza com o estado do formulário
@@ -93,6 +93,7 @@ export default function FormRegistration() {
     setValue('associacao.diaVinculo', newValue);
   };
 
+ 
   useEffect(() => {
     axios.get<AssociadosResponse>('/api/getDataFromFirebase')
       .then(response => {
@@ -211,7 +212,7 @@ export default function FormRegistration() {
                       id="estadoCivil"
                       value={estadoCivil}
                       label="Estado Civil"
-                      onChange={handleChangeSelect}
+                      onChange={handleChangeSelectEstadoCivil}
                       name="estadoCivil">
                       <MenuItem value={'solteiro'}>Solteiro(a)</MenuItem>
                       <MenuItem value={'casado'}>Casado(a)</MenuItem>
@@ -223,7 +224,22 @@ export default function FormRegistration() {
                 </Grid>
                 {/* Campos de Naturalidade */}
                 <InputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
-                <InputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth>
+                    <InputLabel id="naturalidade-uf-label">UF</InputLabel>
+                    <Select
+                      {...register("naturalidade.uf")}
+                      label='naturalidade'
+                      >
+                       {siglas.map((name) => (
+                            <MenuItem key={name} value={name}>
+                              {name}
+                            </MenuItem>
+                          ))}
+                    </Select>
+                  </FormControl>
+                  {errors.estadoCivil && <p>{errors.estadoCivil.message}</p>}
+                </Grid>
               </Grid>
             </FormSection>
             {/* Campos de Endereço */}
@@ -233,7 +249,22 @@ export default function FormRegistration() {
                 <InputField register={register} name="endereco.numero" label="Número" type='text' />
                 <InputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                 <InputField register={register} name="endereco.cep" label="CEP" type='text' />
-                <InputField register={register} name="endereco.uf" label="UF" type='text' />
+                <Grid item xs={12} sm={6}>
+                <FormControl fullWidth >
+                    <InputLabel id="endereco-uf-label">UF</InputLabel>
+                    <Select
+                    
+                      {...register("endereco.uf")}
+                      label='UF do endereço'
+                      >
+                       {siglas.map((name) => (
+                            <MenuItem key={name} value={name}>
+                              {name}
+                            </MenuItem>
+                          ))}
+                    </Select>
+                  </FormControl>
+                  </Grid>
                 <InputField register={register} name="endereco.complemento" label="Complemento" type='text' />
                 <InputField register={register} name="endereco.telefone" label="Telefone" type='text' />
                 <InputField register={register} name="endereco.email" label="Email" type='email' />
@@ -316,7 +347,8 @@ export default function FormRegistration() {
                       label="Selecione o Dia do Estudo"
                       {...register("GrupoEstudoInfoField.diaEstuda")}
                       sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                      defaultValue="nao">
+                      defaultValue="-">
+                        <MenuItem value="-">-</MenuItem>
                       <MenuItem value="Segunda">Segunda</MenuItem>
                       <MenuItem value="Terça">Terça</MenuItem>
                       <MenuItem value="Quarta">Quarta</MenuItem>
@@ -343,7 +375,8 @@ export default function FormRegistration() {
                                 label="Selecione o Dia de Trabalho"
                                 {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
                                 sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                defaultValue="nao">
+                                defaultValue="-">
+                                <MenuItem value="-">-</MenuItem>
                                 <MenuItem value="Segunda">Segunda</MenuItem>
                                 <MenuItem value="Terça">Terça</MenuItem>
                                 <MenuItem value="Quarta">Quarta</MenuItem>

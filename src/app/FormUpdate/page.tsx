@@ -332,19 +332,27 @@ export default function UserUpdateForm() {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: "100%" }}>
-                                                    <FormControl fullWidth>
-                                                        <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
-                                                        <Select
-                                                            label='Selecione o Turno de Trabalho'
-                                                            {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
-                                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                                            defaultValue="nao">
-                                                            <MenuItem value="Manhã">Manhã</MenuItem>
-                                                            <MenuItem value="Tarde">Tarde</MenuItem>
-                                                            <MenuItem value="Noite">Noite</MenuItem>
-                                                        </Select>
-                                                    </FormControl>
+                                                    <Controller
+                                                        name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <FormControl fullWidth>
+                                                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                                                                <Select
+                                                                    {...field}
+                                                                    label="Selecione o Turno de Trabalho"
+                                                                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                                    defaultValue=""
+                                                                >
+                                                                    <MenuItem value="Manhã">Manhã</MenuItem>
+                                                                    <MenuItem value="Tarde">Tarde</MenuItem>
+                                                                    <MenuItem value="Noite">Noite</MenuItem>
+                                                                </Select>
+                                                            </FormControl>
+                                                        )}
+                                                    />
                                                 </Grid>
+
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
                                                         {...register(`trabahadorInfoField.${index}.horarioDeTrabalho` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
@@ -458,14 +466,29 @@ export default function UserUpdateForm() {
                                             <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={12} sx={{ width: '100%' }}>
-                                                        <TextField
-                                                            {...register(`contribuicao.${index}.tipoContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                                            label="Tipo de contribuição"
-                                                            InputLabelProps={{ shrink: true }}
-                                                            fullWidth
-                                                            variant="outlined"
+                                                        <Controller
+                                                            name={`contribuicao.${index}.tipoContribuicao`}
+                                                            control={control}
+                                                            render={({ field }) => (
+                                                                <FormControl fullWidth>
+                                                                    <InputLabel id={`tipoContribuicao-label-${index}`}>Tipo de Contribuição</InputLabel>
+                                                                    <Select
+                                                                        {...field}
+                                                                        labelId={`tipoContribuicao-label-${index}`}
+                                                                        label="Tipo de Contribuição"
+                                                                        defaultValue="-" // Coloque um valor padrão conforme necessário
+                                                                    >
+                                                                        <MenuItem value="-">-</MenuItem>
+                                                                        <MenuItem value="pix">Pix</MenuItem>
+                                                                        <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                                                                        <MenuItem value="cartao">Cartão</MenuItem>
+                                                                        <MenuItem value="vale presente">Vale Presente</MenuItem>
+                                                                    </Select>
+                                                                </FormControl>
+                                                            )}
                                                         />
                                                     </Grid>
+
                                                     <Grid item xs={12} sx={{ width: '100%' }}>
                                                         <TextField
                                                             {...register(`contribuicao.${index}.valorContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod

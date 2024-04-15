@@ -1,6 +1,36 @@
 export const DiasSemanas=[
     'Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
 ]
+
+export const siglas = [
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MS',
+  'MT',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+]
 export const Typevinculo=['estudante','trabalhador','frequentador']
 export const normalizeFloatInputValue = (value: string): number => {
     // Normaliza a string para garantir que o separador decimal seja ponto
