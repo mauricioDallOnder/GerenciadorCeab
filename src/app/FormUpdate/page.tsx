@@ -66,7 +66,7 @@ export default function UserUpdateForm() {
             reset(selectedUser);
             // Configuração individual dos campos
             setValue('estadoCivil', selectedUser.estadoCivil);
-            setValue('GrupoEstudoInfoField.diaEstuda',selectedUser.GrupoEstudoInfoField.diaEstuda)
+            setValue('GrupoEstudoInfoField.diaEstuda', selectedUser.GrupoEstudoInfoField.diaEstuda)
             // Repita para outros campos conforme necessário
         }
     }, [selectedUser, reset, setValue]);
@@ -170,26 +170,26 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="nome" label="Nome Completo" type='text' />
                             <UpdateInputField register={register} name="cpf" label="CPF" type='text' />
                             <UpdateInputField register={register} name="nascimento" label="Data de Nascimento" type='date' />
-                            
-                                <Controller
-                                    name="estadoCivil"
-                                    control={control}
-                                    render={({ field }) => (
-                                       
-                                        <Select
-                                            {...field}
-                                            label="Estado Civil"
-                                            sx={{marginLeft:"16px",mt:"16px",width:"47%"}}
-                                        >
-                                            <MenuItem value="solteiro">Solteiro(a)</MenuItem>
-                                            <MenuItem value="casado">Casado(a)</MenuItem>
-                                            <MenuItem value="divorciado">Divorciado(a)</MenuItem>
-                                            <MenuItem value="viuvo">Viúvo(a)</MenuItem>
-                                        </Select>
-                                        
-                                    )}
-                                />
-                            
+
+                            <Controller
+                                name="estadoCivil"
+                                control={control}
+                                render={({ field }) => (
+
+                                    <Select
+                                        {...field}
+                                        label="Estado Civil"
+                                        sx={{ marginLeft: "16px", mt: "16px", width: "47%" }}
+                                    >
+                                        <MenuItem value="solteiro">Solteiro(a)</MenuItem>
+                                        <MenuItem value="casado">Casado(a)</MenuItem>
+                                        <MenuItem value="divorciado">Divorciado(a)</MenuItem>
+                                        <MenuItem value="viuvo">Viúvo(a)</MenuItem>
+                                    </Select>
+
+                                )}
+                            />
+
 
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                             <UpdateInputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
@@ -257,28 +257,28 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
                             <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
                             <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth >
-                            <InputLabel  sx={{ mb: '2px', mt: '16px' }} >Dia que estuda na casa:</InputLabel>
-                            <Controller
-                                    name="GrupoEstudoInfoField.diaEstuda"
-                                    control={control}
-                                    render={({ field }) => (
-                                       
-                                        <Select
-                                            {...field}
-                                            label="Dia que estuda na casa:"
-                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                            fullWidth
-                                        >
-                                             {DiasSemanas.map((name) => (
+                                <FormControl fullWidth >
+                                    <InputLabel sx={{ mb: '2px', mt: '16px' }} >Dia que estuda na casa:</InputLabel>
+                                    <Controller
+                                        name="GrupoEstudoInfoField.diaEstuda"
+                                        control={control}
+                                        render={({ field }) => (
+
+                                            <Select
+                                                {...field}
+                                                label="Dia que estuda na casa:"
+                                                sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                fullWidth
+                                            >
+                                                {DiasSemanas.map((name) => (
                                                     <MenuItem key={name} value={name}>
                                                         {name}
                                                     </MenuItem>
                                                 ))}
-                                        </Select>
-                                        
-                                    )}
-                                />
+                                            </Select>
+
+                                        )}
+                                    />
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -286,27 +286,31 @@ export default function UserUpdateForm() {
                     {/* Campos trabalhador/voluntário */}
                     <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
                         <Grid container spacing={2}>
-                            <Container >
+                            <Container>
                                 {trabahadorInfoField.map((field, index) => (
                                     <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
                                         <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
                                             <Grid container spacing={2}>
                                                 <Grid item xs={12} sx={{ width: "100%" }}>
-                                                    <FormControl fullWidth>
-                                                        <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
-                                                        <Select
-                                                            label="Selecione o Dia de Trabalho"
-                                                            {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
-                                                            sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                                            defaultValue="nao">
-                                                            <MenuItem value="Segunda">Segunda</MenuItem>
-                                                            <MenuItem value="Terça">Terça</MenuItem>
-                                                            <MenuItem value="Quarta">Quarta</MenuItem>
-                                                            <MenuItem value="Quinta">Quinta</MenuItem>
-                                                            <MenuItem value="Sexta">Sexta</MenuItem>
-                                                            <MenuItem value="Sábado">Sábado</MenuItem>
-                                                        </Select>
-                                                    </FormControl>
+                                                    <Controller
+                                                        name={`trabahadorInfoField.${index}.diaTrabalha`}
+                                                        control={control}
+                                                        render={({ field }) => (
+                                                            <FormControl fullWidth>
+                                                                <InputLabel>Dia de Trabalho</InputLabel>
+                                                                <Select
+                                                                    {...field}
+                                                                    label="Dia de Trabalho"
+                                                                    defaultValue=""
+                                                                >
+                                                                    {DiasSemanas.map((name) => (
+                                                                        <MenuItem key={name} value={name}>{name}</MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                        )}
+                                                    />
+
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
@@ -351,6 +355,7 @@ export default function UserUpdateForm() {
                                                         variant="outlined"
                                                     />
                                                 </Grid>
+
                                             </Grid>
                                         </CardContent>
                                         <CardActions>
@@ -371,10 +376,8 @@ export default function UserUpdateForm() {
                                     Adicionar dia de trabalho
                                 </Button>
                             </Container>
-
-
                         </Grid>
-                    </FormSection >
+                    </FormSection>
 
                     <FormSection title="Seção 6 - Possui Débitos?">
                         <Grid container spacing={2}>
