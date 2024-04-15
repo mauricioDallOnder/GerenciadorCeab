@@ -45,34 +45,10 @@ export default function ListOfUsers() {
     }, []);
 
     const handleOpenModal = (trabahadorInfoField: TrabahadorInfoField[] | undefined) => {
-        console.log(trabahadorInfoField); // Verifique os dados aqui
-        setSelectedWorkers(usuarios[0].trabahadorInfoField || []);  // Garantir que seja um array
+        setSelectedWorkers(trabahadorInfoField || []);  // Garantir que seja um array
         setModalOpen(true);
     };
-
-    const rows: GridRowsProp = usuarios.map(
-        ({ id, numeroRegistroAssociado, nome, endereco, nascimento, cpf, trabahadorInfoField, associacao, GrupoEstudoInfoField }) => {
-            return {
-                id: id,
-                col1: numeroRegistroAssociado,
-                col2: nome,
-                col3: nascimento,
-                col4: cpf,
-                col5: endereco.logradouro,
-                col6: endereco.numero,
-                col7: endereco.telefone,
-                col8: endereco.email,
-                col9: GrupoEstudoInfoField.turmaEstudo,
-                col10: GrupoEstudoInfoField.diaEstuda,
-                col11: GrupoEstudoInfoField.numeroSala,
-                col12: GrupoEstudoInfoField.nomeFacilitador,
-                col13: associacao.diaVinculo,
-                col14: associacao.dataEntrada,
-                col15: associacao.tipo,
-            };
-        }
-    );
-
+    
 
     const columns: GridColDef[] = [
         { field: "col1", headerName: "Nº do Associado", width: 130 },
@@ -80,32 +56,52 @@ export default function ListOfUsers() {
         { field: "col3", headerName: "Nascimento", width: 150 },
         { field: "col4", headerName: "CPF", width: 150 },
         { field: "col5", headerName: "Endereço", width: 200 },
-        { field: "col6", headerName: "nº", width: 150 },
+        { field: "col6", headerName: "Número", width: 150 },
         { field: "col7", headerName: "Telefone", width: 150 },
         { field: "col8", headerName: "Email", width: 150 },
         { field: "col9", headerName: "Turma de Estudo", width: 300 },
         { field: "col10", headerName: "Dia de Estudo", width: 300 },
         { field: "col11", headerName: "Sala", width: 100 },
         { field: "col12", headerName: "Facilitador", width: 300 },
-        { field: "col13", headerName: "Dia(s) que Frequenta a casa", width: 300 },
-        { field: "col14", headerName: "Data de entrada", width: 200 },
-        { field: "col15", headerName: "Tipo de vinculo", width: 200 },
+        { field: "col13", headerName: "Dia(s) que Frequenta a Casa", width: 300 },
+        { field: "col14", headerName: "Data de Entrada", width: 200 },
+        { field: "col15", headerName: "Tipo de Vínculo", width: 200 },
         {
             field: "details",
-            headerName: "Consultar dias de trabalho",
+            headerName: "Consultar Dias de Trabalho",
             width: 200,
             sortable: false,
             renderCell: (params) => (
                 <Button
                     variant="contained"
-                    onClick={() => handleOpenModal(params.row.trabahadorInfoField)}
+                    onClick={() => handleOpenModal(params.row.details)}
                 >
                     Ver Detalhes
                 </Button>
             ),
         },
-
-    ]
+    ];
+    
+    const rows: GridRowsProp = usuarios.map(usuario => ({
+        id: usuario.id,
+        col1: usuario.numeroRegistroAssociado,
+        col2: usuario.nome,
+        col3: usuario.nascimento,
+        col4: usuario.cpf,
+        col5: usuario.endereco.logradouro,
+        col6: usuario.endereco.numero,
+        col7: usuario.endereco.telefone,
+        col8: usuario.endereco.email,
+        col9: usuario.GrupoEstudoInfoField?.turmaEstudo,
+        col10: usuario.GrupoEstudoInfoField?.diaEstuda,
+        col11: usuario.GrupoEstudoInfoField?.numeroSala,
+        col12: usuario.GrupoEstudoInfoField?.nomeFacilitador,
+        col13: usuario.associacao?.diaVinculo,
+        col14: usuario.associacao?.dataEntrada,
+        col15: usuario.associacao?.tipo,
+        details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
+    }));
+    
 
 
 
