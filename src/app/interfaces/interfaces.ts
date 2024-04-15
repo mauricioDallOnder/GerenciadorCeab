@@ -42,14 +42,14 @@ export const associadoSchema = z.object({
     horarioDeTrabalho:z.string()
   })).optional(),
   contribuicao: z.array(z.object({
-    tipoContribuicao: z.string().optional(),
-    valorContribuicao: z.string().optional(),
-    dataContribuicao: z.string().optional(),
+    tipoContribuicao: z.string(),
+    valorContribuicao: z.string(),
+    dataContribuicao: z.string()
   })).optional(),
   possuiDebito: z.array(z.object({
-    tipoDebito: z.string().optional(),
-    valorDebito: z.string().optional(),
-    dataDebito: z.string().optional(),
+    tipoDebito: z.string(),
+    valorDebito: z.string(),
+    dataDebito: z.string()
   })).optional(),
   contribuiu: z.string().optional(),
   debito: z.string().optional(),  

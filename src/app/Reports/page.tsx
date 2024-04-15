@@ -49,12 +49,12 @@ export default function FinanceReport() {
       // Processa contribuições
       user.contribuicao?.forEach(({ dataContribuicao, tipoContribuicao, valorContribuicao }) => {
         const month = new Date(dataContribuicao).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-        const value = parseFloat(valorContribuicao);
+        const value = parseFloat(valorContribuicao!);
         if (!reports[month]) {
           reports[month] = { id: month, month, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
         }
         reports[month].totalContribuicoes += isNaN(value) ? 0 : value;
-        switch (tipoContribuicao.toLowerCase()) {
+        switch (tipoContribuicao!.toLowerCase()) {
           case 'pix':
             reports[month].pix += isNaN(value) ? 0 : value;
             break;
