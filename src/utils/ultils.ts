@@ -98,3 +98,9 @@ export const gruposDeEstudo = [
   { livro: 'Mediunidade: Estudo e Prática III', facilitador: 'Vanderlei Moura / Márcia Teixeira', dia: 'Terça', turno: 'Noite', horario: "19h30 às 21h00", sala: '30' },
   { livro: 'Mediunidade: Estudo e Prática II', facilitador: 'Vanderlei Moura', dia: 'Quinta', turno: 'Noite', horario: "19h30 às 21h00", sala: '200' },
 ];
+
+
+export const refreshPage = () => {
+  // Recarrega a página atual
+  window.location.reload();
+};

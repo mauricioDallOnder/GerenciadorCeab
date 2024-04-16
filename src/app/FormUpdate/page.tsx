@@ -27,15 +27,27 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, refreshPage, Typevinculo } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
 import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
-import { useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 export default function UserUpdateForm() {
-    const { register, handleSubmit, setValue, reset, control, getValues,watch, formState: { errors, isSubmitted } } = useForm<Associado>({
+    const router = useRouter();
+
+    const { data: session } = useSession();
+
+    useEffect(() => {
+        // If there is no session, redirect to the login page
+        if (!session) {
+            router.push('/Login');
+        }
+    }, [session, router]);
+
+
+    const { register, handleSubmit, setValue, reset, control, getValues, watch, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
                 diaVinculo: [], // array vazio
@@ -109,7 +121,7 @@ export default function UserUpdateForm() {
 
     const onSubmit: SubmitHandler<Associado> = data => {
         setLoading(true);
-          // Ensure data.contribuicao and data.possuiDebito are arrays
+        // Ensure data.contribuicao and data.possuiDebito are arrays
         const contribuicoes = data.contribuicao || [];
         const debitos = data.possuiDebito || [];
         const { nome, ...restoDosDados } = data;
@@ -117,12 +129,12 @@ export default function UserUpdateForm() {
         const contribuicoesComValoresConvertidos = contribuicoes.map((contribuicao) => ({
             ...contribuicao,
             valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
-          }));
-        
-          const DebitosComValoresConvertidos = debitos.map((debito) => ({
+        }));
+
+        const DebitosComValoresConvertidos = debitos.map((debito) => ({
             ...debito,
             valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
-          }));
+        }));
         const novosDados = {
             ...restoDosDados,
             contribuicao: contribuicoesComValoresConvertidos,
@@ -133,7 +145,8 @@ export default function UserUpdateForm() {
         axios.put('/api/updateDataOnFirebase', { nome, novosDados })
             .then(response => {
                 alert('Usuário atualizado com sucesso!');
-                reset()
+                reset(); // Limpar os campos após o envio bem sucedido
+
                 console.log(response.data);
             })
             .catch(error => {
@@ -145,14 +158,6 @@ export default function UserUpdateForm() {
 
 
 
-    const { data: session } = useSession();
-    const isUserLoggedIn = !session;
-    const router = useRouter();
-    useEffect(() => {
-        if (isUserLoggedIn) {
-            router.push('/Login');
-        }
-    }, [isUserLoggedIn]);
 
 
     return (
@@ -555,6 +560,10 @@ export default function UserUpdateForm() {
                         sx={{ width: "100%" }}
                     >
                         {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
+                    </Button>
+                    <Button variant="contained"
+                        color="primary" sx={{ mt: 6 }} onClick={refreshPage}>
+                        Recarregar Página
                     </Button>
                 </Box>
             </form>
