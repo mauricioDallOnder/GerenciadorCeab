@@ -7,16 +7,13 @@ import {
 import { useEffect, useState } from "react";
 import { Associado, TrabahadorInfoField } from "../interfaces/interfaces";
 import axios from "axios";
-
-import { Box, Button, Container } from "@mui/material";
+import { Box, Button} from "@mui/material";
 import CustomPagination from "../components/TableCustomPagination";
-import { BoxStyleCadastro, StyledDataGrid } from "@/utils/styles";
-import { FormHeader } from "../components/FormHeader";
+import {StyledDataGrid } from "@/utils/styles";
 import WorkerDetailsModal from "../components/WorkerDetailsModal";
-
-
+import { useSession} from "next-auth/react";
+import { useRouter } from "next/navigation"
 export default function ListOfUsers() {
-
     const [usuarios, setUsuarios] = useState<Associado[]>([]);
     const [selectedWorkers, setSelectedWorkers] = useState<TrabahadorInfoField[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
@@ -25,6 +22,15 @@ export default function ListOfUsers() {
         pageSize: PAGE_SIZE,
         page: 0,
     });
+
+    const { data: session } = useSession();
+    const isUserLoggedIn = !session;
+    const router = useRouter();
+    useEffect(() => {
+        if (isUserLoggedIn) {
+            router.push('/Login');
+        }
+    }, [isUserLoggedIn]);
 
     useEffect(() => {
         // Carregar a lista de usuários para o Autocomplete
@@ -48,7 +54,7 @@ export default function ListOfUsers() {
         setSelectedWorkers(trabahadorInfoField || []);  // Garantir que seja um array
         setModalOpen(true);
     };
-    
+
 
     const columns: GridColDef[] = [
         { field: "col1", headerName: "Nº do Associado", width: 130 },
@@ -83,7 +89,7 @@ export default function ListOfUsers() {
             ),
         },
     ];
-    
+
     const rows: GridRowsProp = usuarios.map(usuario => ({
         id: usuario.id,
         col1: usuario.numeroRegistroAssociado,
@@ -105,7 +111,7 @@ export default function ListOfUsers() {
         col17: usuario.associacao?.tipo,
         details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
     }));
-    
+
 
 
 

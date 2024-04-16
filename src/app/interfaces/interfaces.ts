@@ -100,3 +100,14 @@ export interface GrupoDeEstudoSelectProps {
   setValue: UseFormSetValue<Associado>;
   initialValues?: GrupoEstudoInfoFields;
 }
+
+
+// interfaces.ts
+export interface LoaderData {
+  session: {
+    user: {
+      name: string;
+      role: string;
+    };
+  };
+}

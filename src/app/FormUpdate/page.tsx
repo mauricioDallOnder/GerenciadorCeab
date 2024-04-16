@@ -32,7 +32,8 @@ import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
 import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
-
+import { useSession} from "next-auth/react";
+import { useRouter } from "next/navigation"
 export default function UserUpdateForm() {
     const { register, handleSubmit, setValue, reset, control, getValues,watch, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
@@ -144,6 +145,15 @@ export default function UserUpdateForm() {
     };
 
 
+
+    const { data: session } = useSession();
+    const isUserLoggedIn = !session;
+    const router = useRouter();
+    useEffect(() => {
+        if (isUserLoggedIn) {
+            router.push('/Login');
+        }
+    }, [isUserLoggedIn]);
 
 
     return (
@@ -347,7 +357,7 @@ export default function UserUpdateForm() {
                                 <Button
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
-                                    color="success"
+                                    color="warning"
                                     onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "", id: uuidv4() })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
@@ -411,7 +421,7 @@ export default function UserUpdateForm() {
                                 <Button
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
-                                    color="success"
+                                    color="error"
                                     onClick={() => appendDebito({ tipoDebito: "", valorDebito: "", dataDebito: "" })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >

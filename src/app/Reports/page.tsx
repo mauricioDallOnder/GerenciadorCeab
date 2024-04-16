@@ -1,14 +1,14 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import { Associado } from '../interfaces/interfaces';
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-
+import { GridColDef, GridToolbar } from '@mui/x-data-grid';
 import CustomPagination from '../components/TableCustomPagination';
 import FinanceChart from '../components/FinanceChart';
 import { StyledDataGrid } from '@/utils/styles';
-
+import { useSession} from "next-auth/react";
+import { useRouter } from "next/navigation"
 interface MonthlyReport {
     id: string;
     month: string;
@@ -21,6 +21,15 @@ interface MonthlyReport {
   }
 
 export default function FinanceReport() {
+  const { data: session } = useSession();
+    const isUserLoggedIn = !session;
+    const router = useRouter();
+    useEffect(() => {
+        if (isUserLoggedIn) {
+            router.push('/Login');
+        }
+    }, [isUserLoggedIn]);
+    
     const PAGE_SIZE = 15;
     const [paginationModel, setPaginationModel] = useState({
         pageSize: PAGE_SIZE,
@@ -94,6 +103,8 @@ export default function FinanceReport() {
     { field: 'totalContribuicoes', headerName: 'Valor Total de Contribuições', type: 'number', width: 200 },
     { field: 'totalDebitos', headerName: 'Valor Total em Débitos', type: 'number', width: 200 },
   ];
+
+
 
     return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
