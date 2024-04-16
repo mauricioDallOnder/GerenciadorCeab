@@ -7,7 +7,7 @@ import logo from '../../../public/logo.jpeg'; // Ajuste o caminho conforme neces
 const socialLinks = [
   { icon: <Facebook />, url: 'https://www.facebook.com/alunosdobem' },
   { icon: <Instagram />, url: 'https://www.instagram.com/alunos_do_bem_ceab?igsh=MXB1MzRqbW1mNGVvZQ==' },
-  { icon: <Twitter />, url: '' },
+ 
   { icon: <YouTube />, url: 'https://www.youtube.com/@AlunosdoBem' },
 ];
 
@@ -29,7 +29,7 @@ export const Footer = () => {
             <Image src={logo} alt="Gajok Logo" height={50} width={50} />
             </Avatar>
           
-          <Typography variant="h5" color="#FFFFFF" gutterBottom sx={{ ml: 2 }}>
+          <Typography variant="h5" color="#FFFFFF"  gutterBottom sx={{ ml: 2,fontSize:"1.5rem" }}>
             Centro Espírita Alunos do Bem
           </Typography>
         </Box>
