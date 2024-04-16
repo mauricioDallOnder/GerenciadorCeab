@@ -21,14 +21,16 @@ interface MonthlyReport {
   }
 
 export default function FinanceReport() {
-  const { data: session } = useSession();
-    const isUserLoggedIn = !session;
-    const router = useRouter();
+  const router = useRouter();
+
+    const { data: session } = useSession();
+
     useEffect(() => {
-        if (isUserLoggedIn) {
+        // If there is no session, redirect to the login page
+        if (!session) {
             router.push('/Login');
         }
-    }, [isUserLoggedIn]);
+    }, []);
     
     const PAGE_SIZE = 15;
     const [paginationModel, setPaginationModel] = useState({
