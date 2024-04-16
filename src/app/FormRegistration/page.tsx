@@ -526,7 +526,7 @@ export default function FormRegistration() {
                       startIcon={<AddCircleOutlineIcon />}
                       variant="contained"
                       color="success"
-                      onClick={() => appendDebito({ tipoDebito: "-", valorDebito: "0", dataDebito: "2999/12/12" })}
+                      onClick={() => appendDebito({ tipoDebito: "-", valorDebito: "0", dataDebito: "09/09/9999" })}
                       sx={{ mt: 2, width: '100%' }}
                     >
                       Adicionar Débitos
@@ -610,7 +610,7 @@ export default function FormRegistration() {
                       startIcon={<AddCircleOutlineIcon />}
                       variant="contained"
                       color="success"
-                      onClick={() => appendContribuicao({ tipoContribuicao: "Pix", valorContribuicao: "0", dataContribuicao: "12/12/2999" })}
+                      onClick={() => appendContribuicao({ tipoContribuicao: "Pix", valorContribuicao: "0", dataContribuicao: "09/09/9999" })}
                       sx={{ mt: 2, width: '100%' }}
                     >
                       Adicionar contribuições
