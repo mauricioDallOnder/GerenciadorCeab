@@ -2,6 +2,7 @@
 import { Providers } from "./providers/provider";
 import "./globals.css";
 import TopAppBar from "./components/TopBar";
+import Footer from "./components/Footer";
 export default function RootLayout({
   children,
 }: {
@@ -12,6 +13,7 @@ export default function RootLayout({
       <body>
       <TopAppBar/>
           <Providers>{children}</Providers>
+          <Footer/>
       </body>
     </html>
   );
