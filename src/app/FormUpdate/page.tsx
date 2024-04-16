@@ -563,7 +563,7 @@ export default function UserUpdateForm() {
                     </Button>
                     <Button variant="contained"
                         color="primary" sx={{ mt: 6 }} onClick={refreshPage}>
-                        Recarregar Página
+                        Limpar Formulário e Recarregar Página
                     </Button>
                 </Box>
             </form>
