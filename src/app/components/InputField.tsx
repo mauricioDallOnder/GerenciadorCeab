@@ -22,7 +22,7 @@ export const InputField: React.FC<InputFieldProps> = ({ register, name, label, t
       type={type}
       error={!!error}
       InputLabelProps={type === 'date' ? { shrink: true } : undefined}
-      defaultValue={type === 'text' ? "-" : 0}
+      defaultValue={type === ('text'|| 'email') ? "" : 0}
     />
   </Grid>
 );
