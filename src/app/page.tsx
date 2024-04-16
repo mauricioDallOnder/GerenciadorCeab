@@ -1,11 +1,12 @@
 import { Container, Grid, Card, CardMedia, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import Footer from "./components/Footer";
 
 export default function Home() {
   
   return (
-    <main >
+    <main style={{width:"100%"}}>
      
      <Container>
             <Grid container spacing={12} style={{marginTop: "15%"}}>
@@ -128,8 +129,9 @@ export default function Home() {
 
              
             </Grid>
+           
           </Container>
-     
+          <Footer/>
     </main>
   );
 }

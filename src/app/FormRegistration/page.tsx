@@ -34,6 +34,7 @@ import { FormSection } from "../components/FormSection";
 import { InputField } from "../components/InputField";
 import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields } from "../interfaces/interfaces";
 import GrupoDeEstudoSelect from "../components/GrupoDeEstudoSelect";
+import Footer from "../components/Footer";
 
 
 export default function FormRegistration() {
@@ -196,6 +197,7 @@ export default function FormRegistration() {
   console.log(errors);
 
   return (
+    <>
     <FormProvider {...methods}>
       <Container
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -652,5 +654,7 @@ export default function FormRegistration() {
         </form>
       </Container>
     </FormProvider>
+    <Footer/>
+    </>
   );
 }
