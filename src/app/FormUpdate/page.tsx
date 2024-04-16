@@ -109,25 +109,24 @@ export default function UserUpdateForm() {
 
     const onSubmit: SubmitHandler<Associado> = data => {
         setLoading(true);
+          // Ensure data.contribuicao and data.possuiDebito are arrays
+        const contribuicoes = data.contribuicao || [];
+        const debitos = data.possuiDebito || [];
         const { nome, ...restoDosDados } = data;
         // Itera sobre cada contribuição para converter os valores de string para número
-        const contribuicoesComValoresConvertidos = data.contribuicao!.map(
-            (contribuicao) => ({
-                ...contribuicao,
-                valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
-            })
-        );
-
-        const DebitosComValoresConvertidos = data.possuiDebito!.map(
-            (debito) => ({
-                ...debito,
-                valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
-            })
-        );
+        const contribuicoesComValoresConvertidos = contribuicoes.map((contribuicao) => ({
+            ...contribuicao,
+            valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
+          }));
+        
+          const DebitosComValoresConvertidos = debitos.map((debito) => ({
+            ...debito,
+            valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
+          }));
         const novosDados = {
             ...restoDosDados,
             contribuicao: contribuicoesComValoresConvertidos,
-            debito: DebitosComValoresConvertidos
+            debito: DebitosComValoresConvertidos,
         };
 
 
@@ -383,6 +382,7 @@ export default function UserUpdateForm() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         variant="outlined"
+                                                        defaultValue="0"
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
@@ -393,6 +393,7 @@ export default function UserUpdateForm() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         variant="outlined"
+                                                        defaultValue="09/09/9999"
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
@@ -404,6 +405,7 @@ export default function UserUpdateForm() {
                                                             fullWidth
                                                             id={`tipo-debito-${index}`}
                                                             {...register(`possuiDebito.${index}.tipoDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                            defaultValue="-"
                                                         >
                                                         </TextField>
                                                     </FormControl>
@@ -422,7 +424,7 @@ export default function UserUpdateForm() {
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
                                     color="error"
-                                    onClick={() => appendDebito({ tipoDebito: "", valorDebito: "", dataDebito: "" })}
+                                    onClick={() => appendDebito({ tipoDebito: "Pix", valorDebito: "0", dataDebito: "09/09/9999" })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
                                     Adicionar Débitos
@@ -452,7 +454,7 @@ export default function UserUpdateForm() {
                                                                     <Select
                                                                         {...field}
                                                                         label="Tipo de Contribuição"
-                                                                        defaultValue="-"
+                                                                        defaultValue="Pix"
                                                                     >
                                                                         <MenuItem value="pix">Pix</MenuItem>
                                                                         <MenuItem value="dinheiro">Dinheiro</MenuItem>
@@ -475,6 +477,7 @@ export default function UserUpdateForm() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         variant="outlined"
+                                                        defaultValue="0"
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
@@ -485,6 +488,7 @@ export default function UserUpdateForm() {
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         variant="outlined"
+                                                        defaultValue="09/09/9999"
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -501,7 +505,7 @@ export default function UserUpdateForm() {
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
                                     color="success"
-                                    onClick={() => appendContribuicao({ tipoContribuicao: "", valorContribuicao: "", dataContribuicao: "" })}
+                                    onClick={() => appendContribuicao({ tipoContribuicao: "Pix", valorContribuicao: "0", dataContribuicao: "09/09/9999" })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
                                     Adicionar contribuições

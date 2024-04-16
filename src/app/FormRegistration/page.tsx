@@ -45,6 +45,7 @@ export default function FormRegistration() {
         diaVinculo: [], 
       },
 
+
     },
   });
 
@@ -141,42 +142,42 @@ export default function FormRegistration() {
         id: geraUUid,
         contribuicao: [
           {
-            tipo: "NaoContribuiu",
-            valor: 0,
-            data: "-",
+            tipoContribuicao: "NaoContribuiu",
+            valorContribuicao: "0",
+            dataContribuicao: "09/09/9999",
           },
         ],
         possuiDebito: [
           {
-            tipo: "NaoPossuiDébito",
-            valor: 0,
-            data: "-",
+            tipoDebito: "Pix",
+            valorDebito: "0",
+            dataDebito: "09/09/9999",
           },
         ],
 
       };
     } else {
       // Itera sobre cada contribuição para converter os valores de string para número
-      const contribuicoesComValoresConvertidos = data.contribuicao!.map(
-        (contribuicao) => ({
-          ...contribuicao,
-          valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
-        })
-      );
+      // Ensure data.contribuicao and data.possuiDebito are arrays
+  const contribuicoes = data.contribuicao || [];
+  const debitos = data.possuiDebito || [];
 
-      const DebitosComValoresConvertidos = data.possuiDebito!.map(
-        (debito) => ({
-          ...debito,
-          valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
-        })
-      );
+  const contribuicoesComValoresConvertidos = contribuicoes.map((contribuicao) => ({
+    ...contribuicao,
+    valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
+  }));
+
+  const DebitosComValoresConvertidos = debitos.map((debito) => ({
+    ...debito,
+    valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
+  }));
 
       // Cria um novo objeto de dados com os valores convertidos para os casos de "sim contribuiu"
       dadosParaSubmissao = {
         ...data,
         id: geraUUid,
         contribuicao: contribuicoesComValoresConvertidos,
-        debito: DebitosComValoresConvertidos
+        possuiDebito: DebitosComValoresConvertidos,
       };
     }
     console.log("Dados para submissão:", dadosParaSubmissao);
