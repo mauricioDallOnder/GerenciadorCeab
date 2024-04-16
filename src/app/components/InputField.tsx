@@ -8,11 +8,12 @@ interface InputFieldProps {
   name: string;
   label: string;
   type?: string;
-  error?: FieldErrors;
+  error?: boolean;  // Adicionado para tratamento de erros
+  helperText?: string;  // Adicionado para mostrar mensagens de erro
   
 }
 
-export const InputField: React.FC<InputFieldProps> = ({ register, name, label, type, error}) => (
+export const InputField: React.FC<InputFieldProps> = ({ register, name, label, type, error,helperText}) => (
   <Grid item xs={12} sm={6}>
     
     <TextField
@@ -20,9 +21,10 @@ export const InputField: React.FC<InputFieldProps> = ({ register, name, label, t
       fullWidth
       label={label}
       type={type}
-      error={!!error}
       InputLabelProps={type === 'date' ? { shrink: true } : undefined}
       defaultValue={type === ('text'|| 'email') ? "" : 0}
+      error={error}  // Aplicar o estado de erro
+      helperText={helperText}  // Exibir a mensagem de erro
     />
   </Grid>
 );

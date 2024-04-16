@@ -6,7 +6,7 @@ export const cpfRegex = /^\d{11}$/; // CPF apenas com números
 export const associadoSchema = z.object({
   id: z.string().optional(),
   nome: z.string().min(1, { message: "O campo nome é obrigatório" }),
-  cpf: z.string().regex(cpfRegex, { message: "CPF inválido" }),
+  cpf: z.string().regex(cpfRegex, { message: "CPF inválido, verifique se usou apenas números e se o campo tem 11 números" }),
   nascimento: z.string().min(1, { message: "O campo nascimento é obrigatório" }),
   estadoCivil: z.string().min(1, { message: "O campo estado civil é obrigatório" }),
   naturalidade: z.object({
@@ -14,7 +14,7 @@ export const associadoSchema = z.object({
     uf: z.string()
   }),
   endereco: z.object({
-    logradouro: z.string().min(1, { message: "O campo logradouro é obrigatório" }),
+    logradouro: z.string().min(1, { message: "O campo rua é obrigatório" }),
     numero: z.string().min(1, { message: "O campo número é obrigatório" }),
     complemento: z.string().optional(),
     cidade: z.string().min(1, { message: "O campo cidade é obrigatório" }),
