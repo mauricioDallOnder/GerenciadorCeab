@@ -1,9 +1,10 @@
+import { UseFormRegister, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { z } from 'zod';
 
 export const cpfRegex = /^\d{11}$/; // CPF apenas com números
 
 export const associadoSchema = z.object({
-  id:z.string().optional(),
+  id: z.string().optional(),
   nome: z.string().min(1, { message: "O campo nome é obrigatório" }),
   cpf: z.string().regex(cpfRegex, { message: "CPF inválido" }),
   nascimento: z.string().min(1, { message: "O campo nascimento é obrigatório" }),
@@ -24,22 +25,24 @@ export const associadoSchema = z.object({
   }),
   associacao: z.object({
     tipo: z.array(z.string()).min(1, { message: "Selecione ao menos um tipo de associação" }),
-    diaVinculo: z.array(z.string()).optional(), 
+    diaVinculo: z.array(z.string()).optional(),
     dataEntrada: z.string().min(1, { message: "O campo data de entrada é obrigatório" }),
   }),
   GrupoEstudoInfoField: z.object({
-    diaEstuda:z.string(), 
-    turmaEstudo: z.string(),
-    nomeFacilitador:z.string(),
-    numeroSala:z.string()
+    livro: z.string(),
+    facilitador: z.string(),
+    dia: z.string(),
+    turno: z.string(),
+    horario: z.string(),
+    sala: z.string()
   }),
   trabahadorInfoField: z.array(z.object({
-    id:z.string(),
-    diaTrabalha:z.string(),
+    id: z.string(),
+    diaTrabalha: z.string(),
     funcao: z.string().min(1, { message: "A função é obrigatória" }),
-    nomeDirigente:z.string().min(1, { message: "O nome do diregente é obrigatório" }),
-    turnoDeTrabalho:z.string(),
-    horarioDeTrabalho:z.string()
+    nomeDirigente: z.string().min(1, { message: "O nome do diregente é obrigatório" }),
+    turnoDeTrabalho: z.string(),
+    horarioDeTrabalho: z.string()
   })).optional(),
   contribuicao: z.array(z.object({
     tipoContribuicao: z.string(),
@@ -52,9 +55,9 @@ export const associadoSchema = z.object({
     dataDebito: z.string()
   })).optional(),
   contribuiu: z.string().optional(),
-  debito: z.string().optional(),  
-  observacoes:z.string().optional(),
-  numeroRegistroAssociado:z.string().optional()
+  debito: z.string().optional(),
+  observacoes: z.string().optional(),
+  numeroRegistroAssociado: z.string().optional()
 });
 
 export type Associado = z.infer<typeof associadoSchema>;
@@ -83,4 +86,17 @@ export interface WorkerDetailsModalProps {
 
 export interface AssociadosResponse {
   [key: string]: Associado;
+}
+
+export const grupoEstudoInfoFieldSchema = associadoSchema.pick({
+  GrupoEstudoInfoField: true
+});
+
+export type GrupoEstudoInfoFields = z.infer<typeof grupoEstudoInfoFieldSchema>['GrupoEstudoInfoField'];
+
+// Props para o componente GrupoDeEstudoSelect
+export interface GrupoDeEstudoSelectProps {
+  register: (fieldName: keyof GrupoEstudoInfoFields) => ReturnType<UseFormRegister<Associado>>;
+  setValue: UseFormSetValue<Associado>;
+  initialValues?: GrupoEstudoInfoFields;
 }

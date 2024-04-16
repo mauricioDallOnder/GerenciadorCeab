@@ -52,20 +52,22 @@ export default function ListOfUsers() {
 
     const columns: GridColDef[] = [
         { field: "col1", headerName: "Nº do Associado", width: 130 },
-        { field: "col2", headerName: "Nome", width: 250 },
+        { field: "col2", headerName: "Nome", width: 300 },
         { field: "col3", headerName: "Nascimento", width: 150 },
         { field: "col4", headerName: "CPF", width: 150 },
-        { field: "col5", headerName: "Endereço", width: 200 },
-        { field: "col6", headerName: "Número", width: 150 },
+        { field: "col5", headerName: "Endereço", width: 300 },
+        { field: "col6", headerName: "Nº", width: 100 },
         { field: "col7", headerName: "Telefone", width: 150 },
-        { field: "col8", headerName: "Email", width: 150 },
-        { field: "col9", headerName: "Turma de Estudo", width: 300 },
-        { field: "col10", headerName: "Dia de Estudo", width: 300 },
-        { field: "col11", headerName: "Sala", width: 100 },
-        { field: "col12", headerName: "Facilitador", width: 300 },
-        { field: "col13", headerName: "Dia(s) que Frequenta a Casa", width: 300 },
-        { field: "col14", headerName: "Data de Entrada", width: 200 },
-        { field: "col15", headerName: "Tipo de Vínculo", width: 200 },
+        { field: "col8", headerName: "Email", width: 200 },
+        { field: "col9", headerName: "Turma de Estudo", width: 150 },
+        { field: "col10", headerName: "Facilitador", width: 200 },
+        { field: "col11", headerName: "Dia", width: 100 },
+        { field: "col12", headerName: "Turno", width: 100 },
+        { field: "col13", headerName: "Horário", width: 150 },
+        { field: "col14", headerName: "Sala", width: 100 },
+        { field: "col15", headerName: "Dia(s) que Frequenta a Casa", width: 300 },
+        { field: "col16", headerName: "Data de Entrada", width: 200 },
+        { field: "col17", headerName: "Tipo de Vínculo", width: 250 },
         {
             field: "details",
             headerName: "Consultar Dias de Trabalho",
@@ -92,13 +94,15 @@ export default function ListOfUsers() {
         col6: usuario.endereco.numero,
         col7: usuario.endereco.telefone,
         col8: usuario.endereco.email,
-        col9: usuario.GrupoEstudoInfoField?.turmaEstudo,
-        col10: usuario.GrupoEstudoInfoField?.diaEstuda,
-        col11: usuario.GrupoEstudoInfoField?.numeroSala,
-        col12: usuario.GrupoEstudoInfoField?.nomeFacilitador,
-        col13: usuario.associacao?.diaVinculo,
-        col14: usuario.associacao?.dataEntrada,
-        col15: usuario.associacao?.tipo,
+        col9: usuario.GrupoEstudoInfoField?.livro,
+        col10: usuario.GrupoEstudoInfoField?.facilitador,
+        col11: usuario.GrupoEstudoInfoField?.dia,
+        col12: usuario.GrupoEstudoInfoField?.turno,
+        col13: usuario.GrupoEstudoInfoField?.horario,
+        col14: usuario.GrupoEstudoInfoField?.sala,
+        col15: usuario.associacao?.diaVinculo,
+        col16: usuario.associacao?.dataEntrada,
+        col17: usuario.associacao?.tipo,
         details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
     }));
     
@@ -143,3 +147,17 @@ export default function ListOfUsers() {
 
 
 }
+
+
+/*
+
+ { field: "col9", headerName: "Turma de Estudo", width: 300 },
+        { field: "col10", headerName: "Dia de Estudo", width: 300 },
+        { field: "col11", headerName: "Sala", width: 100 },
+        { field: "col12", headerName: "Facilitador", width: 300 },
+
+        col9: usuario.GrupoEstudoInfoField?.turmaEstudo,
+        col10: usuario.GrupoEstudoInfoField?.diaEstuda,
+        col11: usuario.GrupoEstudoInfoField?.numeroSala,
+        col12: usuario.GrupoEstudoInfoField?.nomeFacilitador,
+*/

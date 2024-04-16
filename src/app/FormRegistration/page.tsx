@@ -32,7 +32,8 @@ import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { InputField } from "../components/InputField";
-import { Associado, associadoSchema, AssociadosResponse } from "../interfaces/interfaces";
+import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields } from "../interfaces/interfaces";
+import GrupoDeEstudoSelect from "../components/GrupoDeEstudoSelect";
 
 
 export default function FormRegistration() {
@@ -75,6 +76,7 @@ export default function FormRegistration() {
   const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = useState<string[]>([]);
   const [usuarios, setUsuarios] = useState<{ id: string, nome: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
   const handleChangeSelectEstadoCivil = (event: SelectChangeEvent) => {
     const value = event.target.value;
@@ -112,6 +114,7 @@ export default function FormRegistration() {
   watch("contribuiu", "nao");
   watch("debito", "nao");
 
+  const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
 
   const onSubmit = (data: Associado) => {
      // Verificar se o nome já existe na lista de usuários
@@ -185,7 +188,7 @@ export default function FormRegistration() {
         setIsSubmitting(false); // Resetar o estado de submissão
       });
     alert('dados cadastrados com sucesso')
-    methods.reset(); // Limpar os campos após o envio bem sucedido
+    //methods.reset(); // Limpar os campos após o envio bem sucedido
     setIsSubmitting(false); // Resetar o estado de submissão
   };
 
@@ -285,9 +288,11 @@ export default function FormRegistration() {
                       error={!!errors.associacao?.tipo}
                       defaultValue="-">
                       <MenuItem value="-">-</MenuItem>
-                      <MenuItem value="trabalhador">Trabalhador</MenuItem>
+                      <MenuItem value="facilitador">Facilitador</MenuItem>
+                      <MenuItem value="facilitador e trabalhador">Facilitador e Trabalhador</MenuItem>
                       <MenuItem value="estudante">Estudante</MenuItem>
                       <MenuItem value="estudante e trabalhador">Estudante e Trabalhador</MenuItem>
+                      <MenuItem value="trabalhador">Trabalhador</MenuItem>
                       <MenuItem value="frequentador">Frequentador</MenuItem>
                     </Select>
                     {errors.associacao?.tipo && (
@@ -335,29 +340,9 @@ export default function FormRegistration() {
               </Grid>
             </FormSection>
             {/* Campos estudante */}
-            <FormSection title="Seção 5 - Dados do Estudante">
+            <FormSection title="Seção 5 - Grupo de Estudo">
               <Grid container spacing={2}>
-                <InputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
-                <InputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
-                <InputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='text' />
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel sx={{ mb: '2px', mt: '12px' }}>Selecione o Dia do Estudo</InputLabel>
-                    <Select
-                      label="Selecione o Dia do Estudo"
-                      {...register("GrupoEstudoInfoField.diaEstuda")}
-                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                      defaultValue="-">
-                        <MenuItem value="-">-</MenuItem>
-                      <MenuItem value="Segunda">Segunda</MenuItem>
-                      <MenuItem value="Terça">Terça</MenuItem>
-                      <MenuItem value="Quarta">Quarta</MenuItem>
-                      <MenuItem value="Quinta">Quinta</MenuItem>
-                      <MenuItem value="Sexta">Sexta</MenuItem>
-                      <MenuItem value="Sábado">Sábado</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+             <GrupoDeEstudoSelect register={registerForGroup} setValue={setValue} />
               </Grid>
             </FormSection >
             {/* Campos trabalhador/voluntário */}

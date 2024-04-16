@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, Controller } from 'react-hook-form';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
-import { Associado } from '../interfaces/interfaces';
+import { Associado, GrupoEstudoInfoFields } from '../interfaces/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import {
     Container,
@@ -31,9 +31,10 @@ import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, Typevincul
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
+import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
 
 export default function UserUpdateForm() {
-    const { register, handleSubmit, setValue, reset, control, getValues, formState: { errors, isSubmitted } } = useForm<Associado>({
+    const { register, handleSubmit, setValue, reset, control, getValues,watch, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
                 diaVinculo: [], // array vazio
@@ -66,7 +67,7 @@ export default function UserUpdateForm() {
             reset(selectedUser);
             // Configuração individual dos campos
             setValue('estadoCivil', selectedUser.estadoCivil);
-            setValue('GrupoEstudoInfoField.diaEstuda', selectedUser.GrupoEstudoInfoField.diaEstuda)
+
             // Repita para outros campos conforme necessário
         }
     }, [selectedUser, reset, setValue]);
@@ -103,6 +104,7 @@ export default function UserUpdateForm() {
         setValue('associacao.diaVinculo', newValue);
     };
 
+    const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
 
     const onSubmit: SubmitHandler<Associado> = data => {
         setLoading(true);
@@ -231,14 +233,26 @@ export default function UserUpdateForm() {
                     </FormSection>
 
                     {/* Campos estudante */}
-                    <FormSection title="Seção 5 - Dados do Estudante">
+                    <FormSection title="Seção 5 - Grupo de estudo">
                         <Grid container spacing={2}>
-                            <UpdateInputField register={register} name="GrupoEstudoInfoField.turmaEstudo" label="Nome da Turma" type='text' />
-                            <UpdateInputField register={register} name="GrupoEstudoInfoField.nomeFacilitador" label="Nome do Facilitador" type='text' />
-                            <UpdateInputField register={register} name="GrupoEstudoInfoField.numeroSala" label="Nº da sala" type='number' />
-                            <UpdateInputField register={register} name=" GrupoEstudoInfoField.diaEstuda" label="Dia que estuda na casa" type='text' />
+
+                            <Controller
+                                name={"GrupoEstudoInfoField"}
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControl fullWidth>
+
+                                        <GrupoDeEstudoSelect
+                                            {...field}
+                                            register={registerForGroup}
+                                            setValue={setValue}
+                                            initialValues={selectedUser?.GrupoEstudoInfoField}
+                                        />
+                                    </FormControl>
+                                )}
+                            />
                         </Grid>
-                    </FormSection >
+                    </FormSection>
                     {/* Campos trabalhador/voluntário */}
                     <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
                         <Grid container spacing={2}>
