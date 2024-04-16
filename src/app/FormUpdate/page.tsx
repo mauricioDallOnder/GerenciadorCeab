@@ -44,7 +44,7 @@ export default function UserUpdateForm() {
         if (!session) {
             router.push('/Login');
         }
-    }, [session, router]);
+    }, []);
 
 
     const { register, handleSubmit, setValue, reset, control, getValues, watch, formState: { errors, isSubmitted } } = useForm<Associado>({
@@ -562,7 +562,7 @@ export default function UserUpdateForm() {
                         {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
                     </Button>
                     <Button variant="contained"
-                        color="primary" sx={{ mt: 6 }} onClick={refreshPage}>
+                        color="primary" sx={{ mt: 3 }} onClick={refreshPage}>
                         Limpar Formulário e Recarregar Página
                     </Button>
                 </Box>
