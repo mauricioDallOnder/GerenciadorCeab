@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { MenuItem, FormControl, InputLabel, Select, Box, SelectChangeEvent, Container } from '@mui/material';
+import { MenuItem, FormControl, InputLabel, Select,SelectChangeEvent, Container } from '@mui/material';
 import { gruposDeEstudo } from '@/utils/ultils';
 import { GrupoDeEstudoSelectProps } from '../interfaces/interfaces';
 
@@ -101,7 +100,8 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
 
 
     return (
-        <Container>
+        <Container sx={{mt:1}}>
+            
             <FormControl fullWidth>
                 <InputLabel id="book-select-label" sx={{ mb: '2px', mt: '16px' }}>Livro</InputLabel>
                 <Select
@@ -202,6 +202,7 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
                     ))}
                 </Select>
             </FormControl>
+           
         </Container>
     );
 };

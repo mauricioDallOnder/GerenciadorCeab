@@ -42,7 +42,7 @@ export default function FormRegistration() {
     resolver: zodResolver(associadoSchema),
     defaultValues: {
       associacao: {
-        diaVinculo: [], // array vazio
+        diaVinculo: [], 
       },
 
     },
@@ -57,7 +57,7 @@ export default function FormRegistration() {
     getValues,
     formState: { errors},
   } = methods;
-  // Dentro de FormRegistration
+ 
   const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
     control,
     name: "contribuicao",
@@ -129,6 +129,7 @@ export default function FormRegistration() {
     return; // Interrompe a execução da função se o nome já existir
   }
     setIsSubmitting(true); // Iniciar a submissão
+    
     let geraUUid = uuidv4()
 
     let dadosParaSubmissao;
@@ -204,7 +205,7 @@ export default function FormRegistration() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box sx={BoxStyleCadastro}>
             <FormHeader titulo='Cadastro de Associados' />
-            <FormSection title="Seção 1 - Dados de Identificação do Associado">
+            <FormSection title="Seção 1 - Dados de Identificação">
               <Grid container spacing={2}>
                 <InputField register={register} name="nome" label="Nome Completo" type='text' />
                 <InputField register={register} name="cpf" label="CPF" type='text' />
@@ -248,7 +249,7 @@ export default function FormRegistration() {
               </Grid>
             </FormSection>
             {/* Campos de Endereço */}
-            <FormSection title="Seção 2 - Dados de Endereço e Contato">
+            <FormSection title="Seção 2 - Endereço e Contatos">
               <Grid container spacing={2}>
                 <InputField register={register} name="endereco.logradouro" label="Rua" type='text' />
                 <InputField register={register} name="endereco.numero" label="Número" type='text' />
@@ -279,7 +280,7 @@ export default function FormRegistration() {
 
             {/* Campos de Associação */}
             <FormSection title="Seção 4 - Dados de Associação">
-              <Grid container spacing={2}>
+              <Grid container spacing={2} sx={{mt:1}}>
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel>Tipo de vinculo com a casa</InputLabel>
@@ -348,12 +349,12 @@ export default function FormRegistration() {
               </Grid>
             </FormSection >
             {/* Campos trabalhador/voluntário */}
-            <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
+            <FormSection title="Seção 6 - Trabalho na casa" >
               <Grid container spacing={2}>
                 <Container >
                   {trabahadorInfoField.map((field, index) => (
-                    <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
-                      <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
+                    <Card key={field.id} variant="outlined" sx={{ marginBottom: 2,mt:4, width: '100%' }}>
+                      <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sx={{ width: "100%" }}>
                             <FormControl fullWidth>
@@ -446,7 +447,7 @@ export default function FormRegistration() {
             </FormSection >
 
             {/* Campos débito */}
-            <FormSection title="Seção 6 - Dados referentes a débitos">
+            <FormSection title="Seção 7 - Dados referentes a débitos">
               <Grid container spacing={2}>
                 <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px',textAlign:"center" }}>O associado possui débitos com a casa?</InputLabel>
@@ -523,7 +524,7 @@ export default function FormRegistration() {
               </Grid>
             </FormSection>
             {/* Campos de contribuição com a casa */}
-            <FormSection title="Seção 7 - Dados referentes a contribuições">
+            <FormSection title="Seção 8 - Dados referentes a contribuições">
               <Grid container spacing={2}>
                 <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px' }}>O associado ajudou a casa com algum valor?</InputLabel>
@@ -607,7 +608,7 @@ export default function FormRegistration() {
                 )}
               </Grid>
             </FormSection>
-            <FormSection title="Seção 8 - Observações">
+            <FormSection title="Seção 9 - Observações">
               <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Box
                   sx={{
@@ -632,6 +633,7 @@ export default function FormRegistration() {
                       resize: 'vertical', // Permite redimensionar apenas verticalmente
                       padding: '8px', // Espaçamento interno adicional
                       borderRadius: '4px', // Bordas arredondadas
+                      marginLeft:"6px"
                     }}
                     {...register("observacoes")}
                   />
@@ -658,3 +660,4 @@ export default function FormRegistration() {
     </>
   );
 }
+//fixed
