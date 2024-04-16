@@ -188,7 +188,7 @@ export default function FormRegistration() {
         setIsSubmitting(false); // Resetar o estado de submissão
       });
     alert('dados cadastrados com sucesso')
-    //methods.reset(); // Limpar os campos após o envio bem sucedido
+    methods.reset(); // Limpar os campos após o envio bem sucedido
     setIsSubmitting(false); // Resetar o estado de submissão
   };
 
