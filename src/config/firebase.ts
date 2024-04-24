@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCdtpnYGptLaci2DGicmrVv0dxwZ3abejU",
-  authDomain: "imagens-9116b.firebaseapp.com",
-  databaseURL: "https://imagens-9116b-default-rtdb.firebaseio.com",
-  projectId: "imagens-9116b",
-  storageBucket: "imagens-9116b.appspot.com",
-  messagingSenderId: "338656406998",
-  appId: "1:338656406998:web:0f91517e6fccb1b94e4877"
+apiKey: "AIzaSyCGuEHNYb0vUSw-ojk8GVpW-MuvUHptWtY",
+  authDomain: "bancodedadosceab.firebaseapp.com",
+  databaseURL: "https://bancodedadosceab-default-rtdb.firebaseio.com",
+  projectId: "bancodedadosceab",
+  storageBucket: "bancodedadosceab.appspot.com",
+  messagingSenderId: "1069107759611",
+  appId: "1:1069107759611:web:1ba395c5f374492d62635e"
 };
 
 // Inicializa o Firebase
