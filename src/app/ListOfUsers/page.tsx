@@ -23,16 +23,14 @@ export default function ListOfUsers() {
         page: 0,
     });
 
-    const router = useRouter();
-
-    const { data: session } = useSession();
-
-    useEffect(() => {
-        // If there is no session, redirect to the login page
-        if (!session) {
+   const router = useRouter();
+    const { status } = useSession({
+        required: true, // Indica que a sessão é necessária
+        onUnauthenticated() {
+            // Redireciona para o login se não autenticado
             router.push('/Login');
         }
-    }, []);
+    });
 
     useEffect(() => {
         // Carregar a lista de usuários para o Autocomplete
