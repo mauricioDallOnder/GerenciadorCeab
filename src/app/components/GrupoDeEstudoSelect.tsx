@@ -44,16 +44,33 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
     }, [selectedBook, selectedFacilitator, setValue]);
 
     useEffect(() => {
+        console.log('Selected Book:', selectedBook);
+        console.log('Selected Facilitator:', selectedFacilitator);
+        console.log('Filtered Facilitators:', filteredFacilitators);
+        console.log('Filtered Details:', filteredDetails);
+    }, [selectedBook, selectedFacilitator, filteredFacilitators, filteredDetails]);
+    
+
+    useEffect(() => {
         if (selectedFacilitator) {
-            const details = gruposDeEstudo
-                .filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
+            const details = gruposDeEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
             setFilteredDetails(details);
         } else {
             setFilteredDetails([]);
         }
     }, [selectedFacilitator, selectedBook]);
+    
+    useEffect(() => {
+        if (filteredDetails.length === 1) {
+            setSelectedDia(filteredDetails[0].dia);
+            setSelectedTurno(filteredDetails[0].turno);
+            setSelectedHorario(filteredDetails[0].horario);
+            setSelectedSala(filteredDetails[0].sala);
+        }
+    }, [filteredDetails]);
 
     const uniqueOptions = (field: keyof typeof gruposDeEstudo[0]) => {
+        console.log(`Unique options for ${field}:`);
         return Array.from(new Set(filteredDetails.map(item => item[field])));
     };
 
@@ -140,9 +157,9 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('dia')}
                     label="Dia"
-                    disabled={!selectedFacilitator}
-                    onChange={handleDiaChange}
                     value={selectedDia}
+                    onChange={handleDiaChange}
+                    disabled={filteredDetails.length === 0}
                 >
                     {uniqueOptions('dia').map(dia => (
                         <MenuItem key={dia} value={dia}>{dia}</MenuItem>
