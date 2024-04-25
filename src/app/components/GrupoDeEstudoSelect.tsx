@@ -43,15 +43,47 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
         }
     }, [selectedBook, selectedFacilitator, setValue]);
 
-    useEffect(() => {
-        if (selectedFacilitator) {
-            const details = gruposDeEstudo
-                .filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
-            setFilteredDetails(details);
-        } else {
-            setFilteredDetails([]);
+   useEffect(() => {
+    if (selectedFacilitator) {
+        const details = gruposDeEstudo
+            .filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
+
+        setFilteredDetails(details);
+
+        // Automatically set values if only one option is available
+        const uniqueDia = uniqueOptions('dia');
+        if (uniqueDia.length === 1) {
+            setSelectedDia(uniqueDia[0]);
+            setValue('GrupoEstudoInfoField.dia', uniqueDia[0]);
         }
-    }, [selectedFacilitator, selectedBook]);
+
+        const uniqueTurno = uniqueOptions('turno');
+        if (uniqueTurno.length === 1) {
+            setSelectedTurno(uniqueTurno[0]);
+            setValue('GrupoEstudoInfoField.turno', uniqueTurno[0]);
+        }
+
+        const uniqueHorario = uniqueOptions('horario');
+        if (uniqueHorario.length === 1) {
+            setSelectedHorario(uniqueHorario[0]);
+            setValue('GrupoEstudoInfoField.horario', uniqueHorario[0]);
+        }
+
+        const uniqueSala = uniqueOptions('sala');
+        if (uniqueSala.length === 1) {
+            setSelectedSala(uniqueSala[0]);
+            setValue('GrupoEstudoInfoField.sala', uniqueSala[0]);
+        }
+    } else {
+        // Reset all dependent values if no facilitator is selected
+        setSelectedDia('');
+        setSelectedTurno('');
+        setSelectedHorario('');
+        setSelectedSala('');
+        setFilteredDetails([]);
+    }
+}, [selectedFacilitator, selectedBook, setValue]);
+
 
     const uniqueOptions = (field: keyof typeof gruposDeEstudo[0]) => {
         return Array.from(new Set(filteredDetails.map(item => item[field])));
