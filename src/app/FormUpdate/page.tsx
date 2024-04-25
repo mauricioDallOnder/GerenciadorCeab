@@ -35,16 +35,14 @@ import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 export default function UserUpdateForm() {
-    const router = useRouter();
-
-    const { data: session } = useSession();
-
-    useEffect(() => {
-        // If there is no session, redirect to the login page
-        if (!session) {
+  const router = useRouter();
+    const { status } = useSession({
+        required: true, // Indica que a sessão é necessária
+        onUnauthenticated() {
+            // Redireciona para o login se não autenticado
             router.push('/Login');
         }
-    }, []);
+    });
 
 
     const { register, handleSubmit, setValue, reset, control, getValues, watch, formState: { errors, isSubmitted } } = useForm<Associado>({
