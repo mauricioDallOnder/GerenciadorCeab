@@ -35,6 +35,7 @@ import { InputField } from "../components/InputField";
 import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields } from "../interfaces/interfaces";
 import GrupoDeEstudoSelect from "../components/GrupoDeEstudoSelect";
 import Footer from "../components/Footer";
+import SelectGroupRegistration from "../components/SelectGroupRegistration";
 
 
 export default function FormRegistration() {
@@ -348,7 +349,7 @@ export default function FormRegistration() {
               {/* Campos estudante */}
               <FormSection title="Seção 5 - Grupo de Estudo">
                 <Grid container spacing={2}>
-                  <GrupoDeEstudoSelect register={registerForGroup} setValue={setValue} />
+                  <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
                 </Grid>
               </FormSection >
               {/* Campos trabalhador/voluntário */}
