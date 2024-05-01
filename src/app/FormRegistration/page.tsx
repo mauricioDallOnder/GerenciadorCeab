@@ -34,7 +34,7 @@ import { FormSection } from "../components/FormSection";
 import { InputField } from "../components/InputField";
 import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields } from "../interfaces/interfaces";
 import Footer from "../components/Footer";
-import {SelectGroupRegistration} from "../components/SelectGroupRegistration";
+import {SelectGroupRegistration} from "../components/GroupeSelectComponent/SelectGroupRegistration";
 import { useCeabContext } from "@/context/context";
 
 

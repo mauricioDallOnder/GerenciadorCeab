@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { MenuItem, FormControl, InputLabel, Select,SelectChangeEvent, Container } from '@mui/material';
-import { GrupoDeEstudoSelectProps } from '../interfaces/interfaces';
+import { GrupoDeEstudoSelectProps } from '../../interfaces/interfaces';
 import { useCeabContext } from '@/context/context';
 import { IIgruposDeEstudo } from '@/utils/ultils';
 
@@ -24,9 +24,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
         }
     }, [initialValues]);
 
-    useEffect(()=>{
-        console.log(filteredDetails)
-    },[filteredDetails])
+ 
 
     // Atualizar facilitadores quando o livro é selecionado
     useEffect(() => {

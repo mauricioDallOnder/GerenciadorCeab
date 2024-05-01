@@ -31,7 +31,7 @@ import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, refreshPag
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
-import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
+import GrupoDeEstudoSelect from '../components/GroupeSelectComponent/UpdateSelectGroupe';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useCeabContext } from '@/context/context';
