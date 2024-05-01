@@ -2,6 +2,7 @@
 import { Providers } from "./providers/provider";
 import "./globals.css";
 import TopAppBar from "./components/TopBar";
+import { XContextProvider } from "@/context/context";
 
 export default function RootLayout({
   children,
@@ -11,13 +12,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <XContextProvider>
       <TopAppBar/>
           <Providers>{children}</Providers>
+          </XContextProvider>
       </body>
     </html>
   );
 }
-
-
-// 
-//

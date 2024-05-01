@@ -34,7 +34,8 @@ export const associadoSchema = z.object({
     dia: z.string(),
     turno: z.string(),
     horario: z.string(),
-    sala: z.string()
+    sala: z.string(),
+    turmaUUID: z.string().optional()
   }),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),
@@ -94,7 +95,7 @@ export const grupoEstudoInfoFieldSchema = associadoSchema.pick({
 
 export type GrupoEstudoInfoFields = z.infer<typeof grupoEstudoInfoFieldSchema>['GrupoEstudoInfoField'];
 
-// Props para o componente GrupoDeEstudoSelect
+// Props do GrupoDeEstudoSelect
 export interface GrupoDeEstudoSelectProps {
   register: (fieldName: keyof GrupoEstudoInfoFields) => ReturnType<UseFormRegister<Associado>>;
   setValue: UseFormSetValue<Associado>;
@@ -102,7 +103,6 @@ export interface GrupoDeEstudoSelectProps {
 }
 
 
-// interfaces.ts
 export interface LoaderData {
   session: {
     user: {
@@ -111,3 +111,4 @@ export interface LoaderData {
     };
   };
 }
+

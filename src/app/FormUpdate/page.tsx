@@ -34,7 +34,10 @@ import { UpdateInputField } from "../components/UpdateInputFields";
 import GrupoDeEstudoSelect from '../components/GrupoDeEstudoSelect';
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
+import { useCeabContext } from '@/context/context';
+
 export default function UserUpdateForm() {
+
   const router = useRouter();
     const { status } = useSession({
         required: true, // Indica que a sessão é necessária
@@ -43,8 +46,7 @@ export default function UserUpdateForm() {
             router.push('/Login');
         }
     });
-
-
+    const { usuariosData } = useCeabContext();
     const { register, handleSubmit, setValue, reset, control, getValues, watch, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
@@ -67,7 +69,7 @@ export default function UserUpdateForm() {
         control,
         name: "trabahadorInfoField",
     });
-    const [usuarios, setUsuarios] = useState<Associado[]>([]);
+    
     const [loading, setLoading] = useState(false);
     const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
@@ -82,26 +84,6 @@ export default function UserUpdateForm() {
             // Repita para outros campos conforme necessário
         }
     }, [selectedUser, reset, setValue]);
-
-
-
-    useEffect(() => {
-        // Carregar a lista de usuários para o Autocomplete
-        axios.get('/api/getDataFromFirebase') // Substitua por sua URL de API real para buscar usuários
-            .then(response => {
-                // Verificar se a resposta não é um array e convertê-la em array
-                if (!Array.isArray(response.data)) {
-                    const transformed = Object.entries(response.data).map(([key, value]) => ({
-                        id: key,
-                        ...value as Associado
-                    }));
-                    setUsuarios(transformed);
-                } else {
-                    console.error('Resposta não é um array:', response.data);
-                }
-            })
-            .catch(error => console.error('Erro ao buscar usuários:', error));
-    }, []);
 
 
     const handleChangeDiaSemanaFrequentado = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
@@ -165,7 +147,7 @@ export default function UserUpdateForm() {
                 <Box sx={BoxStyleCadastro}>
                     <FormHeader titulo='Atualização Cadastral' />
                     <Autocomplete
-                        options={usuarios}
+                        options={usuariosData}
                         getOptionLabel={(option) => option.nome}
                         onChange={(event, value) => {
                             setSelectedUser(value); // Atualiza o usuário selecionado

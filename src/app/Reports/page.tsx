@@ -38,7 +38,7 @@ export default function FinanceReport() {
     const [monthlyReports, setMonthlyReports] = useState<MonthlyReport[]>([]);
 
   useEffect(() => {
-    axios.get<Record<string, Associado>>('/api/getDataFromFirebase')
+    axios.get<Record<string, Associado>>('/api/getAssociadosDataFirebase')
       .then(response => {
         const usuarios = Object.entries(response.data).map(([key, value]) => ({
           id: key,

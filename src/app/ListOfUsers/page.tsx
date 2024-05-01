@@ -13,8 +13,10 @@ import {StyledDataGrid } from "@/utils/styles";
 import WorkerDetailsModal from "../components/WorkerDetailsModal";
 import { useSession} from "next-auth/react";
 import { useRouter } from "next/navigation"
+import { useCeabContext } from "@/context/context";
 export default function ListOfUsers() {
-    const [usuarios, setUsuarios] = useState<Associado[]>([]);
+    const { usuariosData } = useCeabContext();
+   
     const [selectedWorkers, setSelectedWorkers] = useState<TrabahadorInfoField[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const PAGE_SIZE = 15;
@@ -32,23 +34,7 @@ export default function ListOfUsers() {
         }
     });
 
-    useEffect(() => {
-        // Carregar a lista de usuários para o Autocomplete
-        axios.get('/api/getDataFromFirebase') // Substitua por sua URL de API real para buscar usuários
-            .then(response => {
-                // Verificar se a resposta não é um array e convertê-la em array
-                if (!Array.isArray(response.data)) {
-                    const transformed = Object.entries(response.data).map(([key, value]) => ({
-                        id: key,
-                        ...value as Associado
-                    }));
-                    setUsuarios(transformed);
-                } else {
-                    console.error('Resposta não é um array:', response.data);
-                }
-            })
-            .catch(error => console.error('Erro ao buscar usuários:', error));
-    }, []);
+   
 
     const handleOpenModal = (trabahadorInfoField: TrabahadorInfoField[] | undefined) => {
         setSelectedWorkers(trabahadorInfoField || []);  // Garantir que seja um array
@@ -90,7 +76,7 @@ export default function ListOfUsers() {
         },
     ];
 
-    const rows: GridRowsProp = usuarios.map(usuario => ({
+    const rows: GridRowsProp = usuariosData.map(usuario => ({
         id: usuario.id,
         col1: usuario.numeroRegistroAssociado,
         col2: usuario.nome,

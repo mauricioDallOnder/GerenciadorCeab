@@ -36,9 +36,11 @@ import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields }
 import GrupoDeEstudoSelect from "../components/GrupoDeEstudoSelect";
 import Footer from "../components/Footer";
 import SelectGroupRegistration from "../components/SelectGroupRegistration";
+import { useCeabContext } from "@/context/context";
 
 
 export default function FormRegistration() {
+  const { usuariosData } = useCeabContext();
   const methods = useForm<Associado>({
     resolver: zodResolver(associadoSchema),
     defaultValues: {
@@ -77,7 +79,7 @@ export default function FormRegistration() {
 
   const [estadoCivil, setEstadoCivil] = useState('');
   const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = useState<string[]>([]);
-  const [usuarios, setUsuarios] = useState<{ id: string, nome: string }[]>([]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
 
@@ -98,22 +100,6 @@ export default function FormRegistration() {
     setValue('associacao.diaVinculo', newValue);
   };
 
-
-  useEffect(() => {
-    axios.get<AssociadosResponse>('/api/getDataFromFirebase')
-      .then(response => {
-        const transformed = Object.entries(response.data).map(([key, value]) => {
-          if (typeof value === 'object' && value.nome) { // Verifica se value é um objeto e possui a propriedade nome
-            return { id: key, nome: value.nome };
-          }
-          return null; // ou retornar um valor padrão ou manipular de alguma outra forma
-        }).filter((item): item is { id: string; nome: string } => item !== null);
-        setUsuarios(transformed);
-      })
-      .catch(error => console.error('Erro ao buscar usuários:', error));
-  }, []);
-
-
   watch("contribuiu", "nao");
   watch("debito", "nao");
 
@@ -121,7 +107,7 @@ export default function FormRegistration() {
 
   const onSubmit = (data: Associado) => {
     // Verificar se o nome já existe na lista de usuários
-    const nomeJaExiste = usuarios.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
+    const nomeJaExiste = usuariosData.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
 
 
     if (nomeJaExiste) {
