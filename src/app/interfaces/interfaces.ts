@@ -35,7 +35,7 @@ export const associadoSchema = z.object({
     turno: z.string(),
     horario: z.string(),
     sala: z.string(),
-    turmaUUID: z.string().optional()
+    uuid: z.string().optional()
   }),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),

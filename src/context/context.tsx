@@ -1,11 +1,15 @@
+'use client'
 import React, { createContext, useContext, useState, useEffect } from "react"
 import { Associado, TrabahadorInfoField } from "../app/interfaces/interfaces";
 import axios from "axios";
+import { IIgruposDeEstudo } from "@/utils/ultils";
 type Props = {
   children: React.ReactNode
 }
 type Context = {
     usuariosData:Associado[]
+    gruposEstudo:IIgruposDeEstudo[];
+    gruposEstudoCarregado:boolean;
 }
 
 
@@ -13,10 +17,25 @@ const CeabContext = createContext<Context | null>(null)
 
 export const XContextProvider = ({ children }: Props) => {
   const [usuariosData, setUsuarios] = useState<Associado[]>([]);
-
+const [gruposEstudo,setGruposEstudo]=useState<IIgruposDeEstudo[]>([]);
+const [gruposEstudoCarregado, setGruposEstudoCarregado] = useState(false);
+  
+  //Buscar grupos de Estudo
   useEffect(() => {
-    // Carregar a lista de usuários para o Autocomplete
-    axios.get('/api/getAssociadosDataFirebase') // Substitua por sua URL de API real para buscar usuários
+    axios.get('/api/getTurmasEstudoFirebase')
+        .then(response => {
+            setGruposEstudo(response.data);
+            setGruposEstudoCarregado(true);
+        })
+        .catch(error => console.error('Erro ao buscar grupos de estudo:', error));
+}, []);
+
+
+  
+  
+    // Buscar usuarios----------------------------------------------------------------
+    useEffect(() => {
+    axios.get('/api/getAssociadosDataFirebase') 
         .then(response => {
             // Verificar se a resposta não é um array e convertê-la em array
             if (!Array.isArray(response.data)) {
@@ -33,7 +52,7 @@ export const XContextProvider = ({ children }: Props) => {
 }, []);
 
   return (
-    <CeabContext.Provider value={{usuariosData }}>
+    <CeabContext.Provider value={{usuariosData,gruposEstudo,gruposEstudoCarregado }}>
       {children}
     </CeabContext.Provider>
   )

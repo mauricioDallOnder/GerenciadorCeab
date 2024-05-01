@@ -1,10 +1,13 @@
+'use client'
 import { Container, Grid, Card, CardMedia, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "./components/Footer";
+import { useCeabContext } from "@/context/context";
 
 export default function Home() {
-  
+  const { gruposEstudo, gruposEstudoCarregado } = useCeabContext();
+  //console.log(gruposEstudo, gruposEstudoCarregado)
   return (
     <main style={{width:"100%"}}>
      

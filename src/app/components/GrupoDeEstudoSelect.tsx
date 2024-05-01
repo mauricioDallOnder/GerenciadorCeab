@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { MenuItem, FormControl, InputLabel, Select,SelectChangeEvent, Container } from '@mui/material';
-import { gruposDeEstudo } from '@/utils/ultils';
+import { MenuItem, FormControl, InputLabel, Select, SelectChangeEvent, Container } from '@mui/material';
+import { IIgruposDeEstudo } from '@/utils/ultils';
 import { GrupoDeEstudoSelectProps } from '../interfaces/interfaces';
+import { useCeabContext } from '@/context/context';
 
 const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, setValue, initialValues }) => {
     const [selectedBook, setSelectedBook] = useState<string>(initialValues?.livro || '');
@@ -11,10 +12,11 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
     const [selectedHorario, setSelectedHorario] = useState<string>(initialValues?.horario || '');
     const [selectedSala, setSelectedSala] = useState<string>(initialValues?.sala || '');
     const [filteredFacilitators, setFilteredFacilitators] = useState<string[]>([]);
-    const [filteredDetails, setFilteredDetails] = useState<typeof gruposDeEstudo>([]);
-
+    const [filteredDetails, setFilteredDetails] = useState<IIgruposDeEstudo[]>([]);
+   const { gruposEstudo, gruposEstudoCarregado } = useCeabContext();
+  
     useEffect(() => {
-        console.log('Initial Values:', initialValues);
+       
         if (initialValues) {
             setSelectedBook(initialValues.livro);
             setSelectedFacilitator(initialValues.facilitador);
@@ -25,7 +27,7 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
     // Atualizar facilitadores quando o livro é selecionado
     useEffect(() => {
         if (selectedBook) {
-            const facilitators = gruposDeEstudo
+            const facilitators = gruposEstudo
                 .filter(g => g.livro === selectedBook)
                 .map(g => g.facilitador);
 
@@ -49,17 +51,17 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
         console.log('Filtered Facilitators:', filteredFacilitators);
         console.log('Filtered Details:', filteredDetails);
     }, [selectedBook, selectedFacilitator, filteredFacilitators, filteredDetails]);
-    
+
 
     useEffect(() => {
         if (selectedFacilitator) {
-            const details = gruposDeEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
+            const details = gruposEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
             setFilteredDetails(details);
         } else {
             setFilteredDetails([]);
         }
     }, [selectedFacilitator, selectedBook]);
-    
+
     useEffect(() => {
         if (filteredDetails.length === 1) {
             setSelectedDia(filteredDetails[0].dia);
@@ -69,7 +71,7 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
         }
     }, [filteredDetails]);
 
-    const uniqueOptions = (field: keyof typeof gruposDeEstudo[0]) => {
+    const uniqueOptions = (field: keyof typeof gruposEstudo[0]) => {
         console.log(`Unique options for ${field}:`);
         return Array.from(new Set(filteredDetails.map(item => item[field])));
     };
@@ -114,113 +116,113 @@ const GrupoDeEstudoSelect: React.FC<GrupoDeEstudoSelectProps> = ({ register, set
         setSelectedSala(sala);
     };
 
+  
 
 
     return (
-        <Container sx={{mt:1}}>
-            
-            <FormControl fullWidth>
-                <InputLabel id="book-select-label" sx={{ mb: '2px', mt: '16px' }}>Livro</InputLabel>
-                <Select
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    labelId="book-select-label"
-                    {...register('livro')}
-                    value={selectedBook}
-                    label="Livro"
-                    onChange={handleBookChange}
-                >
-                    {gruposDeEstudo.map((g, index) => (
-                        <MenuItem key={index} value={g.livro}>{g.livro}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+        <Container sx={{ mt: 1 }}>
+        {gruposEstudoCarregado && Array.isArray(gruposEstudo) ? (
+            <>
+                <FormControl fullWidth>
+                    <InputLabel id="book-select-label" sx={{ mb: '2px', mt: '16px' }}>Livro</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        labelId="book-select-label"
+                        {...register('livro')}
+                        value={selectedBook}
+                        label="Livro"
+                        onChange={handleBookChange}
+                    >
+                        {gruposEstudo!.map((g, index) => (
+                            <MenuItem key={index} value={g.livro}>{g.livro}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <FormControl fullWidth>
-                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Facilitador</InputLabel>
-                <Select
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    {...register('facilitador')}
-                    value={selectedFacilitator}
-                    label="Facilitador"
-                    onChange={handleFacilitatorChange}
-                    disabled={!selectedBook}
-                >
-                    {filteredFacilitators.map(facilitator => (
-                        <MenuItem key={facilitator} value={facilitator}>{facilitator}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Facilitador</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        {...register('facilitador')}
+                        value={selectedFacilitator}
+                        label="Facilitador"
+                        onChange={handleFacilitatorChange}
+                        disabled={!selectedBook}
+                    >
+                        {filteredFacilitators.map(facilitator => (
+                            <MenuItem key={facilitator} value={facilitator}>{facilitator}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <FormControl fullWidth>
-                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Dia</InputLabel>
-                <Select
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    {...register('dia')}
-                    label="Dia"
-                    value={selectedDia}
-                    onChange={handleDiaChange}
-                    disabled={filteredDetails.length === 0}
-                >
-                    {uniqueOptions('dia').map(dia => (
-                        <MenuItem key={dia} value={dia}>{dia}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Dia</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        {...register('dia')}
+                        label="Dia"
+                        value={selectedDia}
+                        onChange={handleDiaChange}
+                        disabled={filteredDetails.length === 0}
+                    >
+                        {uniqueOptions('dia').map(dia => (
+                            <MenuItem key={dia} value={dia}>{dia}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <FormControl fullWidth>
-                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Turno</InputLabel>
-                <Select
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    {...register('turno')}
-                    label="Turno"
-                    disabled={!selectedFacilitator}
-                    onChange={handleTurnoChange}
-                    value={selectedTurno}
-                >
-                    {uniqueOptions('turno').map(turno => (
-                        <MenuItem key={turno} value={turno}>{turno}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Turno</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        {...register('turno')}
+                        label="Turno"
+                        onChange={handleTurnoChange}
+                        value={selectedTurno}
+                        disabled={!selectedFacilitator}
+                    >
+                        {uniqueOptions('turno').map(turno => (
+                            <MenuItem key={turno} value={turno}>{turno}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <FormControl fullWidth>
-                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Horário</InputLabel>
-                <Select
+                <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Horário</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        {...register('horario')}
+                        label="Horário"
+                        onChange={handleHorarioChange}
+                        value={selectedHorario}
+                        disabled={!selectedFacilitator}
+                    >
+                        {uniqueOptions('horario').map(horario => (
+                            <MenuItem key={horario} value={horario}>{horario}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    {...register('horario')}
-                    label="Horário"
-                    disabled={!selectedFacilitator}
-                    onChange={handleHorarioChange}
-                    value={selectedHorario}
-
-                >
-                    {uniqueOptions('horario').map(horario => (
-                        <MenuItem key={horario} value={horario}>{horario}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-
-            <FormControl fullWidth>
-                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Sala</InputLabel>
-                <Select
-
-
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                    {...register('sala')}
-                    label="Sala"
-                    disabled={!selectedFacilitator}
-                    onChange={handleSalaChange}
-                    value={selectedSala}
-                >
-                    {uniqueOptions('sala').map(sala => (
-                        <MenuItem key={sala} value={sala}>{sala}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-           
-        </Container>
+                <FormControl fullWidth>
+                    <InputLabel sx={{ mb: '2px', mt: '16px' }}>Sala</InputLabel>
+                    <Select
+                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                        {...register('sala')}
+                        label="Sala"
+                        onChange={handleSalaChange}
+                        value={selectedSala}
+                        disabled={!selectedFacilitator}
+                    >
+                        {uniqueOptions('sala').map(sala => (
+                            <MenuItem key={sala} value={sala}>{sala}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </>
+        ) : (
+            <p>Carregando...</p>
+        )}
+    </Container>
     );
 };
 

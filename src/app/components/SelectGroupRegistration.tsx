@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { MenuItem, FormControl, InputLabel, Select,SelectChangeEvent, Container } from '@mui/material';
-import { gruposDeEstudo } from '@/utils/ultils';
+import { MenuItem, FormControl, InputLabel, Select,SelectChangeEvent, Container, Typography, TextField } from '@mui/material';
+import { useCeabContext } from '@/context/context';
 import { GrupoDeEstudoSelectProps } from '../interfaces/interfaces';
+import { IIgruposDeEstudo } from '@/utils/ultils';
 
-const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register, setValue, initialValues }) => {
+
+export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register, setValue, initialValues }) => {
+    const { gruposEstudo, gruposEstudoCarregado } = useCeabContext();
     const [selectedBook, setSelectedBook] = useState<string>(initialValues?.livro || '');
     const [selectedFacilitator, setSelectedFacilitator] = useState<string>(initialValues?.facilitador || '');
     const [selectedDia, setSelectedDia] = useState<string>(initialValues?.dia || '');
     const [selectedTurno, setSelectedTurno] = useState<string>(initialValues?.turno || '');
     const [selectedHorario, setSelectedHorario] = useState<string>(initialValues?.horario || '');
     const [selectedSala, setSelectedSala] = useState<string>(initialValues?.sala || '');
+    const [selectedUUid, setSelectedUUid] = useState<string>(initialValues?.uuid || '');
     const [filteredFacilitators, setFilteredFacilitators] = useState<string[]>([]);
-    const [filteredDetails, setFilteredDetails] = useState<typeof gruposDeEstudo>([]);
+    const [filteredDetails, setFilteredDetails] = useState<IIgruposDeEstudo[]>([]);
 
     useEffect(() => {
         console.log('Initial Values:', initialValues);
@@ -19,13 +23,14 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
             setSelectedBook(initialValues.livro);
             setSelectedFacilitator(initialValues.facilitador);
             setSelectedDia(initialValues.dia)
+            setSelectedUUid(initialValues.uuid!)
         }
     }, [initialValues]);
 
     // Atualizar facilitadores quando o livro é selecionado
     useEffect(() => {
         if (selectedBook) {
-            const facilitators = gruposDeEstudo
+            const facilitators = gruposEstudo
                 .filter(g => g.livro === selectedBook)
                 .map(g => g.facilitador);
 
@@ -39,22 +44,30 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
                 setValue('GrupoEstudoInfoField.turno', '');
                 setValue('GrupoEstudoInfoField.horario', '');
                 setValue('GrupoEstudoInfoField.sala', '');
+                setValue('GrupoEstudoInfoField.uuid', '');
             }
         }
     }, [selectedBook, selectedFacilitator, setValue]);
 
    useEffect(() => {
     if (selectedFacilitator) {
-        const details = gruposDeEstudo
-            .filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
-
+        const details = gruposEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
+    
         setFilteredDetails(details);
+        
+        console.log(filteredDetails)
 
         // Automatically set values if only one option is available
         const uniqueDia = uniqueOptions('dia');
         if (uniqueDia.length === 1) {
             setSelectedDia(uniqueDia[0]);
             setValue('GrupoEstudoInfoField.dia', uniqueDia[0]);
+        }
+
+        const uniqueUUId = uniqueOptions('uuid');
+        if (uniqueUUId.length === 1) {
+            setSelectedDia(uniqueUUId[0]);
+            setValue('GrupoEstudoInfoField.uuid', uniqueDia[0]);
         }
 
         const uniqueTurno = uniqueOptions('turno');
@@ -80,23 +93,29 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
         setSelectedTurno('');
         setSelectedHorario('');
         setSelectedSala('');
+        setSelectedUUid("")
         setFilteredDetails([]);
     }
 }, [selectedFacilitator, selectedBook, setValue]);
 
 
-    const uniqueOptions = (field: keyof typeof gruposDeEstudo[0]) => {
+    const uniqueOptions = (field: keyof typeof gruposEstudo[0]) => {
         return Array.from(new Set(filteredDetails.map(item => item[field])));
     };
 
+   
     const handleBookChange = (event: SelectChangeEvent) => {
+       
+
         const book = event.target.value as string;
         setSelectedBook(book);
+      
         setValue('GrupoEstudoInfoField.facilitador', '');
         setValue('GrupoEstudoInfoField.dia', '');
         setValue('GrupoEstudoInfoField.turno', '');
         setValue('GrupoEstudoInfoField.horario', '');
         setValue('GrupoEstudoInfoField.sala', '');
+        setValue('GrupoEstudoInfoField.uuid', '');
     };
 
     const handleFacilitatorChange = (event: SelectChangeEvent) => {
@@ -107,6 +126,7 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
         setValue('GrupoEstudoInfoField.turno', '');
         setValue('GrupoEstudoInfoField.horario', '');
         setValue('GrupoEstudoInfoField.sala', '');
+        setValue('GrupoEstudoInfoField.uuid', '');
     };
 
     const handleDiaChange = (event: SelectChangeEvent) => {
@@ -131,9 +151,26 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
 
 
 
+
     return (
         <Container sx={{mt:1}}>
+             {gruposEstudoCarregado && Array.isArray(gruposEstudo) ? (
+            <>
             
+             <FormControl fullWidth>
+                <Select
+                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                    labelId="book-select-label"
+                    {...register('uuid')}
+                    value={selectedUUid}
+                    label="uuid"
+                    onChange={handleBookChange}
+                >
+                    {gruposEstudo.map((g, index) => (
+                        <MenuItem key={index} value={g.uuid}>{g.uuid}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
             <FormControl fullWidth>
                 <InputLabel id="book-select-label" sx={{ mb: '2px', mt: '16px' }}>Livro</InputLabel>
                 <Select
@@ -144,7 +181,7 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
                     label="Livro"
                     onChange={handleBookChange}
                 >
-                    {gruposDeEstudo.map((g, index) => (
+                    {gruposEstudo.map((g, index) => (
                         <MenuItem key={index} value={g.livro}>{g.livro}</MenuItem>
                     ))}
                 </Select>
@@ -234,9 +271,10 @@ const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register,
                     ))}
                 </Select>
             </FormControl>
-           
+            </>
+        ) : (
+            <Typography sx={{color:"black", fontWeight:"bold"}}>Carregando...</Typography>
+        )}
         </Container>
     );
 };
-
-export default SelectGroupRegistration;
