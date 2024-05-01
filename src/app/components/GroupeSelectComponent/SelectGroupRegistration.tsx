@@ -12,6 +12,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
     const [selectedTurno, setSelectedTurno] = useState<string>(initialValues?.turno || '');
     const [selectedHorario, setSelectedHorario] = useState<string>(initialValues?.horario || '');
     const [selectedSala, setSelectedSala] = useState<string>(initialValues?.sala || '');
+    const [selectedUUid, setSelectedUUid] = useState<string>(initialValues?.uuid || '');
     const [filteredFacilitators, setFilteredFacilitators] = useState<string[]>([]);
     const [filteredDetails, setFilteredDetails] = useState<IIgruposDeEstudo[]>([]);
 
@@ -21,17 +22,20 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             setSelectedBook(initialValues.livro);
             setSelectedFacilitator(initialValues.facilitador);
             setSelectedDia(initialValues.dia)
+            setSelectedUUid(initialValues.uuid!)
         }
     }, [initialValues]);
 
  
+    useEffect(()=>{
+        console.log(filteredDetails)
+    },[filteredDetails])
+
 
     // Atualizar facilitadores quando o livro é selecionado
     useEffect(() => {
         if (selectedBook) {
-            const facilitators = gruposEstudo
-                .filter(g => g.livro === selectedBook)
-                .map(g => g.facilitador);
+            const facilitators = gruposEstudo.filter(g => g.livro === selectedBook).map(g => g.facilitador);
 
             setFilteredFacilitators(facilitators);
 
@@ -43,16 +47,21 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
                 setValue('GrupoEstudoInfoField.turno', '');
                 setValue('GrupoEstudoInfoField.horario', '');
                 setValue('GrupoEstudoInfoField.sala', '');
+                setValue('GrupoEstudoInfoField.uuid', '');
             }
         }
     }, [selectedBook, selectedFacilitator, setValue]);
 
    useEffect(() => {
     if (selectedFacilitator) {
-        const details = gruposEstudo
-            .filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
+        const details = gruposEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
 
         setFilteredDetails(details);
+
+        if (details.length === 1) {
+            setSelectedUUid(details[0].uuid);
+            setValue('GrupoEstudoInfoField.uuid', details[0].uuid);
+        }
 
         // Automatically set values if only one option is available
         const uniqueDia = uniqueOptions('dia');
@@ -85,6 +94,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
         setSelectedHorario('');
         setSelectedSala('');
         setFilteredDetails([]);
+        
     }
 }, [selectedFacilitator, selectedBook, setValue]);
 
