@@ -14,6 +14,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
     const [selectedTurno, setSelectedTurno] = useState<string>(initialValues?.turno || '');
     const [selectedHorario, setSelectedHorario] = useState<string>(initialValues?.horario || '');
     const [selectedSala, setSelectedSala] = useState<string>(initialValues?.sala || '');
+    const [selectedUUid, setSelectedUUid] = useState<string>(initialValues?.uuid || '');
     const [filteredFacilitators, setFilteredFacilitators] = useState<string[]>([]);
     const [filteredDetails, setFilteredDetails] = useState<IIgruposDeEstudo[]>([]);
 
@@ -43,6 +44,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
                 setValue('GrupoEstudoInfoField.turno', '');
                 setValue('GrupoEstudoInfoField.horario', '');
                 setValue('GrupoEstudoInfoField.sala', '');
+                setValue('GrupoEstudoInfoField.uuid', '');
             }
         }
     }, [selectedBook, selectedFacilitator, setValue]);
@@ -51,19 +53,27 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
         if (selectedFacilitator) {
             const details = gruposEstudo.filter(g => g.facilitador === selectedFacilitator && g.livro === selectedBook);
             setFilteredDetails(details);
+            if (details.length === 1) {
+                setSelectedUUid(details[0].uuid);
+                setValue('GrupoEstudoInfoField.uuid', details[0].uuid);
+            }
         } else {
             setFilteredDetails([]);
         }
     }, [selectedFacilitator, selectedBook]);
 
+   
     useEffect(() => {
         if (filteredDetails.length === 1) {
             setSelectedDia(filteredDetails[0].dia);
             setSelectedTurno(filteredDetails[0].turno);
             setSelectedHorario(filteredDetails[0].horario);
             setSelectedSala(filteredDetails[0].sala);
+            setSelectedUUid(filteredDetails[0].uuid);
+            setValue("GrupoEstudoInfoField.uuid", filteredDetails[0].uuid);
         }
     }, [filteredDetails]);
+    
 
 
     const uniqueOptions = (field: keyof typeof gruposEstudo[0]) => {
