@@ -2,6 +2,21 @@ export const DiasSemanas=[
     '-','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
 ]
 
+export const tipoVinculoComCeab=[
+  "-",
+  "Dirigente",
+"Vice-Dirigente",
+"Recepcionista ",
+"Atendente Fraterno",
+"Aplicador de Passe",
+"Médium de Psicofonia",
+"Médium de Psicografia", 
+"Dialogador",
+"Médium de Apoio",
+"Médium de Cura",
+"Expositor/Palestrante",
+]
+
 export const siglas = [
   'AC',
   'AL',
@@ -44,7 +59,7 @@ export const normalizeFloatInputValue = (value: string): number => {
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-export const MenuPropsDiasSemanas = {
+export const MenuPropsMultiSelect = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,

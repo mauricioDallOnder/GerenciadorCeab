@@ -24,7 +24,7 @@ export const associadoSchema = z.object({
     email: z.string().email({ message: "Email inválido" })
   }),
   associacao: z.object({
-    tipo: z.array(z.string()).min(1, { message: "Selecione ao menos um tipo de associação" }),
+    tipo: z.array(z.string()).optional(),
     diaVinculo: z.array(z.string()).optional(),
     dataEntrada: z.string().min(1, { message: "O campo data de entrada é obrigatório" }),
   }),

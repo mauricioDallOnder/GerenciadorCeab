@@ -26,7 +26,7 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, normalizeString, siglas, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
@@ -44,7 +44,8 @@ export default function FormRegistration() {
     resolver: zodResolver(associadoSchema),
     defaultValues: {
       associacao: {
-        diaVinculo: [],
+        tipo: [],
+         diaVinculo: [],
       },
 
 
@@ -77,7 +78,7 @@ export default function FormRegistration() {
   });
 
   const [estadoCivil, setEstadoCivil] = useState('');
-  const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = useState<string[]>([]);
+  const [VinculoCasa, setVinculoCasa] = useState<string[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -88,15 +89,15 @@ export default function FormRegistration() {
     setValue("estadoCivil", value); // Sincroniza com o estado do formulário
   };
 
-  const handleChangeDiaSemanaFrequentado = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
+  const handleChangeVinculoCasa = (event: SelectChangeEvent<typeof VinculoCasa>) => {
     const {
       target: { value },
     } = event;
     //console.log("Before split:", value); // Veja o que está recebendo antes do split
     const newValue = typeof value === 'string' ? value.split(',') : value;
     //console.log("After split:", newValue); // Confira o novo valor após o split
-    setDiaSemanaFrequentado(newValue);
-    setValue('associacao.diaVinculo', newValue);
+    setVinculoCasa(newValue);
+    setValue('associacao.tipo', newValue);
   };
 
   watch("contribuiu", "nao");
@@ -270,44 +271,22 @@ export default function FormRegistration() {
               {/* Campos de Associação */}
               <FormSection title="Seção 4 - Dados de Associação">
                 <Grid container spacing={2} sx={{ mt: 1 }}>
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
-                      <InputLabel>Tipo de vinculo com a casa</InputLabel>
-                      <Select
-                        {...register("associacao.tipo.0")}
-                        label='Tipo de vinculo com a casa'
-                        fullWidth
-                        error={!!errors.associacao?.tipo}
-                        defaultValue="-">
-                        <MenuItem value="-">-</MenuItem>
-                        <MenuItem value="facilitador">Facilitador</MenuItem>
-                        <MenuItem value="facilitador e trabalhador">Facilitador e Trabalhador</MenuItem>
-                        <MenuItem value="estudante">Estudante</MenuItem>
-                        <MenuItem value="estudante e trabalhador">Estudante e Trabalhador</MenuItem>
-                        <MenuItem value="trabalhador">Trabalhador</MenuItem>
-                        <MenuItem value="frequentador">Frequentador</MenuItem>
-                      </Select>
-                      {errors.associacao?.tipo && (
-                        <p>{errors.associacao.tipo.message}</p>
-                      )}
-                    </FormControl>
-                  </Grid>
+                  
                   {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                   <Grid item xs={12} sm={6}>
-
                     <Controller
                       control={control}
-                      name="associacao.diaVinculo"
+                      name="associacao.tipo"
                       render={({ field, fieldState: { error } }) => (
                         <FormControl fullWidth error={!!error}>
-                          <InputLabel>Dia(s) que frenquenta a casa</InputLabel>
+                          <InputLabel>Selecione o vínculo com a casa</InputLabel>
                           <Select
                             {...field}
                             multiple
-                            label='Dia(s) que frenquenta a casa'
+                            label='Vínculo'
                             value={field.value} // Use `field.value` em vez de `defaultValue`
-                            onChange={handleChangeDiaSemanaFrequentado}
-                            input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
+                            onChange={handleChangeVinculoCasa}
+                            input={<OutlinedInput label="vínculo com a casa" />}
                             renderValue={(selected) => (
                               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
@@ -315,8 +294,8 @@ export default function FormRegistration() {
                                 ))}
                               </Box>
                             )}
-                            MenuProps={MenuPropsDiasSemanas}>
-                            {DiasSemanas.map((name) => (
+                            MenuProps={MenuPropsMultiSelect}>
+                            {tipoVinculoComCeab.map((name) => (
                               <MenuItem key={name} value={name}>
                                 {name}
                               </MenuItem>

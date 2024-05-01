@@ -20,6 +20,7 @@ import {
     Card, CardContent, CardActions, IconButton,
     Chip,
     OutlinedInput,
+    FormHelperText,
 } from "@mui/material";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,7 +28,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsDiasSemanas, normalizeFloatInputValue, refreshPage, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
@@ -38,7 +39,7 @@ import { useCeabContext } from '@/context/context';
 
 export default function UserUpdateForm() {
 
-  const router = useRouter();
+    const router = useRouter();
     const { status } = useSession({
         required: true, // Indica que a sessão é necessária
         onUnauthenticated() {
@@ -50,7 +51,8 @@ export default function UserUpdateForm() {
     const { register, handleSubmit, setValue, reset, control, getValues, watch, formState: { errors, isSubmitted } } = useForm<Associado>({
         defaultValues: {
             associacao: {
-                diaVinculo: [], // array vazio
+                tipo: [],
+                diaVinculo: [],
             },
 
         },
@@ -69,9 +71,9 @@ export default function UserUpdateForm() {
         control,
         name: "trabahadorInfoField",
     });
-    
+
     const [loading, setLoading] = useState(false);
-    const [DiaSemanaFrequentado, setDiaSemanaFrequentado] = React.useState<string[]>([]);
+    const [VinculoCasa, setVinculoCasa] = React.useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
 
     useEffect(() => {
@@ -86,15 +88,15 @@ export default function UserUpdateForm() {
     }, [selectedUser, reset, setValue]);
 
 
-    const handleChangeDiaSemanaFrequentado = (event: SelectChangeEvent<typeof DiaSemanaFrequentado>) => {
+    const handleChangeVinculoCasa = (event: SelectChangeEvent<typeof VinculoCasa>) => {
         const {
             target: { value },
         } = event;
         //console.log("Before split:", value); // Veja o que está recebendo antes do split
         const newValue = typeof value === 'string' ? value.split(',') : value;
         //console.log("After split:", newValue); // Confira o novo valor após o split
-        setDiaSemanaFrequentado(newValue);
-        setValue('associacao.diaVinculo', newValue);
+        setVinculoCasa(newValue);
+        setValue('associacao.tipo', newValue);
     };
 
     const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
@@ -186,21 +188,22 @@ export default function UserUpdateForm() {
                     </FormSection >
                     <FormSection title="Seção 3 - Dados de Associação">
                         <Grid container spacing={2}>
-                            <UpdateInputField register={register} name="associacao.tipo.0" label="Vinculo" type='text' />
+
                             {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                             <Grid item xs={12} sm={6}>
-                                <InputLabel>Dia(s) que ele frequentará a casa</InputLabel>
                                 <Controller
                                     control={control}
-                                    name="associacao.diaVinculo"
+                                    name="associacao.tipo"
                                     render={({ field, fieldState: { error } }) => (
                                         <FormControl fullWidth error={!!error}>
+                                            <InputLabel>Selecione o vínculo com a casa</InputLabel>
                                             <Select
                                                 {...field}
                                                 multiple
+                                                label='Vínculo'
                                                 value={field.value} // Use `field.value` em vez de `defaultValue`
-                                                onChange={handleChangeDiaSemanaFrequentado}
-                                                input={<OutlinedInput label="Dia(s) que ele frequentará a casa" />}
+                                                onChange={handleChangeVinculoCasa}
+                                                input={<OutlinedInput label="vínculo com a casa" />}
                                                 renderValue={(selected) => (
                                                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                                         {selected.map((value) => (
@@ -208,14 +211,14 @@ export default function UserUpdateForm() {
                                                         ))}
                                                     </Box>
                                                 )}
-                                                MenuProps={MenuPropsDiasSemanas}>
-                                                {DiasSemanas.map((name) => (
+                                                MenuProps={MenuPropsMultiSelect}>
+                                                {tipoVinculoComCeab.map((name) => (
                                                     <MenuItem key={name} value={name}>
                                                         {name}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
-
+                                            {error && <FormHelperText>{error.message}</FormHelperText>}
                                         </FormControl>
                                     )}
                                 />
