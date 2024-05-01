@@ -28,7 +28,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
@@ -52,7 +52,7 @@ export default function UserUpdateForm() {
         defaultValues: {
             associacao: {
                 tipo: [],
-                diaVinculo: [],
+                TipoMediunidade: [],
             },
 
         },
@@ -86,6 +86,17 @@ export default function UserUpdateForm() {
             // Repita para outros campos conforme necessário
         }
     }, [selectedUser, reset, setValue]);
+
+    const handleChangeMediunidade = (event: SelectChangeEvent<typeof VinculoCasa>) => {
+        const {
+            target: { value },
+        } = event;
+        //console.log("Before split:", value); // Veja o que está recebendo antes do split
+        const newValue = typeof value === 'string' ? value.split(',') : value;
+        //console.log("After split:", newValue); // Confira o novo valor após o split
+        setVinculoCasa(newValue);
+        setValue('associacao.TipoMediunidade', newValue);
+    };
 
 
     const handleChangeVinculoCasa = (event: SelectChangeEvent<typeof VinculoCasa>) => {
@@ -188,8 +199,41 @@ export default function UserUpdateForm() {
                     </FormSection >
                     <FormSection title="Seção 3 - Dados de Associação">
                         <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <Controller
+                                    control={control}
+                                    name="associacao.TipoMediunidade"
+                                    render={({ field, fieldState: { error } }) => (
+                                        <FormControl fullWidth error={!!error}>
+                                            <InputLabel>Selecione o tipo de mediunidade</InputLabel>
+                                            <Select
+                                                {...field}
+                                                multiple
+                                                label='Mediunidade'
+                                                value={field.value} // Use `field.value` em vez de `defaultValue`
+                                                onChange={handleChangeMediunidade}
+                                                input={<OutlinedInput label="Mediunidade" />}
+                                                renderValue={(selected) => (
+                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                                        {selected.map((value) => (
+                                                            <Chip key={value} label={value} />
+                                                        ))}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuPropsMultiSelect}>
+                                                {tipoMediunidade.map((name) => (
+                                                    <MenuItem key={name} value={name}>
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                            {error && <FormHelperText>{error.message}</FormHelperText>}
+                                        </FormControl>
+                                    )}
+                                />
+                            </Grid>
 
-                            {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
+                            {/* Select Multiplo para poder selecionar o tipo de vinculo com a casa*/}
                             <Grid item xs={12} sm={6}>
                                 <Controller
                                     control={control}

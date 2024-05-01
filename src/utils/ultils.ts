@@ -17,6 +17,8 @@ export const tipoVinculoComCeab=[
 "Expositor/Palestrante",
 ]
 
+export const tipoMediunidade=['Médium de Efeitos Físicos',' Médium de Psicografia','Médium de Psicofonia','Médium Sensitivo','Médium de Vidência',' Médium de Sonâmbulismo','Médium de Cura']
+
 export const siglas = [
   'AC',
   'AL',

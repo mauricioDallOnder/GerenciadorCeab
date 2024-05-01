@@ -26,7 +26,7 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
@@ -45,7 +45,7 @@ export default function FormRegistration() {
     defaultValues: {
       associacao: {
         tipo: [],
-         diaVinculo: [],
+         TipoMediunidade: [],
       },
 
 
@@ -87,6 +87,17 @@ export default function FormRegistration() {
     const value = event.target.value;
     setEstadoCivil(value);
     setValue("estadoCivil", value); // Sincroniza com o estado do formulário
+  };
+
+  const handleChangeMediunidade = (event: SelectChangeEvent<typeof VinculoCasa>) => {
+    const {
+      target: { value },
+    } = event;
+    //console.log("Before split:", value); // Veja o que está recebendo antes do split
+    const newValue = typeof value === 'string' ? value.split(',') : value;
+    //console.log("After split:", newValue); // Confira o novo valor após o split
+    setVinculoCasa(newValue);
+    setValue('associacao.TipoMediunidade', newValue);
   };
 
   const handleChangeVinculoCasa = (event: SelectChangeEvent<typeof VinculoCasa>) => {
@@ -271,7 +282,40 @@ export default function FormRegistration() {
               {/* Campos de Associação */}
               <FormSection title="Seção 4 - Dados de Associação">
                 <Grid container spacing={2} sx={{ mt: 1 }}>
-                  
+                   {/* Select Multiplo para poder selecionar o tipo de mediunidade*/}
+                   <Grid item xs={12} sm={6}>
+                    <Controller
+                      control={control}
+                      name="associacao.TipoMediunidade"
+                      render={({ field, fieldState: { error } }) => (
+                        <FormControl fullWidth error={!!error}>
+                          <InputLabel>Selecione o tipo de mediunidade</InputLabel>
+                          <Select
+                            {...field}
+                            multiple
+                            label='Mediunidade'
+                            value={field.value} // Use `field.value` em vez de `defaultValue`
+                            onChange={handleChangeVinculoCasa}
+                            input={<OutlinedInput label="Mediunidade" />}
+                            renderValue={(selected) => (
+                              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                  <Chip key={value} label={value} />
+                                ))}
+                              </Box>
+                            )}
+                            MenuProps={MenuPropsMultiSelect}>
+                            {tipoMediunidade.map((name) => (
+                              <MenuItem key={name} value={name}>
+                                {name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {error && <FormHelperText>{error.message}</FormHelperText>}
+                        </FormControl>
+                      )}
+                    />
+                  </Grid>
                   {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                   <Grid item xs={12} sm={6}>
                     <Controller

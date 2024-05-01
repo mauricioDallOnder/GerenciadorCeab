@@ -57,7 +57,7 @@ export default function ListOfUsers() {
         { field: "col12", headerName: "Turno", width: 100 },
         { field: "col13", headerName: "Horário", width: 150 },
         { field: "col14", headerName: "Sala", width: 100 },
-        { field: "col15", headerName: "Dia(s) que Frequenta a Casa", width: 300 },
+        { field: "col15", headerName: "Tipo de Mediunidade", width: 300 },
         { field: "col16", headerName: "Data de Entrada", width: 200 },
         { field: "col17", headerName: "Tipo de Vínculo", width: 250 },
         {
@@ -92,7 +92,7 @@ export default function ListOfUsers() {
         col12: usuario.GrupoEstudoInfoField?.turno,
         col13: usuario.GrupoEstudoInfoField?.horario,
         col14: usuario.GrupoEstudoInfoField?.sala,
-        col15: usuario.associacao?.diaVinculo,
+        col15: usuario.associacao?.TipoMediunidade,
         col16: usuario.associacao?.dataEntrada,
         col17: usuario.associacao?.tipo,
         details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente

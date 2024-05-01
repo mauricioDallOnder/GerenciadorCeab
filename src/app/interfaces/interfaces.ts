@@ -25,7 +25,7 @@ export const associadoSchema = z.object({
   }),
   associacao: z.object({
     tipo: z.array(z.string()).optional(),
-    diaVinculo: z.array(z.string()).optional(),
+    TipoMediunidade: z.array(z.string()).optional(),
     dataEntrada: z.string().min(1, { message: "O campo data de entrada é obrigatório" }),
   }),
   GrupoEstudoInfoField: z.object({
