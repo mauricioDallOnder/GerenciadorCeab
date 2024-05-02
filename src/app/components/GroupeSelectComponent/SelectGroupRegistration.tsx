@@ -151,6 +151,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel id="book-select-label" sx={{ mb: '2px', mt: '16px' }}>Livro</InputLabel>
                 <Select
+                  defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     labelId="book-select-label"
                     {...register('livro')}
@@ -167,6 +168,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Facilitador</InputLabel>
                 <Select
+                  defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('facilitador')}
                     value={selectedFacilitator}
@@ -183,6 +185,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Dia</InputLabel>
                 <Select
+                  defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('dia')}
                     label="Dia"
@@ -199,6 +202,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Turno</InputLabel>
                 <Select
+                  defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('turno')}
                     label="Turno"
@@ -215,8 +219,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Horário</InputLabel>
                 <Select
-
-
+                    defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('horario')}
                     label="Horário"
@@ -234,8 +237,7 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Sala</InputLabel>
                 <Select
-
-
+                    defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('sala')}
                     label="Sala"

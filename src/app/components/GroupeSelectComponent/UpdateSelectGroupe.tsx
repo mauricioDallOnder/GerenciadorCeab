@@ -160,6 +160,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Dia</InputLabel>
                 <Select
+                defaultValue='-'
                 sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     value={selectedDia}
                     onChange={handleDiaChange}
@@ -174,6 +175,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Turno</InputLabel>
                 <Select
+                  defaultValue='-'
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('turno')}
                     label="Turno"
@@ -190,7 +192,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Horário</InputLabel>
                 <Select
-
+                    defaultValue='-'
 
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('horario')}
@@ -209,7 +211,7 @@ const UpdateSelectGroupe: React.FC<GrupoDeEstudoSelectProps> = ({ register, setV
             <FormControl fullWidth>
                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Sala</InputLabel>
                 <Select
-
+                      defaultValue='-'
 
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
                     {...register('sala')}
