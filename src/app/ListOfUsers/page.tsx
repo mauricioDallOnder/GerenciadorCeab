@@ -3,6 +3,11 @@ import {
     GridColDef,
     GridRowsProp,
     GridToolbar,
+    GridToolbarColumnsButton,
+    GridToolbarContainer,
+    GridToolbarDensitySelector,
+    GridToolbarExport,
+    GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { Associado, TrabahadorInfoField } from "../interfaces/interfaces";
@@ -88,8 +93,7 @@ export default function ListOfUsers() {
         details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
     }));
 
-
-
+   
 
     return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
@@ -111,6 +115,7 @@ export default function ListOfUsers() {
                             showQuickFilter: true,
                         },
                     }}
+                    
                     rows={rows}
                     columns={columns}
                 />
@@ -131,15 +136,3 @@ export default function ListOfUsers() {
 }
 
 
-/*
-
- { field: "col9", headerName: "Turma de Estudo", width: 300 },
-        { field: "col10", headerName: "Dia de Estudo", width: 300 },
-        { field: "col11", headerName: "Sala", width: 100 },
-        { field: "col12", headerName: "Facilitador", width: 300 },
-
-        col9: usuario.GrupoEstudoInfoField?.turmaEstudo,
-        col10: usuario.GrupoEstudoInfoField?.diaEstuda,
-        col11: usuario.GrupoEstudoInfoField?.numeroSala,
-        col12: usuario.GrupoEstudoInfoField?.nomeFacilitador,
-*/

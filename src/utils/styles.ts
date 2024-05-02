@@ -208,12 +208,17 @@ export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 
   "& .MuiInputBase-input": {
+    color: "#3e3e3e", // Texto escuro para inputs
+    borderBottom: `2px solid ${theme.palette.divider}`,
+  },
   
-    color: "#3e3e3e", // Fundo escuro para contraste
+  "& .MuiInputBase-input::placeholder": {
+    color: "black", 
+    fontWeight: '600',
   },
   
   "& .MuiSvgIcon-root.MuiSvgIcon-fontSizeSmall": {
-    color: "#ffffff", // Ícones brancos para contraste
+    color: "black", // Ícones brancos para contraste
   },
 }));
 
