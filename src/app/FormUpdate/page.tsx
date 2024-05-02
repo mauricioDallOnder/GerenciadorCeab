@@ -277,7 +277,7 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='number' />
                         </Grid>
                     </FormSection>
-
+                    <>
                     {/* Campos estudante */}
                     <FormSection title="Seção 5 - Grupo de estudo">
                         <Grid container spacing={2}>
@@ -299,7 +299,7 @@ export default function UserUpdateForm() {
                             />
                         </Grid>
                     </FormSection>
-                    <>
+                  
                {/* Add Study History Section */}
                <FormSection title="Seção 6 - Estudos Anteriores">
                <Container >

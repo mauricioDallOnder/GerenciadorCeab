@@ -63,7 +63,8 @@ export const associadoSchema = z.object({
   contribuiu: z.string().optional(),
   debito: z.string().optional(),
   observacoes: z.string().optional(),
-  numeroRegistroAssociado: z.string().optional()
+  numeroRegistroAssociado: z.string().optional(),
+  estudosAnteriores:z.string().optional(),
 });
 
 export type Associado = z.infer<typeof associadoSchema>;

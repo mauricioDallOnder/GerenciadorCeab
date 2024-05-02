@@ -118,6 +118,7 @@ export default function FormRegistration() {
 
   watch("contribuiu", "nao");
   watch("debito", "nao");
+  watch("estudosAnteriores");
 
   const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
 
@@ -360,85 +361,109 @@ export default function FormRegistration() {
                 </Grid>
               </FormSection>
               {/* Campos estudante */}
-              <FormSection title="Seção 5 - Grupo de Estudo">
-                <Grid container spacing={2}>
-                  <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
-                </Grid>
-              </FormSection >
               <>
-               {/* Add Study History Section */}
-               <FormSection title="Seção 6 - Estudos Anteriores">
-               <Container >
-                    <Grid container spacing={2}  >
-                      {estudoFields.map((field, index) => (
-                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
-                          <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                            {/* Book Selection */}
-                            <FormControl fullWidth>
-                              <InputLabel>Selecione um livro que você já estudou</InputLabel>
-                              <Controller
-                                control={control}
-                                name={`HistoricoEstudoField.${index}.livro`}
-                                render={({ field }) => (
-                                  <Select
-                                    {...field}
-                                    label="Livro"
-                                    value={field.value || ''}
-                                    onChange={field.onChange}
-                                  >
-                                    {/* Assume we have an array named `livrosDisponiveis` */}
-                                    {livrosDisponiveis.map(livro => (
-                                      <MenuItem key={livro} value={livro}>{livro}</MenuItem>
-                                    ))}
-                                  </Select>
-                                )}
-                              />
-                            </FormControl>
 
-                            {/* Year of Study */}
-                            <TextField
-                              {...register(`HistoricoEstudoField.${index}.ano`)}
-                              label="Em qual ano você fez esse estudo? Ex: '2014 a 2016' ou apenas '2019'"
-                              variant="outlined"
-                              fullWidth
-                            />
 
-                            {/* Free Observations */}
-                            <TextareaAutosize
-                              {...register(`HistoricoEstudoField.${index}.observacoes`)}
-                              placeholder="Escreva aqui os cursos, seminários ou outros estudos que você já realizou"
-                              style={{
-                                width: '100%',
-                                padding: '8px',
-                                border: '1px solid #ccc',
-                                borderRadius: '4px',
-                                resize: 'vertical',
-                              }}
-                            />
 
-                          </CardContent>
-                          <CardActions>
-                            <IconButton color="error" onClick={() => removeEstudo(index)}>
-                              <DeleteIcon />
-                              <Typography sx={{ color: "red", ml: "2px" }}>Remover Estudos Adicionados</Typography>
-                            </IconButton>
-                          </CardActions>
-                        </Card>
-                      ))}
-                    </Grid>
-                    {/* Button to Add a New Entry */}
-                  <Button
-                    startIcon={<AddCircleOutlineIcon />}
-                    variant="contained"
-                    color="success"
-                    onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
-                    sx={{ mt: 2, width: '100%' }}
-                  >
-                   Clique aqui para adicionar estudos já realizados
-                  </Button>
+
+                {/* Add Study History Section */}
+                <FormSection title="Seção 5 - Grupo de Estudo e Estudos Anteriores">
+                  <Container >
+                    <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Você é estudante da casa?</InputLabel>
+                    <Select
+                      variant="filled"
+                    
+                      fullWidth
+                      {...register("estudosAnteriores")}
+                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
+                      defaultValue="nao">
+                      <MenuItem value="sim">Sim</MenuItem>
+                      <MenuItem value="nao">Não</MenuItem>
+                    </Select>
+                    {getValues("estudosAnteriores") === "sim" && (
+                      <>
+                       <FormSection title="Seção 5.1 - Selecione o grupo de estudo em que você está estudando atualmente">
+                        <Grid container spacing={2}>
+                          <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
+                        </Grid>
+                        </FormSection>
+                        <FormSection title="Seção 5.2 - Informe abaixo os estudos anteriores já realizados">
+                          <>
+                        <Grid container spacing={2}  >
+                          {estudoFields.map((field, index) => (
+                            <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                              <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                {/* Book Selection */}
+                                <FormControl fullWidth>
+                                  <InputLabel>Selecione um livro que você já estudou</InputLabel>
+                                  <Controller
+                                    control={control}
+                                    name={`HistoricoEstudoField.${index}.livro`}
+                                    render={({ field }) => (
+                                      <Select
+                                        {...field}
+                                        label="Livro"
+                                        value={field.value || ''}
+                                        onChange={field.onChange}
+                                      >
+                                        {/* Assume we have an array named `livrosDisponiveis` */}
+                                        {livrosDisponiveis.map(livro => (
+                                          <MenuItem key={livro} value={livro}>{livro}</MenuItem>
+                                        ))}
+                                      </Select>
+                                    )}
+                                  />
+                                </FormControl>
+
+                                {/* Year of Study */}
+                                <TextField
+                                  {...register(`HistoricoEstudoField.${index}.ano`)}
+                                  label="Em qual ano você fez esse estudo? Ex: '2014 a 2016' ou apenas '2019'"
+                                  variant="outlined"
+                                  fullWidth
+                                />
+
+                                {/* Free Observations */}
+                                <TextareaAutosize
+                                  {...register(`HistoricoEstudoField.${index}.observacoes`)}
+                                  placeholder="Escreva aqui os cursos, seminários ou outros estudos que você já realizou"
+                                  style={{
+                                    width: '100%',
+                                    padding: '8px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    resize: 'vertical',
+                                  }}
+                                />
+
+                              </CardContent>
+                              <CardActions>
+                                <IconButton color="error" onClick={() => removeEstudo(index)}>
+                                  <DeleteIcon />
+                                  <Typography sx={{ color: "red", ml: "2px" }}>Remover Estudos Adicionados</Typography>
+                                </IconButton>
+                              </CardActions>
+                            </Card>
+                          ))}
+                        </Grid>
+                        {/* Button to Add a New Entry */}
+                        <Button
+                          startIcon={<AddCircleOutlineIcon />}
+                          variant="contained"
+                          color="success"
+                          onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
+                          sx={{ mt: 2, width: '100%' }}
+                        >
+                          Clique aqui para adicionar estudos já realizados
+                        </Button>
+                        </>
+                        </FormSection>
+                      </>
+                    )}
                   </Container>
-                  </FormSection>
-                  
+
+                </FormSection>
+
               </>
               {/* Campos trabalhador/voluntário */}
               <FormSection title="Seção 7 - Trabalho na casa" >
