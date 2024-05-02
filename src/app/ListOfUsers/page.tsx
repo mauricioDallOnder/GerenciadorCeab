@@ -80,8 +80,8 @@ export default function ListOfUsers() {
             renderCell: (params) => {
               const data: Volunteer = {
                   campoNome: params.row.col2,
-                  campoRG: params.row.col4,
-                  campoCPF: params.row.col5,
+                  campoRG: params.row.col5,
+                  campoCPF: params.row.col4,
                   campoRua: params.row.col6,
                   campoNumero: params.row.col7,
                   campoBairro: params.row.col8,
