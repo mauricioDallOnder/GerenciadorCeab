@@ -47,8 +47,24 @@ export default function FormRegistration() {
         tipo: [],
         TipoMediunidade: [],
       },
-
-
+      contribuicao: [
+        {
+          tipoContribuicao: "NaoContribuiu",
+          valorContribuicao: "0",
+          dataContribuicao: "09/09/9999",
+        },
+      ],
+      possuiDebito: [
+        {
+          tipoDebito: "Pix",
+          valorDebito: "0",
+          dataDebito: "09/09/9999",
+        },
+      ],
+      debito:"não",
+      estudosAnteriores:"nao",
+      evangelizacao:"não",
+      contribuiu:"não"
     },
   });
 
@@ -159,7 +175,7 @@ export default function FormRegistration() {
             dataDebito: "09/09/9999",
           },
         ],
-
+        debito:"não",
       };
     } else {
       // Itera sobre cada contribuição para converter os valores de string para número
@@ -186,17 +202,18 @@ export default function FormRegistration() {
       };
     }
     console.log("Dados para submissão:", dadosParaSubmissao);
-
-    axios.post('/api/createDataOnFirebase', dadosParaSubmissao)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-        setIsSubmitting(false); // Resetar o estado de submissão
-      });
-    alert('dados cadastrados com sucesso')
-    methods.reset(); // Limpar os campos após o envio bem sucedido
+    
+       axios.post('/api/createDataOnFirebase', dadosParaSubmissao)
+         .then(function (response) {
+           console.log(response);
+         })
+         .catch(function (error) {
+           console.log(error);
+           setIsSubmitting(false); // Resetar o estado de submissão
+         });
+       alert('dados cadastrados com sucesso')
+       
+    // methods.reset(); // Limpar os campos após o envio bem sucedido
     setIsSubmitting(false); // Resetar o estado de submissão
   };
 
@@ -331,14 +348,14 @@ export default function FormRegistration() {
                         {...register("associacao.Tiposocio")}
                         label='selecione'
                       >
-                        
-                          <MenuItem  value="Efetivo">
+
+                        <MenuItem value="Efetivo">
                           Efetivo
-                          </MenuItem>
-                          <MenuItem  value="Contribuinte">
-                         Contribuinte
-                          </MenuItem>
-                        
+                        </MenuItem>
+                        <MenuItem value="Contribuinte">
+                          Contribuinte
+                        </MenuItem>
+
                       </Select>
                     </FormControl>
                   </Grid>
@@ -481,7 +498,7 @@ export default function FormRegistration() {
 
               <FormSection title="Seção 5 - Evangelização">
                 <Container >
-               
+
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Você participa da evangelização?</InputLabel>
                   <Select
                     variant="filled"
@@ -495,7 +512,7 @@ export default function FormRegistration() {
                   </Select>
                   {getValues("evangelizacao") === "sim" && (
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6} sx={{mt:2}}>
+                      <Grid item xs={12} sm={6} sx={{ mt: 2 }}>
                         <FormControl fullWidth >
                           <InputLabel >Qual é a sua função?</InputLabel>
                           <Select
@@ -513,7 +530,7 @@ export default function FormRegistration() {
                         </FormControl>
                       </Grid>
 
-                      <Grid item xs={12} sm={6}  sx={{mt:2}}>
+                      <Grid item xs={12} sm={6} sx={{ mt: 2 }}>
                         <FormControl fullWidth >
                           <InputLabel >Você participa do Ciclo da Família?</InputLabel>
                           <Select
@@ -533,7 +550,7 @@ export default function FormRegistration() {
 
                     </Grid>
                   )}
-                 
+
                 </Container>
               </FormSection>
 
