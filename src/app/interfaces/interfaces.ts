@@ -42,6 +42,10 @@ export const associadoSchema = z.object({
     ano: z.string(),
     observacoes: z.string(),
   })).optional(),
+  EvangelizacaoInfoField:z.object({ 
+    funcaoEvangelizacao: z.string(),
+    ciclofamilia:z.string(),
+  }).optional(),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),
     diaTrabalha: z.string(),
@@ -65,6 +69,7 @@ export const associadoSchema = z.object({
   observacoes: z.string().optional(),
   numeroRegistroAssociado: z.string().optional(),
   estudosAnteriores:z.string().optional(),
+  evangelizacao:z.string().optional(),
 });
 
 export type Associado = z.infer<typeof associadoSchema>;
