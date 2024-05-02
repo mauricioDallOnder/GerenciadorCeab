@@ -64,8 +64,18 @@ export default function FormRegistration() {
       debito:"não",
       estudosAnteriores:"nao",
       evangelizacao:"não",
-      contribuiu:"não"
+      contribuiu:"não",
+      GrupoEstudoInfoField:{
+        livro: "Não está estudando atualmente",
+        facilitador: "-",
+        dia: "-",
+        turno: "-",
+        horario:"-",
+        sala: "-",
+        uuid: "-",
+      }
     },
+   
   });
 
   const {

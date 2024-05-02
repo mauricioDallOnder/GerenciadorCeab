@@ -14,7 +14,7 @@ export const associadoSchema = z.object({
     cidade: z.string().min(1, { message: "O campo cidade é obrigatório" }),
     uf: z.string()
   }),
-  dataCadastro:z.string(),
+  dataCadastro:z.string().optional(),
   endereco: z.object({
     logradouro: z.string().min(1, { message: "O campo rua é obrigatório" }),
     numero: z.string().min(1, { message: "O campo número é obrigatório" }),
