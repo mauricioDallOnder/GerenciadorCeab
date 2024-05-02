@@ -13,7 +13,7 @@ import { StyledDataGrid } from "@/utils/styles";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useCeabContext } from "@/context/context";
-import PreviousStudiesModal from "../components/Modais/ PreviousStudiesModal";
+import {PreviousStudiesModal} from "../components/Modais/ PreviousStudiesModal";
 export default function ListOfStudents() {
     const { usuariosData } = useCeabContext();
 
