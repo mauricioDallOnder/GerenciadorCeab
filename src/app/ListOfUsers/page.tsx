@@ -75,8 +75,8 @@ export default function ListOfUsers() {
         },
         {
             field: "Termo",
-            headerName: "Gerar termo",
-            width: 150,
+            headerName: "Gerar termo de voluntariado",
+            width: 200,
             renderCell: (params) => {
               const data: Volunteer = {
                   campoNome: params.row.col2,
@@ -90,6 +90,7 @@ export default function ListOfUsers() {
               return (
                 <Button
                   variant="contained"
+                  color='secondary'
                   onClick={() => CreateVolunteerAgreement(data)}
                 >
                   Gerar Termo
