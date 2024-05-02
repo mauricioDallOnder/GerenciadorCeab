@@ -37,6 +37,11 @@ export const associadoSchema = z.object({
     sala: z.string(),
     uuid: z.string().optional()
   }),
+  HistoricoEstudoField:  z.array(z.object({
+    livro: z.string(),
+    ano: z.string(),
+    observacoes: z.string(),
+  })).optional(),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),
     diaTrabalha: z.string(),

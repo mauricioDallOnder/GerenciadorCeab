@@ -17,6 +17,37 @@ export const tipoVinculoComCeab=[
 "Expositor/Palestrante",
 ]
 
+export const livrosDisponiveis=[
+'Tomo II',
+'Obras André Luiz',
+'IEE-Introdução ao Estudo do Espiritismo',
+'Tomo I',
+'Tomo II',
+'EADE I',
+'EADE II',
+'EADE II',
+'EADE III',
+'EADE IV',
+'Psicologia de Joanna de Angelis',
+'EADE II',
+'IEE-Introdução ao Estudo do Espiritismo',
+'Tomo I',
+'Tomo II',
+'EADE I',
+'Tomo III',
+'EADE II',
+'EADE III',
+'EADE IV',
+'EADE V',
+'O livro dos Espíritos',
+'Estudo do Espiritismo',
+'EADE I',
+'EADE II',
+'Mediunidade: Estudo e Prática I',
+'Mediunidade: Estudo e Prática II',
+'Mediunidade: Estudo e Prática III',
+'Mediunidade: Estudo e Prática II']
+
 export const tipoMediunidade=['Médium de Efeitos Físicos',' Médium de Psicografia','Médium de Psicofonia','Médium Sensitivo','Médium de Vidência',' Médium de Sonâmbulismo','Médium de Cura']
 
 export const siglas = [
