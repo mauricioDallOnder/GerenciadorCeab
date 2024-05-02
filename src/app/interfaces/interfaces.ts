@@ -7,7 +7,7 @@ export const associadoSchema = z.object({
   id: z.string().optional(),
   nome: z.string().min(1, { message: "O campo nome é obrigatório" }),
   cpf: z.string().regex(cpfRegex, { message: "CPF inválido, verifique se usou apenas números e se o campo tem 11 números" }),
-  rg: z.number(),
+  rg: z.string(),
   nascimento: z.string().min(1, { message: "O campo nascimento é obrigatório" }),
   estadoCivil: z.string().min(1, { message: "O campo estado civil é obrigatório" }),
   naturalidade: z.object({

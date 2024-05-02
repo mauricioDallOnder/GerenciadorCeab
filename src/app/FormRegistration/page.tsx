@@ -235,7 +235,7 @@ export default function FormRegistration() {
                     helperText={errors.nome?.message} />
                   <InputField register={register} name="cpf" label="CPF" type='text' error={Boolean(errors.cpf)}
                     helperText={errors.cpf?.message} />
-                    <InputField register={register} name="rg" label="RG" type='number' error={Boolean(errors.rg)}
+                    <InputField register={register} name="rg" label="RG" type='text' error={Boolean(errors.rg)}
                     helperText={errors.rg?.message} />
                   <InputField register={register} name="nascimento" label="Data de nascimento" type='date' error={Boolean(errors.nascimento)}
                     helperText={errors.nascimento?.message} />
