@@ -192,13 +192,14 @@ export default function FormRegistration() {
         ...debito,
         valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
       }));
-
+      const mycadastro = new Date(Date.now()).toLocaleString().split(",")[0];
       // Cria um novo objeto de dados com os valores convertidos para os casos de "sim contribuiu"
       dadosParaSubmissao = {
         ...data,
         id: geraUUid,
         contribuicao: contribuicoesComValoresConvertidos,
         possuiDebito: DebitosComValoresConvertidos,
+        dataCadastro:mycadastro
       };
     }
     console.log("Dados para submissão:", dadosParaSubmissao);

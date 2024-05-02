@@ -188,6 +188,7 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="estadoCivil" label="Estado Civil" type='text' />
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                             <UpdateInputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
+                            <UpdateInputField register={register} name="dataCadastro" label="Data de Cadastro no aplicativo" type='text'/>
                         </Grid>
                     </FormSection>
 

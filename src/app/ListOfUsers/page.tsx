@@ -15,6 +15,7 @@ import { useSession} from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useCeabContext } from "@/context/context";
 import { CreateVolunteerAgreement, Volunteer } from "../../utils/TermoPDF";
+import { CreateCarnes, IISocio } from "@/utils/Carnes";
 export default function ListOfUsers() {
     const { usuariosData } = useCeabContext();
    
@@ -75,7 +76,7 @@ export default function ListOfUsers() {
         },
         {
             field: "Termo",
-            headerName: "Gerar termo de voluntariado",
+            headerName: "Termo de Voluntariado",
             width: 200,
             renderCell: (params) => {
               const data: Volunteer = {
@@ -97,7 +98,29 @@ export default function ListOfUsers() {
                 </Button>
               );
             },
-          }          
+          },
+          {
+            field: "Carne",
+            headerName: "Carnê de Contribuição",
+            width: 200,
+            renderCell: (params) => {
+                
+              const data: IISocio = {
+                campoNome: params.row.col2,
+                numbS: params.row.col1,
+              };
+          
+              return (
+                <Button
+                  variant="contained"
+                  color='warning'
+                  onClick={() => CreateCarnes(data)}
+                >
+                  Gerar Carnê
+                </Button>
+              );
+            },
+          }                    
     ];
 
     const rows: GridRowsProp = usuariosData.map(usuario => ({
