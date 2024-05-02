@@ -28,7 +28,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, livrosDisponiveis, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
@@ -71,6 +71,11 @@ export default function UserUpdateForm() {
         control,
         name: "trabahadorInfoField",
     });
+
+    const { fields: estudoFields, append: appendEstudo, remove: removeEstudo } = useFieldArray({
+        control,
+        name: "HistoricoEstudoField",
+      });
 
     const [loading, setLoading] = useState(false);
     const [VinculoCasa, setVinculoCasa] = React.useState<string[]>([]);
@@ -294,6 +299,81 @@ export default function UserUpdateForm() {
                             />
                         </Grid>
                     </FormSection>
+                    <>
+               {/* Add Study History Section */}
+               <FormSection title="Seção 6 - Estudos Anteriores">
+               <Container >
+                    <Grid container spacing={2}  >
+                      {estudoFields.map((field, index) => (
+                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                          <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            {/* Book Selection */}
+                            <FormControl fullWidth>
+                              <InputLabel>Selecione um livro que você já estudou</InputLabel>
+                              <Controller
+                                control={control}
+                                name={`HistoricoEstudoField.${index}.livro`}
+                                render={({ field }) => (
+                                  <Select
+                                    {...field}
+                                    label="Livro"
+                                    value={field.value || ''}
+                                    onChange={field.onChange}
+                                  >
+                                   
+                                    {livrosDisponiveis.map(livro => (
+                                      <MenuItem key={livro} value={livro}>{livro}</MenuItem>
+                                    ))}
+                                  </Select>
+                                )}
+                              />
+                            </FormControl>
+
+                            {/* Year of Study */}
+                            <TextField
+                              {...register(`HistoricoEstudoField.${index}.ano`)}
+                              label="Em qual ano você fez esse estudo? Ex: '2014 a 2016' ou apenas '2019'"
+                              variant="outlined"
+                              fullWidth
+                            />
+
+                            {/* Free Observations */}
+                            <TextareaAutosize
+                              {...register(`HistoricoEstudoField.${index}.observacoes`)}
+                              placeholder="Escreva aqui os cursos, seminários ou outros estudos que você já realizou"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                resize: 'vertical',
+                              }}
+                            />
+
+                          </CardContent>
+                          <CardActions>
+                            <IconButton color="error" onClick={() => removeEstudo(index)}>
+                              <DeleteIcon />
+                              <Typography sx={{ color: "red", ml: "2px" }}>Remover Estudos Adicionados</Typography>
+                            </IconButton>
+                          </CardActions>
+                        </Card>
+                      ))}
+                    </Grid>
+                    {/* Button to Add a New Entry */}
+                  <Button
+                    startIcon={<AddCircleOutlineIcon />}
+                    variant="contained"
+                    color="success"
+                    onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
+                    sx={{ mt: 2, width: '100%' }}
+                  >
+                   Clique aqui para adicionar estudos já realizados
+                  </Button>
+                  </Container>
+                  </FormSection>
+                  
+              </>
                     {/* Campos trabalhador/voluntário */}
                     <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
                         <Grid container spacing={2}>
