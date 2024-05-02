@@ -234,6 +234,8 @@ export default function FormRegistration() {
                     helperText={errors.nome?.message} />
                   <InputField register={register} name="cpf" label="CPF" type='text' error={Boolean(errors.cpf)}
                     helperText={errors.cpf?.message} />
+                    <InputField register={register} name="rg" label="RG" type='text' error={Boolean(errors.rg)}
+                    helperText={errors.rg?.message} />
                   <InputField register={register} name="nascimento" label="Data de nascimento" type='date' error={Boolean(errors.nascimento)}
                     helperText={errors.nascimento?.message} />
                   <Grid item xs={12} sm={6}>
@@ -296,7 +298,7 @@ export default function FormRegistration() {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <InputField register={register} name="endereco.complemento" label="Complemento" type='text' />
+                  <InputField register={register} name="endereco.complemento" label="Bairro" type='text' />
                   <InputField register={register} name="endereco.telefone" label="Telefone" type='text' />
                   <InputField register={register} name="endereco.email" label="Email" type='email' />
 

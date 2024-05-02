@@ -183,6 +183,7 @@ export default function UserUpdateForm() {
                         <Grid container spacing={2}>
                             <UpdateInputField register={register} name="nome" label="Nome Completo" type='text' />
                             <UpdateInputField register={register} name="cpf" label="CPF" type='text' />
+                            <UpdateInputField register={register} name="rg" label="RG" type='number' />
                             <UpdateInputField register={register} name="nascimento" label="Data de Nascimento" type='date' />
                             <UpdateInputField register={register} name="estadoCivil" label="Estado Civil" type='text' />
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
@@ -197,7 +198,7 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                             <UpdateInputField register={register} name="endereco.cep" label="CEP" type='text' />
                             <UpdateInputField register={register} name="endereco.uf" label="UF" type='text' />
-                            <UpdateInputField register={register} name="endereco.complemento" label="Complemento" type='text' />
+                            <UpdateInputField register={register} name="endereco.complemento" label="Bairro" type='text' />
                             <UpdateInputField register={register} name="endereco.telefone" label="Telefone" type='text' />
                             <UpdateInputField register={register} name="endereco.email" label="Email" type='email' />
                         </Grid>

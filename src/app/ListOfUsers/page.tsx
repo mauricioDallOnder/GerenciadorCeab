@@ -2,16 +2,11 @@
 import {
     GridColDef,
     GridRowsProp,
-    GridToolbar,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton,
+    GridToolbar
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { Associado, TrabahadorInfoField } from "../interfaces/interfaces";
-import axios from "axios";
+
 import { Box, Button} from "@mui/material";
 import CustomPagination from "../components/TableCustomPagination";
 import {StyledDataGrid } from "@/utils/styles";
@@ -19,6 +14,7 @@ import WorkerDetailsModal from "../components/Modais/WorkerDetailsModal";
 import { useSession} from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useCeabContext } from "@/context/context";
+import { CreateVolunteerAgreement, Volunteer } from "../../utils/TermoPDF";
 export default function ListOfUsers() {
     const { usuariosData } = useCeabContext();
    
@@ -52,14 +48,17 @@ export default function ListOfUsers() {
         { field: "col2", headerName: "Nome", width: 300 },
         { field: "col3", headerName: "Nascimento", width: 150 },
         { field: "col4", headerName: "CPF", width: 150 },
-        { field: "col5", headerName: "Endereço", width: 300 },
-        { field: "col6", headerName: "Nº", width: 100 },
-        { field: "col7", headerName: "Telefone", width: 150 },
-        { field: "col8", headerName: "Email", width: 200 },
-        { field: "col9", headerName: "Tipo de Mediunidade", width: 300 },
-        { field: "col10", headerName: "Data de Entrada", width: 200 },
-        { field: "col11", headerName: "Tipo de Vínculo", width: 250 },
-        { field: "col12", headerName: "Tipo de Associação", width: 250 },
+        { field: "col5", headerName: "RG", width: 150 },
+        { field: "col6", headerName: "Endereço", width: 300 },
+        { field: "col7", headerName: "Nº", width: 100 },
+        { field: "col8", headerName: "Bairro", width: 150 },
+        { field: "col9", headerName: "Telefone", width: 150 },
+        { field: "col10", headerName: "Email", width: 200 },
+        { field: "col11", headerName: "Tipo de Mediunidade", width: 300 },
+        { field: "col12", headerName: "Data de Entrada", width: 200 },
+        { field: "col13", headerName: "Tipo de Vínculo", width: 250 },
+        { field: "col14", headerName: "Tipo de Associação", width: 250 },
+
         {
             field: "details",
             headerName: "Consultar Dias de Trabalho",
@@ -74,6 +73,30 @@ export default function ListOfUsers() {
                 </Button>
             ),
         },
+        {
+            field: "Termo",
+            headerName: "Gerar termo",
+            width: 150,
+            renderCell: (params) => {
+              const data: Volunteer = {
+                  campoNome: params.row.col2,
+                  campoRG: params.row.col4,
+                  campoCPF: params.row.col5,
+                  campoRua: params.row.col6,
+                  campoNumero: params.row.col7,
+                  campoBairro: params.row.col8,
+              };
+          
+              return (
+                <Button
+                  variant="contained"
+                  onClick={() => CreateVolunteerAgreement(data)}
+                >
+                  Gerar Termo
+                </Button>
+              );
+            },
+          }          
     ];
 
     const rows: GridRowsProp = usuariosData.map(usuario => ({
@@ -82,15 +105,17 @@ export default function ListOfUsers() {
         col2: usuario.nome,
         col3: usuario.nascimento,
         col4: usuario.cpf,
-        col5: usuario.endereco.logradouro,
-        col6: usuario.endereco.numero,
-        col7: usuario.endereco.telefone,
-        col8: usuario.endereco.email,
-        col9: usuario.associacao?.TipoMediunidade,
-        col10: usuario.associacao?.dataEntrada,
-        col11: usuario.associacao?.tipo,
-        col12:usuario.associacao?.Tiposocio,
-        details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
+        col5: usuario.rg,
+        col6: usuario.endereco.logradouro,
+        col7: usuario.endereco.numero,
+        col8: usuario.endereco.complemento,
+        col9: usuario.endereco.telefone,
+        col10: usuario.endereco.email,
+        col11: usuario.associacao?.TipoMediunidade,
+        col12: usuario.associacao?.dataEntrada,
+        col13: usuario.associacao?.tipo,
+        col14:usuario.associacao?.Tiposocio,
+        details: usuario.trabahadorInfoField,
     }));
 
    
@@ -125,6 +150,7 @@ export default function ListOfUsers() {
                 onClose={() => setModalOpen(false)}
                 details={selectedWorkers}
             />
+           
         </Box>
     );
 

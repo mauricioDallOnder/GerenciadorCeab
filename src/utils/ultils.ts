@@ -127,3 +127,38 @@ export const refreshPage = () => {
   // Recarrega a página atual
   window.location.reload();
 };
+
+
+export function formatDate(isoString: string | null | undefined): string {
+  if (!isoString) {
+    return "";
+  }
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) {
+    // a data não é válida
+    return "";
+  }
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Janeiro é 0!
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+export default function getMonthName(monthNumber: number) {
+  const months = [
+      'janeiro',
+      'fevereiro',
+      'março',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro'
+  ];
+  return months[monthNumber];
+}

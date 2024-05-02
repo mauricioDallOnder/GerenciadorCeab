@@ -1,7 +1,7 @@
 // firebaseConfig.ts
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
-
+import { getStorage } from "firebase/storage"; 
 const firebaseConfig = {
 apiKey: "AIzaSyCGuEHNYb0vUSw-ojk8GVpW-MuvUHptWtY",
   authDomain: "bancodedadosceab.firebaseapp.com",
@@ -17,3 +17,4 @@ const app = initializeApp(firebaseConfig);
 
 // Inicializa e exporta o Firestore Realtime Database
 export const database = getDatabase(app);
+export const storage = getStorage(app);
