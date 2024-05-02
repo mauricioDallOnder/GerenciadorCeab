@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Box, Typography, Button, Divider } from '@mui/material';
-import { WorkerDetailsModalProps } from '../interfaces/interfaces';
+import { HistoricoEstudoModalProps } from '../../interfaces/interfaces';
 
-const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, details }) => {
+const  PreviousStudiesModal: React.FC<HistoricoEstudoModalProps> = ({ open, onClose, details }) => {
     return (
         <Modal
             open={open}
@@ -24,17 +24,16 @@ const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, 
                 borderRadius: '16px' // Cantos arredondados
             }}>
                 <Typography id="worker-modal-title" variant="h6" component="h2" color="primary">
-                    Dia de Trabalho:
+                    Estudos Anteriores
                 </Typography>
                 <Box sx={{ mt: 2 }}>
                     {details.map((worker, index) => (
                         <>
-                        <Box key={worker.id} sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}> 
-                            <Typography variant="body1" color="textPrimary"><strong>Dia de Trabalho:</strong> {worker.diaTrabalha}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Função:</strong> {worker.funcao}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Horário:</strong> {worker.horarioDeTrabalho}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Turno:</strong> {worker.turnoDeTrabalho}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Dirigente:</strong> {worker.nomeDirigente}</Typography>
+                        <Box key={index} sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}> 
+                            <Typography variant="body1" color="textPrimary"><strong>Livro Estudado:</strong> {worker.livro}</Typography>
+                            <Typography variant="body1" color="textPrimary"><strong>Período de estudo:</strong> {worker.ano}</Typography>
+                            <Typography variant="body1" color="textPrimary"><strong>Cursos realizados:</strong> {worker.observacoes}</Typography>
+                            
                           
                         </Box>
                         <Divider sx={{ my: 2, bgcolor: 'secondary.main' }} />
@@ -49,4 +48,4 @@ const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, 
     );
 };
 
-export default WorkerDetailsModal;
+export default  PreviousStudiesModal;

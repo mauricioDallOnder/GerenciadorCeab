@@ -272,7 +272,7 @@ export default function UserUpdateForm() {
                                     )}
                                 />
                             </Grid>
-
+                            <UpdateInputField register={register} name="associacao.Tiposocio" label="Tipo de associação" />
                             <UpdateInputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
                             <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='number' />
                         </Grid>

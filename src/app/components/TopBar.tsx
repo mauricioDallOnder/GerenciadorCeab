@@ -24,6 +24,7 @@ const pages = [
   { title: "Cadastro", link: "/FormRegistration" },
   { title: "Atualização de dados", link: "/FormUpdate" },
   { title: "Lista de Associados", link: "/ListOfUsers" },
+  { title: "Lista de Estudantes", link: "/ListOfStudents" },
   { title: "Relatórios", link: "/Reports" },
 ];
 //teste

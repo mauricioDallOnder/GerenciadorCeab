@@ -27,6 +27,7 @@ export const associadoSchema = z.object({
     tipo: z.array(z.string()).optional(),
     TipoMediunidade: z.array(z.string()).optional(),
     dataEntrada: z.string().min(1, { message: "O campo data de entrada é obrigatório" }),
+    Tiposocio:z.string(),
   }),
   GrupoEstudoInfoField: z.object({
     livro: z.string(),
@@ -88,6 +89,18 @@ export interface TrabahadorInfoField {
   nomeDirigente: string;
   turnoDeTrabalho: string;
   horarioDeTrabalho: string;
+}
+
+export interface HistoricoEstudoField{
+  livro: string;
+  ano: string;
+  observacoes: string;
+}
+
+export interface HistoricoEstudoModalProps{
+  open: boolean;
+  onClose: () => void;
+  details: HistoricoEstudoField[];
 }
 
 export interface WorkerDetailsModalProps {

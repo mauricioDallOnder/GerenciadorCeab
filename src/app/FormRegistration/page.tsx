@@ -323,6 +323,25 @@ export default function FormRegistration() {
                       )}
                     />
                   </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth >
+                      <InputLabel >Selecione o seu tipo de associação</InputLabel>
+                      <Select
+
+                        {...register("associacao.Tiposocio")}
+                        label='selecione'
+                      >
+                        
+                          <MenuItem  value="Efetivo">
+                          Efetivo
+                          </MenuItem>
+                          <MenuItem  value="Contribuinte">
+                         Contribuinte
+                          </MenuItem>
+                        
+                      </Select>
+                    </FormControl>
+                  </Grid>
                   {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                   <Grid item xs={12} sm={6}>
                     <Controller

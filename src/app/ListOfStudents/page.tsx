@@ -5,19 +5,19 @@ import {
     GridToolbar,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { Associado, TrabahadorInfoField } from "../interfaces/interfaces";
+import { Associado, HistoricoEstudoField } from "../interfaces/interfaces";
 import axios from "axios";
-import { Box, Button} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CustomPagination from "../components/TableCustomPagination";
-import {StyledDataGrid } from "@/utils/styles";
-import WorkerDetailsModal from "../components/Modais/WorkerDetailsModal";
-import { useSession} from "next-auth/react";
+import { StyledDataGrid } from "@/utils/styles";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 import { useCeabContext } from "@/context/context";
-export default function ListOfUsers() {
+import PreviousStudiesModal from "../components/Modais/ PreviousStudiesModal";
+export default function ListOfStudents() {
     const { usuariosData } = useCeabContext();
-   
-    const [selectedWorkers, setSelectedWorkers] = useState<TrabahadorInfoField[]>([]);
+
+    const [selectedWorkers, setSelectedWorkers] = useState<HistoricoEstudoField[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const PAGE_SIZE = 15;
     const [paginationModel, setPaginationModel] = useState({
@@ -25,7 +25,7 @@ export default function ListOfUsers() {
         page: 0,
     });
 
-   const router = useRouter();
+    const router = useRouter();
     const { status } = useSession({
         required: true, // Indica que a sessão é necessária
         onUnauthenticated() {
@@ -34,30 +34,29 @@ export default function ListOfUsers() {
         }
     });
 
-   
 
-    const handleOpenModal = (trabahadorInfoField: TrabahadorInfoField[] | undefined) => {
-        setSelectedWorkers(trabahadorInfoField || []);  // Garantir que seja um array
+
+    const handleOpenModal = (HistoricoEstudoField: HistoricoEstudoField[] | undefined) => {
+        setSelectedWorkers(HistoricoEstudoField || []);  // Garantir que seja um array
         setModalOpen(true);
     };
 
 
     const columns: GridColDef[] = [
-        { field: "col1", headerName: "Nº do Associado", width: 130 },
-        { field: "col2", headerName: "Nome", width: 300 },
-        { field: "col3", headerName: "Nascimento", width: 150 },
-        { field: "col4", headerName: "CPF", width: 150 },
-        { field: "col5", headerName: "Endereço", width: 300 },
-        { field: "col6", headerName: "Nº", width: 100 },
-        { field: "col7", headerName: "Telefone", width: 150 },
-        { field: "col8", headerName: "Email", width: 200 },
-        { field: "col9", headerName: "Tipo de Mediunidade", width: 300 },
-        { field: "col10", headerName: "Data de Entrada", width: 200 },
-        { field: "col11", headerName: "Tipo de Vínculo", width: 250 },
-        { field: "col12", headerName: "Tipo de Associação", width: 250 },
+
+        { field: "col1", headerName: "Nome", width: 300 },
+        { field: "col2", headerName: "Telefone", width: 150 },
+        { field: "col3", headerName: "Email", width: 200 },
+        { field: "col4", headerName: "Turma de Estudo", width: 150 },
+        { field: "col5", headerName: "Facilitador", width: 200 },
+        { field: "col6", headerName: "Dia", width: 100 },
+        { field: "col7", headerName: "Turno", width: 100 },
+        { field: "col8", headerName: "Horário", width: 150 },
+        { field: "col9", headerName: "Sala", width: 100 },
+        { field: "col10", headerName: "Tipo de Mediunidade", width: 300 },
         {
             field: "details",
-            headerName: "Consultar Dias de Trabalho",
+            headerName: "Estudos Anteriores",
             width: 200,
             sortable: false,
             renderCell: (params) => (
@@ -73,19 +72,17 @@ export default function ListOfUsers() {
 
     const rows: GridRowsProp = usuariosData.map(usuario => ({
         id: usuario.id,
-        col1: usuario.numeroRegistroAssociado,
-        col2: usuario.nome,
-        col3: usuario.nascimento,
-        col4: usuario.cpf,
-        col5: usuario.endereco.logradouro,
-        col6: usuario.endereco.numero,
-        col7: usuario.endereco.telefone,
-        col8: usuario.endereco.email,
-        col9: usuario.associacao?.TipoMediunidade,
-        col10: usuario.associacao?.dataEntrada,
-        col11: usuario.associacao?.tipo,
-        col12:usuario.associacao?.Tiposocio,
-        details: usuario.trabahadorInfoField, // Certifique-se de que este campo está sendo preenchido corretamente
+        col1: usuario.nome,
+        col2: usuario.endereco.telefone,
+        col3: usuario.endereco.email,
+        col4: usuario.GrupoEstudoInfoField?.livro,
+        col5: usuario.GrupoEstudoInfoField?.facilitador,
+        col6: usuario.GrupoEstudoInfoField?.dia,
+        col7: usuario.GrupoEstudoInfoField?.turno,
+        col8: usuario.GrupoEstudoInfoField?.horario,
+        col9: usuario.GrupoEstudoInfoField?.sala,
+        col10: usuario.associacao?.TipoMediunidade,
+        details: usuario.HistoricoEstudoField, 
     }));
 
 
@@ -115,7 +112,7 @@ export default function ListOfUsers() {
                     columns={columns}
                 />
             </Box>
-            <WorkerDetailsModal
+            <PreviousStudiesModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 details={selectedWorkers}

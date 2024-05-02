@@ -176,40 +176,45 @@ export const modalStyleTemporaly = {
 
 export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   border: 0,
-  color: theme.palette.text.primary, // Texto com cor primária do tema
-  fontFamily: theme.typography.fontFamily, // Fonte do tema
-  WebkitFontSmoothing: "auto",
+  fontFamily: theme.typography.fontFamily,
   letterSpacing: "normal",
-  backgroundColor: theme.palette.text.secondary,
+  backgroundColor: "rgba(250, 250, 250, 0.65)", // Fundo mais transparente para harmonizar com o gradiente
   
   "& .MuiDataGrid-columnsContainer": {
-    backgroundColor: "#4a4a4a", // Cor mais escura para o cabeçalho
-    color: "#ffffff", // Texto do cabeçalho em branco para contraste
+    backgroundColor: "#3e3e3e", // Cabeçalho escuro
+    color: "#ffffff", // Texto claro no cabeçalho
   },
-  "& .MuiDataGrid-iconSeparator": {
-    display: "none",
-  },
-  // As bordas das células agora são mais visíveis
+  
   "& .MuiDataGrid-columnHeader, .MuiDataGrid-cell": {
-    borderRight: `1px solid ${theme.palette.divider}`, // Borda à direita das células
-    backgroundColor: "white", // Efeito ao passar o mouse
+    borderRight: `1px solid ${theme.palette.divider}`, // Bordas mais visíveis
   },
+
+  "& .MuiDataGrid-columnHeaderTitle": {
+    color: "black",
+    fontWeight: '600'
+  },
+  
   "& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell": {
-    borderBottom: `1px solid ${theme.palette.divider}`, // Borda inferior das células
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
-  // Cor de fundo das células para diferenciar do fundo do site
+  
   "& .MuiDataGrid-cell": {
-    color: theme.palette.text.secondary, // Cor do texto das células do tema
-    backgroundColor: "#e0e0e0", // Cor de fundo clara para as células
+    color: "#333333", // Texto escuro nas células
+    backgroundColor: "#e0e0e0", // Fundo mais claro para as células
   },
-  // Ajuste nos botões de paginação
+  
   "& .MuiPaginationItem-root": {
-    borderRadius: 0, // Botões de paginação sem bordas arredondadas
+    borderRadius: 0,
   },
+
   "& .MuiInputBase-input": {
-    color: "white",
+  
+    color: "#3e3e3e", // Fundo escuro para contraste
   },
-  "& .MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ptiqhd-MuiSvgIcon-root":{
-    backgroundColor:"white"
-  }       
+  
+  "& .MuiSvgIcon-root.MuiSvgIcon-fontSizeSmall": {
+    color: "#ffffff", // Ícones brancos para contraste
+  },
 }));
+
+
