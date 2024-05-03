@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
       // Refere-se ao caminho do arquivo DOCX no Storage
-      const filePath = "https://firebasestorage.googleapis.com/v0/b/bancodedadosceab.appspot.com/o/MODELO%20DE%20CARNE%CC%82%20NOVO.docx?alt=media&token=46b4b942-40e5-4cff-a8a9-6a2011cd8b0f";
+      const filePath = "https://firebasestorage.googleapis.com/v0/b/bancodedadosceab.appspot.com/o/MODELO%20DE%20CARNE%CC%82%20NOVO.docx?alt=media&token=cdb3e7e6-9aca-4988-a98e-bce41cb99209";
       const fileRef = ref(storage, filePath);
 
       // Obtem a URL de download direto
