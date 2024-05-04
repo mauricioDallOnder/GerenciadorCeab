@@ -1,11 +1,16 @@
-// app/components/PreviousStudiesModal.tsx
 import React from 'react';
 import { Modal, Box, Typography, Button, Divider } from '@mui/material';
 import { HistoricoEstudoModalProps } from '../../interfaces/interfaces';
 
+const extractYear = (yearStr: string): number => {
+    // Extrai apenas números do início da string até encontrar um não número ou hífen
+    const match = yearStr.match(/^\s*\d+/);
+    return match ? Number(match[0]) : Infinity; // Retorna Infinity para strings que não começam com um número
+}
+
 export const PreviousStudiesModal: React.FC<HistoricoEstudoModalProps> = ({ open, onClose, details }) => {
-    // Ordena a lista de detalhes pelo campo `ano` como número
-    const sortedDetails = details.sort((a, b) => Number(a.ano) - Number(b.ano));
+    // Ordena a lista de detalhes pelo primeiro ano encontrado na string
+    const sortedDetails = details.sort((a, b) => extractYear(a.ano) - extractYear(b.ano));
 
     return (
         <Modal
@@ -34,14 +39,14 @@ export const PreviousStudiesModal: React.FC<HistoricoEstudoModalProps> = ({ open
                 </Typography>
                 <Box sx={{ mt: 2 }}>
                     {sortedDetails.map((worker, index) => (
-                        <>
-                            <Box key={index} sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}>
+                        <React.Fragment key={index}>
+                            <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}>
                                 <Typography variant="body1" color="textPrimary"><strong>Livro Estudado:</strong> {worker.livro}</Typography>
                                 <Typography variant="body1" color="textPrimary"><strong>Período de estudo:</strong> {worker.ano}</Typography>
                                 <Typography variant="body1" color="textPrimary"><strong>Cursos realizados:</strong> {worker.observacoes}</Typography>
                             </Box>
                             <Divider sx={{ my: 2, bgcolor: 'secondary.main' }} />
-                        </>
+                        </React.Fragment>
                     ))}
                 </Box>
                 <Button color='error' variant='contained' onClick={onClose} sx={{

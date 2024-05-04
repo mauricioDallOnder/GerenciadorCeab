@@ -70,7 +70,9 @@ export default function ListOfStudents() {
         },
     ];
 
-    const rows: GridRowsProp = usuariosData.map(usuario => ({
+    const filtroEstudantes=usuariosData.filter(item=>item.GrupoEstudoInfoField.livro!=="Não está estudando atualmente")
+
+    const rows: GridRowsProp = filtroEstudantes.map(usuario => ({
         id: usuario.id,
         col1: usuario.nome,
         col2: usuario.endereco.telefone,

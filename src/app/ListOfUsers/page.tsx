@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import { useCeabContext } from "@/context/context";
 import { CreateVolunteerAgreement, Volunteer } from "../../utils/TermoPDF";
 import { CreateCarnes, IISocio } from "@/utils/Carnes";
+import { formatDate } from "@/utils/ultils";
 export default function ListOfUsers() {
     const { usuariosData } = useCeabContext();
    
@@ -56,9 +57,9 @@ export default function ListOfUsers() {
         { field: "col9", headerName: "Telefone", width: 150 },
         { field: "col10", headerName: "Email", width: 200 },
         { field: "col11", headerName: "Tipo de Mediunidade", width: 300 },
-        { field: "col12", headerName: "Data de Entrada", width: 200 },
+        { field: "col12", headerName: "Data de Entrada na casa", width: 200 },
         { field: "col13", headerName: "Tipo de Vínculo", width: 250 },
-        { field: "col14", headerName: "Tipo de Associação", width: 250 },
+        { field: "col14", headerName: "Tipo de Sócio", width: 250 },
 
         {
             field: "details",
@@ -120,14 +121,14 @@ export default function ListOfUsers() {
                 </Button>
               );
             },
-          }                    
+          },          
     ];
 
     const rows: GridRowsProp = usuariosData.map(usuario => ({
         id: usuario.id,
         col1: usuario.numeroRegistroAssociado,
         col2: usuario.nome,
-        col3: usuario.nascimento,
+        col3: formatDate(usuario.nascimento),
         col4: usuario.cpf,
         col5: usuario.rg,
         col6: usuario.endereco.logradouro,
@@ -136,7 +137,7 @@ export default function ListOfUsers() {
         col9: usuario.endereco.telefone,
         col10: usuario.endereco.email,
         col11: usuario.associacao?.TipoMediunidade,
-        col12: usuario.associacao?.dataEntrada,
+        col12: formatDate(usuario.associacao?.dataEntrada),
         col13: usuario.associacao?.tipo,
         col14:usuario.associacao?.Tiposocio,
         details: usuario.trabahadorInfoField,

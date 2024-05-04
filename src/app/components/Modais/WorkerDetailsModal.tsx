@@ -11,17 +11,19 @@ const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, 
             aria-describedby="worker-modal-description"
         >
             <Box sx={{
-                position: 'absolute', 
-                top: '50%', 
-                left: '50%', 
-                transform: 'translate(-50%, -50%)',
-                bgcolor: 'background.paper', // Ajuste para garantir cor de fundo adequada
-                boxShadow: 24, 
-                p: 4, 
-                maxWidth: 500, 
-                width: '100%', 
-                border: '2px solid #000', // Borda sutil para o modal
-                borderRadius: '16px' // Cantos arredondados
+                 position: 'absolute',
+                 top: '50%',
+                 left: '50%',
+                 transform: 'translate(-50%, -50%)',
+                 bgcolor: 'background.paper',
+                 boxShadow: 24,
+                 p: 4,
+                 maxWidth: 500,
+                 width: '100%',
+                 border: '2px solid #000',
+                 borderRadius: '16px',
+                 maxHeight: '80vh',
+                 overflowY: 'auto',
             }}>
                 <Typography id="worker-modal-title" variant="h6" component="h2" color="primary">
                     Dia de Trabalho:
@@ -41,7 +43,13 @@ const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, 
                         </>
                     ))}
                 </Box>
-                <Button color='error' variant='contained' onClick={onClose} sx={{ mt: 2,'&:hover': { bgcolor: 'secondary.dark' } }}>
+                <Button color='error' variant='contained' onClick={onClose} sx={{
+                    position: 'fixed', 
+                    top: 10, 
+                    right: '20%', 
+                    transform: 'translateX(50%)', 
+                    '&:hover': { bgcolor: 'secondary.dark' },
+                }}>
                     Fechar
                 </Button>
             </Box>
