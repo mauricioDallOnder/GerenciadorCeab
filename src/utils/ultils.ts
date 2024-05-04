@@ -3,7 +3,6 @@ export const DiasSemanas=[
 ]
 
 export const tipoVinculoComCeab=[
-  "-",
   "Dirigente",
 "Vice-Dirigente",
 "Recepcionista ",
@@ -50,7 +49,7 @@ export const livrosDisponiveis=[
 'Mediunidade: Estudo e Prática III',
 'Mediunidade: Estudo e Prática II']
 
-export const tipoMediunidade=['Médium de Efeitos Físicos',' Médium de Psicografia','Médium de Psicofonia','Médium Sensitivo','Médium de Vidência',' Médium de Sonâmbulismo','Médium de Cura']
+export const tipoMediunidade=['Não possuo mediunidade ostensiva','Médium de Efeitos Físicos',' Médium de Psicografia','Médium de Psicofonia','Médium Sensitivo','Médium de Vidência',' Médium de Sonâmbulismo','Médium de Cura']
 
 export const siglas = [
   'AC',

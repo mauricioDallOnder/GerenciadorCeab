@@ -45,8 +45,8 @@ export default function FormRegistration() {
     mode: 'all',
     defaultValues: {
       associacao: {
-        tipo: [],
-        TipoMediunidade: [],
+        tipo: ['Não informado'],
+        TipoMediunidade: ['Não possuo mediunidade ostensiva'],
       },
       contribuicao: [
         {
@@ -296,14 +296,14 @@ export default function FormRegistration() {
               {/* Campos de Endereço */}
               <FormSection title="Seção 2 - Endereço e Contatos">
                 <Grid container spacing={2}>
-                  <InputField register={register} name="endereco.logradouro" label="Rua" type='text' />
-                  <InputField register={register} name="endereco.numero" label="Número" type='text' />
-                  <InputField register={register} name="endereco.cidade" label="Cidade" type='text' />
-                  <InputField register={register} name="endereco.cep" label="CEP" type='text' />
-                  <InputField register={register} name="endereco.uf" label="UF" type='text' />
-                  <InputField register={register} name="endereco.complemento" label="Bairro" type='text' />
-                  <InputField register={register} name="endereco.telefone" label="Telefone" type='text' />
-                  <InputField register={register} name="endereco.email" label="Email" type='email' />
+                  <InputField register={register} name="endereco.logradouro" label="Rua" type='text' helperText={errors.endereco?.logradouro?.message} error={Boolean(errors.endereco?.logradouro)}/>
+                  <InputField register={register} name="endereco.numero" label="Número" type='text' helperText={errors.endereco?.numero?.message} error={Boolean(errors.endereco?.numero)}/>
+                  <InputField register={register} name="endereco.cidade" label="Cidade" type='text' helperText={errors.endereco?.cidade?.message} error={Boolean(errors.endereco?.cidade)} />
+                  <InputField register={register} name="endereco.cep" label="CEP" type='text' helperText={errors.endereco?.cep?.message} error={Boolean(errors.endereco?.cep)} />
+                  <InputField register={register} name="endereco.uf" label="UF" type='text' helperText={errors.endereco?.uf?.message} error={Boolean(errors.endereco?.uf)} />
+                  <InputField register={register} name="endereco.complemento" label="Bairro" type='text' helperText={errors.endereco?.complemento?.message} error={Boolean(errors.endereco?.complemento)}  />
+                  <InputField register={register} name="endereco.telefone" label="Telefone" type='text' helperText={errors.endereco?.telefone?.message} error={Boolean(errors.endereco?.telefone)} />
+                  <InputField register={register} name="endereco.email" label="Email" type='email' helperText={errors.endereco?.email?.message} error={Boolean(errors.endereco?.email)}  />
 
                 </Grid>
               </FormSection >
@@ -318,10 +318,11 @@ export default function FormRegistration() {
                       name="associacao.TipoMediunidade"
                       render={({ field, fieldState: { error } }) => (
                         <FormControl fullWidth error={!!error}>
-                          <InputLabel>Selecione o tipo de mediunidade</InputLabel>
+                          <InputLabel>Selecione o seu tipo de mediunidade</InputLabel>
                           <Select
                             {...field}
                             multiple
+                           defaultValue={['Não possuo mediunidade ostensiva']}
                             label='Mediunidade'
                             value={field.value} // Use `field.value` em vez de `defaultValue`
                             onChange={handleChangeMediunidade}
@@ -340,16 +341,16 @@ export default function FormRegistration() {
                               </MenuItem>
                             ))}
                           </Select>
-                          {error && <FormHelperText>{error.message}</FormHelperText>}
                         </FormControl>
                       )}
                     />
+                    
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth >
                       <InputLabel >Selecione o seu tipo de associação</InputLabel>
                       <Select
-
+                      
                         {...register("associacao.Tiposocio")}
                         label='selecione'
                       >
@@ -360,8 +361,9 @@ export default function FormRegistration() {
                         <MenuItem value="Contribuinte">
                           Contribuinte
                         </MenuItem>
-
+                        
                       </Select>
+                    <Typography sx={{color:"red",fontSize:"0.75rem"}}>  {errors.associacao?.Tiposocio ? "Informe seu tipo de associação com a casa":""}</Typography>
                     </FormControl>
                   </Grid>
                   {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
@@ -393,12 +395,12 @@ export default function FormRegistration() {
                               </MenuItem>
                             ))}
                           </Select>
-                          {error && <FormHelperText>{error.message}</FormHelperText>}
+                          <Typography sx={{color:"red",fontSize:"0.75rem"}}>  {errors.associacao?.tipo ? "Informe sua função na casa":""}</Typography>
                         </FormControl>
                       )}
                     />
                   </Grid>
-                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
+                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date'  helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)}/>
                   <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
                 </Grid>
               </FormSection>
