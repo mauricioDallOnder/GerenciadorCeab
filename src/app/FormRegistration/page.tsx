@@ -45,7 +45,7 @@ export default function FormRegistration() {
     mode: 'all',
     defaultValues: {
       associacao: {
-        tipo: ['Não informado'],
+        tipo: [],
         TipoMediunidade: ['Não possuo mediunidade ostensiva'],
       },
       contribuicao: [
