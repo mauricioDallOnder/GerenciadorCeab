@@ -15,7 +15,8 @@ export const tipoVinculoComCeab=[
 "Médium de Apoio",
 "Médium de Cura",
 "Expositor/Palestrante",
-"Evangelizador"
+"Evangelizador",
+"outro-informe nas observações!"
 ]
 
 export const livrosDisponiveis=[

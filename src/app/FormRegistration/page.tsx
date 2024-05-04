@@ -42,6 +42,7 @@ export default function FormRegistration() {
   const { usuariosData } = useCeabContext();
   const methods = useForm<Associado>({
     resolver: zodResolver(associadoSchema),
+    mode: 'all',
     defaultValues: {
       associacao: {
         tipo: [],
@@ -61,21 +62,22 @@ export default function FormRegistration() {
           dataDebito: "09/09/9999",
         },
       ],
-      debito:"não",
-      estudosAnteriores:"nao",
-      evangelizacao:"não",
-      contribuiu:"não",
-      GrupoEstudoInfoField:{
+      debito: "não",
+      estudosAnteriores: "nao",
+      evangelizacao: "não",
+      contribuiu: "não",
+      GrupoEstudoInfoField: {
         livro: "Não está estudando atualmente",
         facilitador: "-",
         dia: "-",
         turno: "-",
-        horario:"-",
+        horario: "-",
         sala: "-",
         uuid: "-",
-      }
+      },
+
     },
-   
+
   });
 
   const {
@@ -85,7 +87,7 @@ export default function FormRegistration() {
     setValue,
     watch,
     getValues,
-    formState: { errors },
+    formState: { errors, isValid },
   } = methods;
 
   const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
@@ -146,6 +148,11 @@ export default function FormRegistration() {
   watch("debito", "nao");
   watch("estudosAnteriores");
   watch("evangelizacao");
+  const selectedTipo = watch("associacao.tipo", []); // observa as mudanças neste campo específico
+  // Check se 'outro-especifique no campo observações' está selecionado
+  const isOtherSpecified = selectedTipo!.includes("outro-informe nas observações!");
+  const disableButton = isSubmitting || (isOtherSpecified && !!errors.observacoes);
+
 
   const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
 
@@ -185,7 +192,7 @@ export default function FormRegistration() {
             dataDebito: "09/09/9999",
           },
         ],
-        debito:"não",
+        debito: "não",
       };
     } else {
       // Itera sobre cada contribuição para converter os valores de string para número
@@ -209,21 +216,21 @@ export default function FormRegistration() {
         id: geraUUid,
         contribuicao: contribuicoesComValoresConvertidos,
         possuiDebito: DebitosComValoresConvertidos,
-        dataCadastro:mycadastro
+        dataCadastro: mycadastro
       };
     }
     console.log("Dados para submissão:", dadosParaSubmissao);
-    
-       axios.post('/api/createDataOnFirebase', dadosParaSubmissao)
-         .then(function (response) {
-           console.log(response);
-         })
-         .catch(function (error) {
-           console.log(error);
-           setIsSubmitting(false); // Resetar o estado de submissão
-         });
-       alert('dados cadastrados com sucesso')
-       
+
+    axios.post('/api/createDataOnFirebase', dadosParaSubmissao)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setIsSubmitting(false); // Resetar o estado de submissão
+      });
+    alert('dados cadastrados com sucesso')
+
     // methods.reset(); // Limpar os campos após o envio bem sucedido
     setIsSubmitting(false); // Resetar o estado de submissão
   };
@@ -245,7 +252,7 @@ export default function FormRegistration() {
                     helperText={errors.nome?.message} />
                   <InputField register={register} name="cpf" label="CPF" type='text' error={Boolean(errors.cpf)}
                     helperText={errors.cpf?.message} />
-                    <InputField register={register} name="rg" label="RG" type='text' error={Boolean(errors.rg)}
+                  <InputField register={register} name="rg" label="RG" type='text' error={Boolean(errors.rg)}
                     helperText={errors.rg?.message} />
                   <InputField register={register} name="nascimento" label="Data de nascimento" type='date' error={Boolean(errors.nascimento)}
                     helperText={errors.nascimento?.message} />
@@ -293,22 +300,7 @@ export default function FormRegistration() {
                   <InputField register={register} name="endereco.numero" label="Número" type='text' />
                   <InputField register={register} name="endereco.cidade" label="Cidade" type='text' />
                   <InputField register={register} name="endereco.cep" label="CEP" type='text' />
-                  <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth >
-                      <InputLabel id="endereco-uf-label">UF</InputLabel>
-                      <Select
-
-                        {...register("endereco.uf")}
-                        label='UF do endereço'
-                      >
-                        {siglas.map((name) => (
-                          <MenuItem key={name} value={name}>
-                            {name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
+                  <InputField register={register} name="endereco.uf" label="UF" type='text' />
                   <InputField register={register} name="endereco.complemento" label="Bairro" type='text' />
                   <InputField register={register} name="endereco.telefone" label="Telefone" type='text' />
                   <InputField register={register} name="endereco.email" label="Email" type='email' />
@@ -379,14 +371,14 @@ export default function FormRegistration() {
                       name="associacao.tipo"
                       render={({ field, fieldState: { error } }) => (
                         <FormControl fullWidth error={!!error}>
-                          <InputLabel>Selecione o vínculo com a casa</InputLabel>
+                          <InputLabel>Função na casa</InputLabel>
                           <Select
                             {...field}
                             multiple
                             label='Vínculo'
                             value={field.value} // Use `field.value` em vez de `defaultValue`
                             onChange={handleChangeVinculoCasa}
-                            input={<OutlinedInput label="vínculo com a casa" />}
+                            input={<OutlinedInput label="Função na casa" />}
                             renderValue={(selected) => (
                               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                                 {selected.map((value) => (
@@ -414,7 +406,7 @@ export default function FormRegistration() {
 
               <FormSection title="Seção 4 - Grupo de Estudo e Estudos Anteriores">
                 <Container >
-                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Você é estudante da casa?</InputLabel>
+                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Atualmente,você é estudante da casa?</InputLabel>
                   <Select
                     variant="filled"
 
@@ -432,7 +424,7 @@ export default function FormRegistration() {
                           <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
                         </Grid>
                       </FormSection>
-                      <FormSection title="Seção 4.2 - Informe abaixo os estudos anteriores já realizados">
+                      <FormSection title="Seção 4.2 - Informe abaixo os estudos que você já realizou">
                         <>
                           <Grid container spacing={2}  >
                             {estudoFields.map((field, index) => (
@@ -463,7 +455,7 @@ export default function FormRegistration() {
                                   {/* Year of Study */}
                                   <TextField
                                     {...register(`HistoricoEstudoField.${index}.ano`)}
-                                    label="Em qual ano você fez esse estudo? Ex: '2014 a 2016' ou apenas '2019'"
+                                    label="Em qual ano/período você fez esse estudo?"
                                     variant="outlined"
                                     fullWidth
                                   />
@@ -471,7 +463,7 @@ export default function FormRegistration() {
                                   {/* Free Observations */}
                                   <TextareaAutosize
                                     {...register(`HistoricoEstudoField.${index}.observacoes`)}
-                                    placeholder="Escreva aqui os cursos, seminários ou outros estudos que você já realizou"
+                                    placeholder="Escreva aqui os cursos/estudos que você realizou nesse período"
                                     style={{
                                       width: '100%',
                                       padding: '8px',
@@ -499,7 +491,7 @@ export default function FormRegistration() {
                             onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
                             sx={{ mt: 2, width: '100%' }}
                           >
-                            Clique aqui para adicionar estudos já realizados
+                            Clique aqui para informar mais estudos que você realizou.
                           </Button>
                         </>
                       </FormSection>
@@ -830,44 +822,42 @@ export default function FormRegistration() {
                   )}
                 </Grid>
               </FormSection>
+
               <FormSection title="Seção 9 - Observações">
-                <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <Box
-                    sx={{
-                      width: '100%', // Ajusta a largura conforme necessário
-                      padding: '8px', // Espaçamento interno para não colar o texto nas bordas
-                      border: '1px solid #ccc', // Borda cinza leve
-                      borderRadius: '4px', // Bordas arredondadas
-                      boxShadow: '0px 2px 4px rgba(0,0,0,0.1)', // Sombra suave para profundidade
-                      '&:focus-within': {
-                        boxShadow: '0px 0px 0px 2px #1976d2', // Sombra de foco para indicar ativação
-                      },
+                <Grid item xs={12}>
+                  <TextareaAutosize
+                    aria-label="Observações"
+                    minRows={3}
+                    placeholder="Digite suas observações aqui..."
+                    {...register("observacoes", {
+                      required: isOtherSpecified ? "Campo obrigatório" : false,
+                      minLength: {
+                        value: 1,
+                        message: "Este campo é obrigatório"
+                      }
+                    })}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      marginLeft: "6px",
+                      borderColor: isOtherSpecified ? 'red' : '#ccc',
+                      borderWidth: isOtherSpecified ? '2px' : '1px',
                     }}
-                  >
-                    <TextareaAutosize
-                      aria-label="Observações"
-                      minRows={3}
-                      placeholder="Digite suas observações aqui..."
-                      style={{
-                        width: '100%', // Ajusta a largura para preencher o Box
-                        border: 'none', // Remove a borda padrão do textarea
-                        outline: 'none', // Remove o outline padrão para foco
-                        resize: 'vertical', // Permite redimensionar apenas verticalmente
-                        padding: '8px', // Espaçamento interno adicional
-                        borderRadius: '4px', // Bordas arredondadas
-                        marginLeft: "6px"
-                      }}
-                      {...register("observacoes")}
-                    />
-                  </Box>
+                  />
+                  {isOtherSpecified && (
+                    <Typography color="error" sx={{ mt: 2 }}>Você escolheu "outro" no campo "função na casa", descreva aqui sua função.</Typography>
+                  )}
                 </Grid>
+
               </FormSection>
+
               <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="secondary"
-                  disabled={isSubmitting}
+                  disabled={disableButton}
                   sx={{ width: "100%" }}
                 >
                   {isSubmitting ? "Enviando dados, aguarde..." : "Cadastrar Associado"}
