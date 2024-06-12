@@ -45,10 +45,14 @@ export const associadoSchema = z.object({
     ano: z.string(),
     observacoes: z.string(),
   })).optional(),
+  HistoricoTrabalhoField:  z.array(z.object({
+    funcao: z.string(),
+    ano: z.string(),
+    observacoes: z.string(),
+  })).optional(),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),
     diaTrabalha: z.string(),
-    nomeDirigente: z.string().min(1, { message: "O nome do diregente é obrigatório" }),
     turnoDeTrabalho: z.string(),
   })).optional(),
   contribuicao: z.array(z.object({

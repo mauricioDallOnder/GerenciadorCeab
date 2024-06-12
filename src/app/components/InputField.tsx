@@ -22,7 +22,7 @@ export const InputField: React.FC<InputFieldProps> = ({ register, name, label, t
       label={label}
       type={type}
       InputLabelProps={type === 'date' ? { shrink: true } : undefined}
-      defaultValue={type === ('text'|| 'email') ? "" : 0}
+      defaultValue={type === ('text'|| 'email') ? "" : ""}
       error={error}  // Aplicar o estado de erro
       helperText={helperText}  // Exibir a mensagem de erro
     />

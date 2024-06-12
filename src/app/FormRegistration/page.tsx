@@ -536,16 +536,7 @@ export default function FormRegistration() {
                             </Grid>
                            
 
-                            <Grid item xs={12} sx={{ width: '100%' }}>
-                              <TextField
-                                {...register(`trabahadorInfoField.${index}.nomeDirigente` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                label="Nome do Dirigente do Trabalho"
-                                InputLabelProps={{ shrink: true }}
-                                fullWidth
-                                variant="outlined"
-                                defaultValue="-"
-                              />
-                            </Grid>
+                           
                             <Grid item xs={12} sx={{ width: "100%" }}>
                               <FormControl fullWidth>
                                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
@@ -576,7 +567,7 @@ export default function FormRegistration() {
                       startIcon={<AddCircleOutlineIcon />}
                       variant="contained"
                       color="success"
-                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", nomeDirigente: "", turnoDeTrabalho: "", id: uuidv4() })}
+                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
                       sx={{ mt: 2, width: '100%' }}
                     >
                       Adicionar dia de trabalho
@@ -587,170 +578,9 @@ export default function FormRegistration() {
                 </Grid>
               </FormSection >
 
-              {/* Campos débito */}
-              <FormSection title="Seção 6 - Dados referentes a débitos">
-                <Grid container spacing={2}>
-                  <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>O associado possui débitos com a casa?</InputLabel>
-                    <Select
-                      variant="filled"
-                      disabled
-                      fullWidth
-                      {...register("debito")}
-                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
-                      defaultValue="nao">
-                      <MenuItem value="sim">Sim</MenuItem>
-                      <MenuItem value="nao">Não</MenuItem>
-                    </Select>
-                  </Container>
-                  {getValues("debito") === "sim" && (
-                    <Container >
-                      {debitoFields.map((field, index) => (
-                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
-                          <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
-                            <Grid container spacing={2}>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <TextField
-                                  {...register(`possuiDebito.${index}.valorDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                  label="Valor devido"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  variant="outlined"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <TextField
-                                  {...register(`possuiDebito.${index}.dataDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                  label="Data do débito"
-                                  type="date"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  variant="outlined"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <FormControl fullWidth>
+           
 
-                                  <TextField
-                                    label='Adicione aqui observações ou descrições sobre o débito'
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    id={`tipo-debito-${index}`}
-                                    {...register(`possuiDebito.${index}.tipoDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                  >
-                                  </TextField>
-                                </FormControl>
-                              </Grid>
-                            </Grid>
-                          </CardContent>
-                          <CardActions>
-                            <IconButton color="error" onClick={() => removeDebito(index)}>
-                              <DeleteIcon />
-                              <Typography sx={{ color: "red", ml: "2px" }}>Remover Débito</Typography>
-                            </IconButton>
-                          </CardActions>
-                        </Card>
-                      ))}
-                      <Button
-                        startIcon={<AddCircleOutlineIcon />}
-                        variant="contained"
-                        color="success"
-                        onClick={() => appendDebito({ tipoDebito: "-", valorDebito: "0", dataDebito: "09/09/9999" })}
-                        sx={{ mt: 2, width: '100%' }}
-                      >
-                        Adicionar Débitos
-                      </Button>
-                    </Container>
-                  )}
-                </Grid>
-              </FormSection>
-              {/* Campos de contribuição com a casa */}
-              <FormSection title="Seção 7 - Dados referentes a contribuições">
-                <Grid container spacing={2}>
-                  <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <InputLabel sx={{ color: "black", mb: '2px', mt: '16px' }}>O associado ajudou a casa com algum valor?</InputLabel>
-                    <Select
-                      variant="filled"
-                      fullWidth
-                      {...register("contribuiu")}
-                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
-                      defaultValue="nao"
-                      disabled
-                    >
-                      <MenuItem value="sim">Sim</MenuItem>
-                      <MenuItem value="nao">Não</MenuItem>
-                    </Select>
-                  </Container>
-                  {getValues("contribuiu") === "sim" && (
-                    <Container >
-                      {contribuicaoFields.map((field, index) => (
-                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
-                          <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
-                            <Grid container spacing={2}>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <FormControl fullWidth>
-                                  <InputLabel >Forma de contribuição</InputLabel>
-                                  <Select
-                                    {...register(`contribuicao.${index}.tipoContribuicao`)}
-                                    fullWidth
-                                    id='forma de pagamento'
-                                    label="Tipo de Contribuição"
-                                    defaultValue="Dinheiro"
-                                  >
-                                    <MenuItem value="pix">Pix</MenuItem>
-                                    <MenuItem value="dinheiro">Dinheiro</MenuItem>
-                                    <MenuItem value="cartao">Cartão</MenuItem>
-                                    <MenuItem value="vale presente">
-                                      Vale Presente
-                                    </MenuItem>
-                                  </Select>
-                                </FormControl>
-                              </Grid>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <TextField
-                                  {...register(`contribuicao.${index}.valorContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                  label="Valor devido"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  variant="outlined"
-                                />
-                              </Grid>
-                              <Grid item xs={12} sx={{ width: '100%' }}>
-                                <TextField
-                                  {...register(`contribuicao.${index}.dataContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                  label="Data do débito"
-                                  type="date"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  variant="outlined"
-                                />
-                              </Grid>
-                            </Grid>
-                          </CardContent>
-                          <CardActions>
-                            <IconButton color="error" onClick={() => removeContribuicao(index)}>
-                              <DeleteIcon />
-                              <Typography sx={{ color: "red", ml: "2px" }}>Excluir contribuição adicionada</Typography>
-                            </IconButton>
-                          </CardActions>
-                        </Card>
-                      ))}
-                      <Button
-                        startIcon={<AddCircleOutlineIcon />}
-                        variant="contained"
-                        color="success"
-                        onClick={() => appendContribuicao({ tipoContribuicao: "Pix", valorContribuicao: "0", dataContribuicao: "09/09/9999" })}
-                        sx={{ mt: 2, width: '100%' }}
-                      >
-                        Adicionar contribuições
-                      </Button>
-
-                    </Container>
-                  )}
-                </Grid>
-              </FormSection>
-
-              <FormSection title="Seção 8 - Observações">
+              <FormSection title="Seção 6 - Observações">
                 <Grid item xs={12}>
                   <TextareaAutosize
                     aria-label="Observações"

@@ -184,7 +184,7 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="nome" label="Nome Completo" type='text' />
                             <UpdateInputField register={register} name="cpf" label="CPF" type='text' />
                             <UpdateInputField register={register} name="rg" label="RG" type='text' />
-                            <UpdateInputField register={register} name="nascimento" label="Data de Nascimento" type='date' />
+                            <UpdateInputField register={register} name="nascimento" label="Data de Nascimento" type='text' />
                             <UpdateInputField register={register} name="estadoCivil" label="Estado Civil" type='text' />
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                             <UpdateInputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
@@ -409,15 +409,7 @@ export default function UserUpdateForm() {
                                                 </Grid>
                                                
 
-                                                <Grid item xs={12} sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        {...register(`trabahadorInfoField.${index}.nomeDirigente` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                                        label="Nome do Dirigente do Trabalho"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                        variant="outlined"
-                                                    />
-                                                </Grid>
+                                               
                                                 <Grid item xs={12} sx={{ width: "100%" }}>
                                                     <Controller
                                                         name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
@@ -456,7 +448,7 @@ export default function UserUpdateForm() {
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
                                     color="warning"
-                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", nomeDirigente: "", turnoDeTrabalho: "", id: uuidv4() })}
+                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
                                     Adicionar dia de trabalho

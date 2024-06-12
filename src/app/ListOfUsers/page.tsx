@@ -128,7 +128,7 @@ export default function ListOfUsers() {
         id: usuario.id,
         col1: usuario.numeroRegistroAssociado,
         col2: usuario.nome,
-        col3: formatDate(usuario.nascimento),
+        col3: usuario.nascimento,
         col4: usuario.cpf,
         col5: usuario.rg,
         col6: usuario.endereco.logradouro,
