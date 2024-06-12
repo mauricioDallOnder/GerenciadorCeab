@@ -19,14 +19,13 @@ import {
   Chip,
 } from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { FormHelperText } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, livrosDisponiveis, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoMediunidade, tipoVinculoComCeab} from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
@@ -46,7 +45,7 @@ export default function FormRegistration() {
     defaultValues: {
       associacao: {
         tipo: [],
-        TipoMediunidade: ['Não possuo mediunidade ostensiva'],
+        TipoMediunidade: [],
       },
       contribuicao: [
         {
@@ -254,7 +253,7 @@ export default function FormRegistration() {
                     helperText={errors.cpf?.message} />
                   <InputField register={register} name="rg" label="RG" type='text' error={Boolean(errors.rg)}
                     helperText={errors.rg?.message} />
-                  <InputField register={register} name="nascimento" label="Data de nascimento" type='date' error={Boolean(errors.nascimento)}
+                  <InputField register={register} name="nascimento" label="Data de nascimento" type='string' error={Boolean(errors.nascimento)}
                     helperText={errors.nascimento?.message} />
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
@@ -318,12 +317,12 @@ export default function FormRegistration() {
                       name="associacao.TipoMediunidade"
                       render={({ field, fieldState: { error } }) => (
                         <FormControl fullWidth error={!!error}>
-                          <InputLabel>Selecione o seu tipo de mediunidade</InputLabel>
+                          <InputLabel>Selecione sua mediunidade</InputLabel>
                           <Select
                             {...field}
                             multiple
-                           defaultValue={['Não possuo mediunidade ostensiva']}
-                            label='Mediunidade'
+                           //defaultValue={['Não possuo mediunidade ostensiva']}
+                           
                             value={field.value} // Use `field.value` em vez de `defaultValue`
                             onChange={handleChangeMediunidade}
                             input={<OutlinedInput label="Mediunidade" />}
@@ -348,18 +347,18 @@ export default function FormRegistration() {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth >
-                      <InputLabel >Selecione o seu tipo de associação</InputLabel>
+                      <InputLabel >Você é sócio da casa?</InputLabel>
                       <Select
                       
                         {...register("associacao.Tiposocio")}
                         label='selecione'
                       >
 
-                        <MenuItem value="Efetivo">
-                          Efetivo
+                        <MenuItem value="Sim">
+                         Sim
                         </MenuItem>
-                        <MenuItem value="Contribuinte">
-                          Contribuinte
+                        <MenuItem value="Não">
+                         Não
                         </MenuItem>
                         
                       </Select>
@@ -400,7 +399,7 @@ export default function FormRegistration() {
                       )}
                     />
                   </Grid>
-                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date'  helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)}/>
+                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='string'  helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)}/>
                   <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
                 </Grid>
               </FormSection>
@@ -446,7 +445,7 @@ export default function FormRegistration() {
                                           onChange={field.onChange}
                                         >
                                           {/* Assume we have an array named `livrosDisponiveis` */}
-                                          {livrosDisponiveis.map(livro => (
+                                          {livrosOrganizados.map(livro => (
                                             <MenuItem key={livro} value={livro}>{livro}</MenuItem>
                                           ))}
                                         </Select>
@@ -503,69 +502,13 @@ export default function FormRegistration() {
 
               </FormSection>
 
-              <FormSection title="Seção 5 - Evangelização">
-                <Container >
-
-                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Você participa da evangelização?</InputLabel>
-                  <Select
-                    variant="filled"
-
-                    fullWidth
-                    {...register("evangelizacao")}
-                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
-                    defaultValue="nao">
-                    <MenuItem value="sim">Sim</MenuItem>
-                    <MenuItem value="nao">Não</MenuItem>
-                  </Select>
-                  {getValues("evangelizacao") === "sim" && (
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6} sx={{ mt: 2 }}>
-                        <FormControl fullWidth >
-                          <InputLabel >Qual é a sua função?</InputLabel>
-                          <Select
-                            {...register("EvangelizacaoInfoField.funcaoEvangelizacao")}
-                            label='Escolha sua função'
-                          >
-                            <MenuItem value='Evangelizador' >
-                              Evangelizador
-                            </MenuItem>
-                            <MenuItem value='Monitor'>
-                              Monitor
-                            </MenuItem>
-
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item xs={12} sm={6} sx={{ mt: 2 }}>
-                        <FormControl fullWidth >
-                          <InputLabel >Você participa do Ciclo da Família?</InputLabel>
-                          <Select
-                            {...register("EvangelizacaoInfoField.ciclofamilia")}
-                            label='Selecione'
-                          >
-                            <MenuItem value='sim'>
-                              Sim
-                            </MenuItem>
-                            <MenuItem value='não'>
-                              Não
-                            </MenuItem>
-
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                    </Grid>
-                  )}
-
-                </Container>
-              </FormSection>
+            
 
 
 
 
               {/* Campos trabalhador/voluntário */}
-              <FormSection title="Seção 6 - Trabalho na casa" >
+              <FormSection title="Seção 5 - Trabalho na casa" >
                 <Grid container spacing={2}>
                   <Container >
                     {trabahadorInfoField.map((field, index) => (
@@ -591,16 +534,7 @@ export default function FormRegistration() {
                                 </Select>
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} sx={{ width: '100%' }}>
-                              <TextField
-                                {...register(`trabahadorInfoField.${index}.funcao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                label="Função que Exerce"
-                                InputLabelProps={{ shrink: true }}
-                                fullWidth
-                                variant="outlined"
-                                defaultValue="-"
-                              />
-                            </Grid>
+                           
 
                             <Grid item xs={12} sx={{ width: '100%' }}>
                               <TextField
@@ -627,16 +561,7 @@ export default function FormRegistration() {
                                 </Select>
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} sx={{ width: '100%' }}>
-                              <TextField
-                                {...register(`trabahadorInfoField.${index}.horarioDeTrabalho` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                label="Horário de Trabalho"
-                                InputLabelProps={{ shrink: true }}
-                                fullWidth
-                                type='time'
-                                variant="outlined"
-                              />
-                            </Grid>
+                            
                           </Grid>
                         </CardContent>
                         <CardActions>
@@ -651,7 +576,7 @@ export default function FormRegistration() {
                       startIcon={<AddCircleOutlineIcon />}
                       variant="contained"
                       color="success"
-                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "", id: uuidv4() })}
+                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", nomeDirigente: "", turnoDeTrabalho: "", id: uuidv4() })}
                       sx={{ mt: 2, width: '100%' }}
                     >
                       Adicionar dia de trabalho
@@ -663,7 +588,7 @@ export default function FormRegistration() {
               </FormSection >
 
               {/* Campos débito */}
-              <FormSection title="Seção 7 - Dados referentes a débitos">
+              <FormSection title="Seção 6 - Dados referentes a débitos">
                 <Grid container spacing={2}>
                   <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                     <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>O associado possui débitos com a casa?</InputLabel>
@@ -740,7 +665,7 @@ export default function FormRegistration() {
                 </Grid>
               </FormSection>
               {/* Campos de contribuição com a casa */}
-              <FormSection title="Seção 8 - Dados referentes a contribuições">
+              <FormSection title="Seção 7 - Dados referentes a contribuições">
                 <Grid container spacing={2}>
                   <Container sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
                     <InputLabel sx={{ color: "black", mb: '2px', mt: '16px' }}>O associado ajudou a casa com algum valor?</InputLabel>
@@ -825,7 +750,7 @@ export default function FormRegistration() {
                 </Grid>
               </FormSection>
 
-              <FormSection title="Seção 9 - Observações">
+              <FormSection title="Seção 8 - Observações">
                 <Grid item xs={12}>
                   <TextareaAutosize
                     aria-label="Observações"

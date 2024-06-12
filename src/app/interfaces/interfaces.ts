@@ -45,17 +45,11 @@ export const associadoSchema = z.object({
     ano: z.string(),
     observacoes: z.string(),
   })).optional(),
-  EvangelizacaoInfoField:z.object({ 
-    funcaoEvangelizacao: z.string(),
-    ciclofamilia:z.string(),
-  }).optional(),
   trabahadorInfoField: z.array(z.object({
     id: z.string(),
     diaTrabalha: z.string(),
-    funcao: z.string().min(1, { message: "A função é obrigatória" }),
     nomeDirigente: z.string().min(1, { message: "O nome do diregente é obrigatório" }),
     turnoDeTrabalho: z.string(),
-    horarioDeTrabalho: z.string()
   })).optional(),
   contribuicao: z.array(z.object({
     tipoContribuicao: z.string(),

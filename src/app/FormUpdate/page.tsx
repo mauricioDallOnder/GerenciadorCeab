@@ -28,7 +28,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, livrosDisponiveis, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas,  livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
@@ -323,7 +323,7 @@ export default function UserUpdateForm() {
                                                                 onChange={field.onChange}
                                                             >
 
-                                                                {livrosDisponiveis.map(livro => (
+                                                                { livrosOrganizados.map(livro => (
                                                                     <MenuItem key={livro} value={livro}>{livro}</MenuItem>
                                                                 ))}
                                                             </Select>
@@ -377,20 +377,9 @@ export default function UserUpdateForm() {
 
                     </>
 
-                    <FormSection title="Seção 6 - Evangelização">
-                        <Container >
-                            <Grid container spacing={2}>
-                                
-                                    <UpdateInputField register={register} name="EvangelizacaoInfoField.funcaoEvangelizacao" label="Função na evangelização" />
-                                    <UpdateInputField register={register} name="EvangelizacaoInfoField.ciclofamilia" label="Participa do Ciclo da Família?" />
-                               
-
-                            </Grid>
-
-                        </Container>
-                    </FormSection>
+                   
                     {/* Campos trabalhador/voluntário */}
-                    <FormSection title="Seção 7 - Dados do Trabalhador/Voluntário">
+                    <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
                         <Grid container spacing={2}>
                             <Container>
                                 {trabahadorInfoField.map((field, index) => (
@@ -418,15 +407,7 @@ export default function UserUpdateForm() {
                                                     />
 
                                                 </Grid>
-                                                <Grid item xs={12} sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        {...register(`trabahadorInfoField.${index}.funcao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                                        label="Função que Exerce"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                        variant="outlined"
-                                                    />
-                                                </Grid>
+                                               
 
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
@@ -459,16 +440,7 @@ export default function UserUpdateForm() {
                                                     />
                                                 </Grid>
 
-                                                <Grid item xs={12} sx={{ width: '100%' }}>
-                                                    <TextField
-                                                        {...register(`trabahadorInfoField.${index}.horarioDeTrabalho` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
-                                                        label="Horário de Trabalho"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        fullWidth
-                                                        type='time'
-                                                        variant="outlined"
-                                                    />
-                                                </Grid>
+                                                
 
                                             </Grid>
                                         </CardContent>
@@ -484,7 +456,7 @@ export default function UserUpdateForm() {
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
                                     color="warning"
-                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", funcao: "", nomeDirigente: "", turnoDeTrabalho: "", horarioDeTrabalho: "", id: uuidv4() })}
+                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", nomeDirigente: "", turnoDeTrabalho: "", id: uuidv4() })}
                                     sx={{ mt: 2, width: '100%' }}
                                 >
                                     Adicionar dia de trabalho
@@ -493,7 +465,7 @@ export default function UserUpdateForm() {
                         </Grid>
                     </FormSection>
 
-                    <FormSection title="Seção 8 - Dados referentes a débitos">
+                    <FormSection title="Seção 7 - Dados referentes a débitos">
                         <Grid container spacing={2}>
 
 
@@ -561,7 +533,7 @@ export default function UserUpdateForm() {
                         </Grid>
                     </FormSection>
                     {/* Campos de contribuição com a casa */}
-                    <FormSection title="Seção 9 - Dados referentes a contribuições">
+                    <FormSection title="Seção 8 - Dados referentes a contribuições">
                         <Grid container spacing={2}>
 
 
@@ -643,7 +615,7 @@ export default function UserUpdateForm() {
                         </Grid>
                     </FormSection>
 
-                    <FormSection title="Seção 10 - Observações">
+                    <FormSection title="Seção 9 - Observações">
                         <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <Box
                                 sx={{

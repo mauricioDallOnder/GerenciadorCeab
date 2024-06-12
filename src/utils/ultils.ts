@@ -1,55 +1,64 @@
-export const DiasSemanas=[
-    '-','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
+export const DiasSemanas = [
+  '-', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'
 ]
 
-export const tipoVinculoComCeab=[
+export const tipoVinculoComCeab = [
+  'Presidente',
+  'Vice-Presidente',
+  'Diretor de Área',
+  'Vice-Diretor de Área',
+  'Tesoureiro',
+  'Segundo Tesoureiro',
+  'Secretário de Direção',
+  '2º Secretário de Direção',
+  'Facilitador',
+  'Monitor de Facilitador',
   "Dirigente",
-"Vice-Dirigente",
-"Recepcionista ",
-"Atendente Fraterno",
-"Aplicador de Passe",
-"Médium de Psicofonia",
-"Médium de Psicografia", 
-"Dialogador",
-"Médium de Apoio",
-"Médium de Cura",
-"Expositor/Palestrante",
-"Evangelizador",
-"outro-informe nas observações!"
+  "Vice-Dirigente",
+  "Recepcionista ",
+  "Atendente Fraterno",
+  "Expositor/Palestrante",
+  "Evangelizador",
+  "Monitor de Evangelizador",
+  "outro-informe nas observações!"
 ]
 
-export const livrosDisponiveis=[
-'Tomo II',
-'Obras André Luiz',
-'IEE-Introdução ao Estudo do Espiritismo',
-'Tomo I',
-'Tomo II',
-'EADE I',
-'EADE II',
-'EADE II',
-'EADE III',
-'EADE IV',
-'Psicologia de Joanna de Angelis',
-'EADE II',
-'IEE-Introdução ao Estudo do Espiritismo',
-'Tomo I',
-'Tomo II',
-'EADE I',
-'Tomo III',
-'EADE II',
-'EADE III',
-'EADE IV',
-'EADE V',
-'O livro dos Espíritos',
-'Estudo do Espiritismo',
-'EADE I',
-'EADE II',
-'Mediunidade: Estudo e Prática I',
-'Mediunidade: Estudo e Prática II',
-'Mediunidade: Estudo e Prática III',
-'Mediunidade: Estudo e Prática II']
+export const livrosOrganizados = [
+  'IEE - Introdução ao Estudo do Espiritismo',
+  'ESDE - Estudo Sistematizado da Doutrina Espírita',
+  'Tomo I',
+  'Tomo II',
+  'Tomo III',
+  'EADE I',
+  'EADE II',
+  'EADE III',
+  'EADE IV',
+  'EADE V',
+  'Estudo do Espiritismo',
+  'Mediunidade: Estudo e Prática I',
+  'Mediunidade: Estudo e Prática II',
+  'Obras André Luiz',
+  'Obras de Emmanuel',
+  'Obras de Leon Denis',
+  'Obras de Manoel Philomeno de Miranda',
+  'O livro dos Espíritos',
+  'Psicologia de Joanna de Angelis'
+];
 
-export const tipoMediunidade=['Não possuo mediunidade ostensiva','Médium de Efeitos Físicos',' Médium de Psicografia','Médium de Psicofonia','Médium Sensitivo','Médium de Vidência',' Médium de Sonâmbulismo','Médium de Cura']
+
+
+export const tipoMediunidade = [
+'Médium de Efeitos Físicos', 
+' Médium de Psicografia', 
+'Médium de Psicofonia', 'Médium Sensitivo', 
+'Médium de Vidência', ' Médium de Sonâmbulismo', 
+'Médium de Cura',
+'Médium de Intuitivo',
+'Médium de Dialogador',
+'Médium de Apoio',
+'Médium de Audiência',
+'Médium de Desdobramento',
+'Aplicador de Passe']
 
 export const siglas = [
   'AC',
@@ -80,16 +89,16 @@ export const siglas = [
   'SE',
   'TO',
 ]
-export const Typevinculo=['facilitador','facilitador e trabalhador','estudante','estudante e trabalhador','trabalhador','frequentador']
+export const Typevinculo = ['facilitador', 'facilitador e trabalhador', 'estudante', 'estudante e trabalhador', 'trabalhador', 'frequentador']
 export const normalizeFloatInputValue = (value: string): number => {
-    // Normaliza a string para garantir que o separador decimal seja ponto
-    const normalizedValue = value.replace(",", ".");
-    // Tenta converter para float. Retorna 0 se falhar.
-    const floatValue = parseFloat(normalizedValue);
-    return isNaN(floatValue) ? 0 : floatValue;
-  };
+  // Normaliza a string para garantir que o separador decimal seja ponto
+  const normalizedValue = value.replace(",", ".");
+  // Tenta converter para float. Retorna 0 se falhar.
+  const floatValue = parseFloat(normalizedValue);
+  return isNaN(floatValue) ? 0 : floatValue;
+};
 
-  export const FormasContribuicao=['Pix','Dinheiro','Cartão','Vale Presente']
+export const FormasContribuicao = ['Pix', 'Dinheiro', 'Cartão', 'Vale Presente']
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -147,18 +156,18 @@ export function formatDate(isoString: string | null | undefined): string {
 
 export default function getMonthName(monthNumber: number) {
   const months = [
-      'janeiro',
-      'fevereiro',
-      'março',
-      'abril',
-      'maio',
-      'junho',
-      'julho',
-      'agosto',
-      'setembro',
-      'outubro',
-      'novembro',
-      'dezembro'
+    'janeiro',
+    'fevereiro',
+    'março',
+    'abril',
+    'maio',
+    'junho',
+    'julho',
+    'agosto',
+    'setembro',
+    'outubro',
+    'novembro',
+    'dezembro'
   ];
   return months[monthNumber];
 }

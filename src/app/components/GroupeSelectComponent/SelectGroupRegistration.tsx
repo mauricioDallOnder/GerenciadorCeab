@@ -16,6 +16,10 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
     const [filteredFacilitators, setFilteredFacilitators] = useState<string[]>([]);
     const [filteredDetails, setFilteredDetails] = useState<IIgruposDeEstudo[]>([]);
 
+// Cria um array único de livros usando Set para evitar duplicidades
+const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
+
+
     useEffect(() => {
         console.log('Initial Values:', initialValues);
         if (initialValues) {
@@ -159,8 +163,8 @@ export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ re
                     label="Livro"
                     onChange={handleBookChange}
                 >
-                    {gruposEstudo.map((g, index) => (
-                        <MenuItem key={index} value={g.livro}>{g.livro}</MenuItem>
+                    {uniqueBooks.map((book, index) => (
+                        <MenuItem key={index} value={book}>{book}</MenuItem>
                     ))}
                 </Select>
             </FormControl>
