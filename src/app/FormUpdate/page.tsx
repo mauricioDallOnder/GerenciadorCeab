@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, Controller } from 'react-hook-form';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -28,7 +28,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas,  livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab, Typevinculo } from "@/utils/ultils";
+import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
@@ -41,9 +41,8 @@ export default function UserUpdateForm() {
 
     const router = useRouter();
     const { status } = useSession({
-        required: true, // Indica que a sessão é necessária
+        required: true,
         onUnauthenticated() {
-            // Redireciona para o login se não autenticado
             router.push('/Login');
         }
     });
@@ -54,7 +53,6 @@ export default function UserUpdateForm() {
                 tipo: [],
                 TipoMediunidade: [],
             },
-
         },
     });
 
@@ -77,18 +75,19 @@ export default function UserUpdateForm() {
         name: "HistoricoEstudoField",
     });
 
+    const { fields: trabalhoAnteriorFields, append: appendTrabalhoAnterior, remove: removeTrabalho } = useFieldArray({
+        control,
+        name: "HistoricoTrabalhoField",
+    });
+
     const [loading, setLoading] = useState(false);
     const [VinculoCasa, setVinculoCasa] = React.useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
 
     useEffect(() => {
         if (selectedUser) {
-            // Reset de todos os campos
             reset(selectedUser);
-            // Configuração individual dos campos
             setValue('estadoCivil', selectedUser.estadoCivil);
-
-            // Repita para outros campos conforme necessário
         }
     }, [selectedUser, reset, setValue]);
 
@@ -96,21 +95,16 @@ export default function UserUpdateForm() {
         const {
             target: { value },
         } = event;
-        //console.log("Before split:", value); // Veja o que está recebendo antes do split
         const newValue = typeof value === 'string' ? value.split(',') : value;
-        //console.log("After split:", newValue); // Confira o novo valor após o split
         setVinculoCasa(newValue);
         setValue('associacao.TipoMediunidade', newValue);
     };
-
 
     const handleChangeVinculoCasa = (event: SelectChangeEvent<typeof VinculoCasa>) => {
         const {
             target: { value },
         } = event;
-        //console.log("Before split:", value); // Veja o que está recebendo antes do split
         const newValue = typeof value === 'string' ? value.split(',') : value;
-        //console.log("After split:", newValue); // Confira o novo valor após o split
         setVinculoCasa(newValue);
         setValue('associacao.tipo', newValue);
     };
@@ -119,11 +113,9 @@ export default function UserUpdateForm() {
 
     const onSubmit: SubmitHandler<Associado> = data => {
         setLoading(true);
-        // Ensure data.contribuicao and data.possuiDebito are arrays
         const contribuicoes = data.contribuicao || [];
         const debitos = data.possuiDebito || [];
         const { nome, ...restoDosDados } = data;
-        // Itera sobre cada contribuição para converter os valores de string para número
         const contribuicoesComValoresConvertidos = contribuicoes.map((contribuicao) => ({
             ...contribuicao,
             valorContribuicao: normalizeFloatInputValue(contribuicao.valorContribuicao!.toString()),
@@ -139,12 +131,10 @@ export default function UserUpdateForm() {
             debito: DebitosComValoresConvertidos,
         };
 
-
         axios.put('/api/updateDataOnFirebase', { nome, novosDados })
             .then(response => {
                 alert('Usuário atualizado com sucesso!');
-                reset(); // Limpar os campos após o envio bem sucedido
-
+                reset();
                 console.log(response.data);
             })
             .catch(error => {
@@ -153,10 +143,6 @@ export default function UserUpdateForm() {
             })
             .finally(() => setLoading(false));
     };
-
-
-
-
 
     return (
         <Container
@@ -168,7 +154,7 @@ export default function UserUpdateForm() {
                         options={usuariosData}
                         getOptionLabel={(option) => option.nome}
                         onChange={(event, value) => {
-                            setSelectedUser(value); // Atualiza o usuário selecionado
+                            setSelectedUser(value);
                         }}
                         renderInput={(params) => (
                             <TextField
@@ -217,7 +203,7 @@ export default function UserUpdateForm() {
                                                 {...field}
                                                 multiple
                                                 label='Mediunidade'
-                                                value={field.value} // Use `field.value` em vez de `defaultValue`
+                                                value={field.value}
                                                 onChange={handleChangeMediunidade}
                                                 input={<OutlinedInput label="Mediunidade" />}
                                                 renderValue={(selected) => (
@@ -240,7 +226,6 @@ export default function UserUpdateForm() {
                                 />
                             </Grid>
 
-                            {/* Select Multiplo para poder selecionar o tipo de vinculo com a casa*/}
                             <Grid item xs={12} sm={6}>
                                 <Controller
                                     control={control}
@@ -252,7 +237,7 @@ export default function UserUpdateForm() {
                                                 {...field}
                                                 multiple
                                                 label='Vínculo'
-                                                value={field.value} // Use `field.value` em vez de `defaultValue`
+                                                value={field.value}
                                                 onChange={handleChangeVinculoCasa}
                                                 input={<OutlinedInput label="vínculo com a casa" />}
                                                 renderValue={(selected) => (
@@ -280,16 +265,13 @@ export default function UserUpdateForm() {
                         </Grid>
                     </FormSection>
                     <>
-                        {/* Campos estudante */}
                         <FormSection title="Seção 4 - Grupo de estudo">
                             <Grid container spacing={2}>
-
                                 <Controller
                                     name={"GrupoEstudoInfoField"}
                                     control={control}
                                     render={({ field }) => (
                                         <FormControl fullWidth>
-
                                             <GrupoDeEstudoSelect
                                                 {...field}
                                                 register={registerForGroup}
@@ -302,14 +284,12 @@ export default function UserUpdateForm() {
                             </Grid>
                         </FormSection>
 
-                        {/* Add Study History Section */}
                         <FormSection title="Seção 5 - Estudos Anteriores">
                             <Container >
                                 <Grid container spacing={2}  >
                                     {estudoFields.map((field, index) => (
                                         <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
                                             <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                                {/* Book Selection */}
                                                 <FormControl fullWidth>
                                                     <InputLabel>Selecione um livro que você já estudou</InputLabel>
                                                     <Controller
@@ -322,7 +302,6 @@ export default function UserUpdateForm() {
                                                                 value={field.value || ''}
                                                                 onChange={field.onChange}
                                                             >
-
                                                                 { livrosOrganizados.map(livro => (
                                                                     <MenuItem key={livro} value={livro}>{livro}</MenuItem>
                                                                 ))}
@@ -330,16 +309,12 @@ export default function UserUpdateForm() {
                                                         )}
                                                     />
                                                 </FormControl>
-
-                                                {/* Year of Study */}
                                                 <TextField
                                                     {...register(`HistoricoEstudoField.${index}.ano`)}
                                                     label="Em qual ano você fez esse estudo? Ex: '2014 a 2016' ou apenas '2019'"
                                                     variant="outlined"
                                                     fullWidth
                                                 />
-
-                                                {/* Free Observations */}
                                                 <TextareaAutosize
                                                     {...register(`HistoricoEstudoField.${index}.observacoes`)}
                                                     placeholder="Escreva aqui os cursos, seminários ou outros estudos que você já realizou"
@@ -351,7 +326,6 @@ export default function UserUpdateForm() {
                                                         resize: 'vertical',
                                                     }}
                                                 />
-
                                             </CardContent>
                                             <CardActions>
                                                 <IconButton color="error" onClick={() => removeEstudo(index)}>
@@ -362,7 +336,6 @@ export default function UserUpdateForm() {
                                         </Card>
                                     ))}
                                 </Grid>
-                                {/* Button to Add a New Entry */}
                                 <Button
                                     startIcon={<AddCircleOutlineIcon />}
                                     variant="contained"
@@ -375,92 +348,80 @@ export default function UserUpdateForm() {
                             </Container>
                         </FormSection>
 
-                    </>
-
-                   
-                    {/* Campos trabalhador/voluntário */}
-                    <FormSection title="Seção 6 - Dados do Trabalhador/Voluntário">
-                        <Grid container spacing={2}>
+                        <FormSection title="Seção 6 - Trabalhos já realizados para a casa">
                             <Container>
-                                {trabahadorInfoField.map((field, index) => (
-                                    <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
-                                        <CardContent sx={{ mt: 2, display: "flex", gap: "10px" }}>
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12} sx={{ width: "100%" }}>
-                                                    <Controller
-                                                        name={`trabahadorInfoField.${index}.diaTrabalha`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <FormControl fullWidth>
-                                                                <InputLabel>Dia de Trabalho</InputLabel>
-                                                                <Select
-                                                                    {...field}
-                                                                    label="Dia de Trabalho"
-                                                                    defaultValue="-"
-                                                                >
-                                                                    {DiasSemanas.map((name) => (
-                                                                        <MenuItem key={name} value={name}>{name}</MenuItem>
-                                                                    ))}
-                                                                </Select>
-                                                            </FormControl>
-                                                        )}
-                                                    />
-
-                                                </Grid>
-                                               
-
-                                               
-                                                <Grid item xs={12} sx={{ width: "100%" }}>
-                                                    <Controller
-                                                        name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
-                                                        control={control}
-                                                        render={({ field }) => (
-                                                            <FormControl fullWidth>
-                                                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
-                                                                <Select
-                                                                    {...field}
-                                                                    label="Selecione o Turno de Trabalho"
-                                                                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                                                    defaultValue=""
-                                                                >
-                                                                    <MenuItem value="Manhã">Manhã</MenuItem>
-                                                                    <MenuItem value="Tarde">Tarde</MenuItem>
-                                                                    <MenuItem value="Noite">Noite</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        )}
-                                                    />
-                                                </Grid>
-
-                                                
-
-                                            </Grid>
-                                        </CardContent>
-                                        <CardActions>
-                                            <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
-                                                <DeleteIcon />
-                                                <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
-                                            </IconButton>
-                                        </CardActions>
-                                    </Card>
-                                ))}
-                                <Button
-                                    startIcon={<AddCircleOutlineIcon />}
-                                    variant="contained"
-                                    color="warning"
-                                    onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
-                                    sx={{ mt: 2, width: '100%' }}
+                                <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
+                                    Você já realizou trabalhos anteriores para a casa?
+                                </InputLabel>
+                                <Select
+                                    variant="filled"
+                                    fullWidth
+                                    {...register("trabalhosAnteriores")}
+                                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
+                                    defaultValue="nao"
                                 >
-                                    Adicionar dia de trabalho
-                                </Button>
+                                    <MenuItem value="sim">Sim</MenuItem>
+                                    <MenuItem value="nao">Não</MenuItem>
+                                </Select>
+                                {watch("trabalhosAnteriores") === "sim" && (
+                                    <FormSection title="Informe abaixo os trabalhos que você já realizou">
+                                        <Grid container spacing={2}>
+                                            {trabalhoAnteriorFields.map((field, index) => (
+                                                <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                                                    <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                                        <FormControl fullWidth>
+                                                            
+                                                            <TextField
+                                                                {...register(`HistoricoTrabalhoField.${index}.funcao`)}
+                                                                label="Exemplo: Eu trabalhei na portaria distribuindo fichas..."
+                                                                variant="outlined"
+                                                                fullWidth
+                                                            />
+                                                        </FormControl>
+                                                        <TextField
+                                                            {...register(`HistoricoTrabalhoField.${index}.ano`)}
+                                                            label="Em qual ano/período você fez esse trabalho?"
+                                                            variant="outlined"
+                                                            fullWidth
+                                                        />
+                                                        <TextareaAutosize
+                                                            {...register(`HistoricoTrabalhoField.${index}.observacoes`)}
+                                                            placeholder="Escreva aqui outras observações relevantes acerca do trabalho realizado"
+                                                            style={{
+                                                                width: '100%',
+                                                                padding: '8px',
+                                                                border: '1px solid #ccc',
+                                                                borderRadius: '4px',
+                                                                resize: 'vertical',
+                                                            }}
+                                                        />
+                                                    </CardContent>
+                                                    <CardActions>
+                                                        <IconButton color="error" onClick={() => removeTrabalho(index)}>
+                                                            <DeleteIcon />
+                                                            <Typography sx={{ color: "red", ml: "2px" }}>Remover Trabalho Adicionado</Typography>
+                                                        </IconButton>
+                                                    </CardActions>
+                                                </Card>
+                                            ))}
+                                        </Grid>
+                                        <Button
+                                            startIcon={<AddCircleOutlineIcon />}
+                                            variant="contained"
+                                            color="success"
+                                            onClick={() => appendTrabalhoAnterior({ funcao: "", ano: "", observacoes: "" })}
+                                            sx={{ mt: 2, width: '100%' }}
+                                        >
+                                            Clique aqui para informar mais trabalhos que você já realizou.
+                                        </Button>
+                                    </FormSection>
+                                )}
                             </Container>
-                        </Grid>
-                    </FormSection>
+                        </FormSection>
+                    </>
 
                     <FormSection title="Seção 7 - Dados referentes a débitos">
                         <Grid container spacing={2}>
-
-
                             <Container >
                                 {debitoFields.map((field, index) => (
                                     <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
@@ -468,7 +429,7 @@ export default function UserUpdateForm() {
                                             <Grid container spacing={2}>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
-                                                        {...register(`possuiDebito.${index}.valorDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        {...register(`possuiDebito.${index}.valorDebito` as const)}
                                                         label="Valor devido"
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
@@ -478,7 +439,7 @@ export default function UserUpdateForm() {
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
-                                                        {...register(`possuiDebito.${index}.dataDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        {...register(`possuiDebito.${index}.dataDebito` as const)}
                                                         label="Data do débito"
                                                         type="date"
                                                         InputLabelProps={{ shrink: true }}
@@ -489,13 +450,12 @@ export default function UserUpdateForm() {
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <FormControl fullWidth>
-
                                                         <TextField
                                                             label='Adicione aqui observações ou descrições sobre o débito'
                                                             InputLabelProps={{ shrink: true }}
                                                             fullWidth
                                                             id={`tipo-debito-${index}`}
-                                                            {...register(`possuiDebito.${index}.tipoDebito` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                            {...register(`possuiDebito.${index}.tipoDebito` as const)}
                                                             defaultValue="-"
                                                         >
                                                         </TextField>
@@ -521,14 +481,11 @@ export default function UserUpdateForm() {
                                     Adicionar Débitos
                                 </Button>
                             </Container>
-
                         </Grid>
                     </FormSection>
-                    {/* Campos de contribuição com a casa */}
+
                     <FormSection title="Seção 8 - Dados referentes a contribuições">
                         <Grid container spacing={2}>
-
-
                             <Container >
                                 {contribuicaoFields.map((field, index) => (
                                     <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, width: '100%' }}>
@@ -550,20 +507,16 @@ export default function UserUpdateForm() {
                                                                         <MenuItem value="pix">Pix</MenuItem>
                                                                         <MenuItem value="dinheiro">Dinheiro</MenuItem>
                                                                         <MenuItem value="cartao">Cartão</MenuItem>
-                                                                        <MenuItem value="vale presente">
-                                                                            Vale Presente
-                                                                        </MenuItem>
+                                                                        <MenuItem value="vale presente">Vale Presente</MenuItem>
                                                                     </Select>
                                                                 </FormControl>
                                                             )}
                                                         />
-
-
                                                     </FormControl>
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
-                                                        {...register(`contribuicao.${index}.valorContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        {...register(`contribuicao.${index}.valorContribuicao` as const)}
                                                         label="Valor devido"
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
@@ -573,7 +526,7 @@ export default function UserUpdateForm() {
                                                 </Grid>
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
-                                                        {...register(`contribuicao.${index}.dataContribuicao` as const)} // Corrigido para corresponder ao nome do seu array no esquema Zod
+                                                        {...register(`contribuicao.${index}.dataContribuicao` as const)}
                                                         label="Data do débito"
                                                         type="date"
                                                         InputLabelProps={{ shrink: true }}
@@ -601,9 +554,7 @@ export default function UserUpdateForm() {
                                 >
                                     Adicionar contribuições
                                 </Button>
-
                             </Container>
-
                         </Grid>
                     </FormSection>
 
@@ -611,13 +562,13 @@ export default function UserUpdateForm() {
                         <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <Box
                                 sx={{
-                                    width: '100%', // Ajusta a largura conforme necessário
-                                    padding: '8px', // Espaçamento interno para não colar o texto nas bordas
-                                    border: '1px solid #ccc', // Borda cinza leve
-                                    borderRadius: '4px', // Bordas arredondadas
-                                    boxShadow: '0px 2px 4px rgba(0,0,0,0.1)', // Sombra suave para profundidade
+                                    width: '100%',
+                                    padding: '8px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
                                     '&:focus-within': {
-                                        boxShadow: '0px 0px 0px 2px #1976d2', // Sombra de foco para indicar ativação
+                                        boxShadow: '0px 0px 0px 2px #1976d2',
                                     },
                                 }}
                             >
@@ -626,12 +577,12 @@ export default function UserUpdateForm() {
                                     minRows={3}
                                     placeholder="Digite suas observações aqui..."
                                     style={{
-                                        width: '100%', // Ajusta a largura para preencher o Box
-                                        border: 'none', // Remove a borda padrão do textarea
-                                        outline: 'none', // Remove o outline padrão para foco
-                                        resize: 'vertical', // Permite redimensionar apenas verticalmente
-                                        padding: '8px', // Espaçamento interno adicional
-                                        borderRadius: '4px', // Bordas arredondadas
+                                        width: '100%',
+                                        border: 'none',
+                                        outline: 'none',
+                                        resize: 'vertical',
+                                        padding: '8px',
+                                        borderRadius: '4px',
                                     }}
                                     {...register("observacoes")}
                                 />
@@ -653,7 +604,6 @@ export default function UserUpdateForm() {
                     </Button>
                 </Box>
             </form>
-
         </Container>
     );
 }

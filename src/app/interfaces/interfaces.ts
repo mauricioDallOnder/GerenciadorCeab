@@ -70,6 +70,7 @@ export const associadoSchema = z.object({
   observacoes: z.string().optional(),
   numeroRegistroAssociado: z.string().optional(),
   estudosAnteriores:z.string().optional(),
+  trabalhosAnteriores:z.string().optional(),
   evangelizacao:z.string().optional(),
 });
 

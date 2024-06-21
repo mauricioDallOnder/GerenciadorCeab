@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   Container,
   Box,
@@ -35,7 +34,6 @@ import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields }
 import Footer from "../components/Footer";
 import { SelectGroupRegistration } from "../components/GroupeSelectComponent/SelectGroupRegistration";
 import { useCeabContext } from "@/context/context";
-
 
 export default function FormRegistration() {
   const { usuariosData } = useCeabContext();
@@ -74,9 +72,7 @@ export default function FormRegistration() {
         sala: "-",
         uuid: "-",
       },
-
     },
-
   });
 
   const {
@@ -89,16 +85,6 @@ export default function FormRegistration() {
     formState: { errors, isValid },
   } = methods;
 
-  const { fields: contribuicaoFields, append: appendContribuicao, remove: removeContribuicao } = useFieldArray({
-    control,
-    name: "contribuicao",
-  });
-
-  const { fields: debitoFields, append: appendDebito, remove: removeDebito } = useFieldArray({
-    control,
-    name: "possuiDebito",
-  });
-
   const { fields: trabahadorInfoField, append: appendtrabahadorInfo, remove: removetrabahadorInfo } = useFieldArray({
     control,
     name: "trabahadorInfoField",
@@ -109,25 +95,26 @@ export default function FormRegistration() {
     name: "HistoricoEstudoField",
   });
 
+  const { fields: trabalhoAnteriorFields, append: appendTrabalhoAnterior, remove: removeTrabalho } = useFieldArray({
+    control,
+    name: "HistoricoTrabalhoField",
+  });
+
   const [estadoCivil, setEstadoCivil] = useState('');
   const [VinculoCasa, setVinculoCasa] = useState<string[]>([]);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-
+  
   const handleChangeSelectEstadoCivil = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setEstadoCivil(value);
-    setValue("estadoCivil", value); // Sincroniza com o estado do formulário
+    setValue("estadoCivil", value);
   };
 
   const handleChangeMediunidade = (event: SelectChangeEvent<typeof VinculoCasa>) => {
     const {
       target: { value },
     } = event;
-    //console.log("Before split:", value); // Veja o que está recebendo antes do split
     const newValue = typeof value === 'string' ? value.split(',') : value;
-    //console.log("After split:", newValue); // Confira o novo valor após o split
     setVinculoCasa(newValue);
     setValue('associacao.TipoMediunidade', newValue);
   };
@@ -136,44 +123,42 @@ export default function FormRegistration() {
     const {
       target: { value },
     } = event;
-    //console.log("Before split:", value); // Veja o que está recebendo antes do split
     const newValue = typeof value === 'string' ? value.split(',') : value;
-    //console.log("After split:", newValue); // Confira o novo valor após o split
     setVinculoCasa(newValue);
     setValue('associacao.tipo', newValue);
   };
 
   watch("contribuiu", "nao");
   watch("debito", "nao");
-  watch("estudosAnteriores");
-  watch("evangelizacao");
-  const selectedTipo = watch("associacao.tipo", []); // observa as mudanças neste campo específico
-  // Check se 'outro-especifique no campo observações' está selecionado
-  const isOtherSpecified = selectedTipo!.includes("outro-informe nas observações!");
-  const disableButton = isSubmitting || (isOtherSpecified && !!errors.observacoes);
+  const estudosAnteriores = watch("estudosAnteriores");
+  const trabalhosAnteriores = watch("trabalhosAnteriores");
+  const selectedTipo = watch("associacao.tipo", []);
 
+  const isOtherSpecified = selectedTipo.includes("outro-informe nas observações!");
+  const disableButton = isSubmitting || (isOtherSpecified && !!errors.observacoes);
 
   const registerForGroup = (fieldName: keyof GrupoEstudoInfoFields) => register(`GrupoEstudoInfoField.${fieldName}` as const);
 
-  const onSubmit = (data: Associado) => {
-    // Verificar se o nome já existe na lista de usuários
-    const nomeJaExiste = usuariosData.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
+  useEffect(() => {
+    if (trabalhosAnteriores === "sim" && trabalhoAnteriorFields.length === 0) {
+      appendTrabalhoAnterior({ funcao: "", ano: "", observacoes: "" });
+    }
+  }, [trabalhosAnteriores, trabalhoAnteriorFields, appendTrabalhoAnterior]);
 
+  const onSubmit = (data: Associado) => {
+    const nomeJaExiste = usuariosData.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
 
     if (nomeJaExiste) {
       alert("Nome já cadastrado.");
-      setIsSubmitting(false); // Resetar o estado de submissão
-      console.log(nomeJaExiste)
-      return; // Interrompe a execução da função se o nome já existir
+      setIsSubmitting(false);
+      return;
     }
-    setIsSubmitting(true); // Iniciar a submissão
+    setIsSubmitting(true);
 
-    let geraUUid = uuidv4()
-
+    let geraUUid = uuidv4();
     let dadosParaSubmissao;
 
     if (data.contribuiu === "nao" || data.debito === "nao") {
-      // Sobrescreve os dados de contribuição com valores padrão para "não contribuiu"
       dadosParaSubmissao = {
         ...data,
         id: geraUUid,
@@ -194,8 +179,6 @@ export default function FormRegistration() {
         debito: "não",
       };
     } else {
-      // Itera sobre cada contribuição para converter os valores de string para número
-      // Ensure data.contribuicao and data.possuiDebito are arrays
       const contribuicoes = data.contribuicao || [];
       const debitos = data.possuiDebito || [];
 
@@ -209,7 +192,6 @@ export default function FormRegistration() {
         valorDebito: normalizeFloatInputValue(debito.valorDebito!.toString()),
       }));
       const mycadastro = new Date(Date.now()).toLocaleString().split(",")[0];
-      // Cria um novo objeto de dados com os valores convertidos para os casos de "sim contribuiu"
       dadosParaSubmissao = {
         ...data,
         id: geraUUid,
@@ -226,22 +208,18 @@ export default function FormRegistration() {
       })
       .catch(function (error) {
         console.log(error);
-        setIsSubmitting(false); // Resetar o estado de submissão
+        setIsSubmitting(false);
       });
-    alert('dados cadastrados com sucesso')
-
-    // methods.reset(); // Limpar os campos após o envio bem sucedido
-    setIsSubmitting(false); // Resetar o estado de submissão
+    alert('dados cadastrados com sucesso');
+    setIsSubmitting(false);
   };
-
 
   console.log(errors);
 
   return (
     <>
       <FormProvider {...methods}>
-        <Container
-          sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Box sx={BoxStyleCadastro}>
               <FormHeader titulo='Cadastro de Associados' />
@@ -259,7 +237,6 @@ export default function FormRegistration() {
                     <FormControl fullWidth>
                       <InputLabel id="estado-civil-label">Estado Civil</InputLabel>
                       <Select
-
                         labelId="estado-civil-label"
                         id="estadoCivil"
                         value={estadoCivil}
@@ -273,7 +250,6 @@ export default function FormRegistration() {
                       </Select>
                     </FormControl>
                   </Grid>
-                  {/* Campos de Naturalidade */}
                   <InputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
@@ -292,7 +268,6 @@ export default function FormRegistration() {
                   </Grid>
                 </Grid>
               </FormSection>
-              {/* Campos de Endereço */}
               <FormSection title="Seção 2 - Endereço e Contatos">
                 <Grid container spacing={2}>
                   <InputField register={register} name="endereco.logradouro" label="Rua" type='text' helperText={errors.endereco?.logradouro?.message} error={Boolean(errors.endereco?.logradouro)}/>
@@ -303,14 +278,10 @@ export default function FormRegistration() {
                   <InputField register={register} name="endereco.complemento" label="Bairro" type='text' helperText={errors.endereco?.complemento?.message} error={Boolean(errors.endereco?.complemento)}  />
                   <InputField register={register} name="endereco.telefone" label="Telefone" type='text' helperText={errors.endereco?.telefone?.message} error={Boolean(errors.endereco?.telefone)} />
                   <InputField register={register} name="endereco.email" label="Email" type='email' helperText={errors.endereco?.email?.message} error={Boolean(errors.endereco?.email)}  />
-
                 </Grid>
               </FormSection >
-
-              {/* Campos de Associação */}
               <FormSection title="Seção 3 - Dados de Associação">
                 <Grid container spacing={2} sx={{ mt: 1 }}>
-                  {/* Select Multiplo para poder selecionar o tipo de mediunidade*/}
                   <Grid item xs={12} sm={6}>
                     <Controller
                       control={control}
@@ -321,9 +292,7 @@ export default function FormRegistration() {
                           <Select
                             {...field}
                             multiple
-                           //defaultValue={['Não possuo mediunidade ostensiva']}
-                           
-                            value={field.value} // Use `field.value` em vez de `defaultValue`
+                            value={field.value}
                             onChange={handleChangeMediunidade}
                             input={<OutlinedInput label="Mediunidade" />}
                             renderValue={(selected) => (
@@ -343,29 +312,22 @@ export default function FormRegistration() {
                         </FormControl>
                       )}
                     />
-                    
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth >
                       <InputLabel >Você é sócio da casa?</InputLabel>
                       <Select
-                      
                         {...register("associacao.Tiposocio")}
                         label='selecione'
                       >
-
-                        <MenuItem value="Sim">
-                         Sim
-                        </MenuItem>
-                        <MenuItem value="Não">
-                         Não
-                        </MenuItem>
-                        
+                        <MenuItem value="Sim">Sim</MenuItem>
+                        <MenuItem value="Não">Não</MenuItem>
                       </Select>
-                    <Typography sx={{color:"red",fontSize:"0.75rem"}}>  {errors.associacao?.Tiposocio ? "Informe seu tipo de associação com a casa":""}</Typography>
+                      <Typography sx={{color:"red",fontSize:"0.75rem"}}>
+                        {errors.associacao?.Tiposocio ? "Informe seu tipo de associação com a casa" : ""}
+                      </Typography>
                     </FormControl>
                   </Grid>
-                  {/* Select Multiplo para poder selecionar varios dias que o usuário frequentará a casa*/}
                   <Grid item xs={12} sm={6}>
                     <Controller
                       control={control}
@@ -377,7 +339,7 @@ export default function FormRegistration() {
                             {...field}
                             multiple
                             label='Vínculo'
-                            value={field.value} // Use `field.value` em vez de `defaultValue`
+                            value={field.value}
                             onChange={handleChangeVinculoCasa}
                             input={<OutlinedInput label="Função na casa" />}
                             renderValue={(selected) => (
@@ -394,7 +356,9 @@ export default function FormRegistration() {
                               </MenuItem>
                             ))}
                           </Select>
-                          <Typography sx={{color:"red",fontSize:"0.75rem"}}>  {errors.associacao?.tipo ? "Informe sua função na casa":""}</Typography>
+                          <Typography sx={{color:"red",fontSize:"0.75rem"}}>
+                            {errors.associacao?.tipo ? "Informe sua função na casa" : ""}
+                          </Typography>
                         </FormControl>
                       )}
                     />
@@ -403,114 +367,163 @@ export default function FormRegistration() {
                   <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
                 </Grid>
               </FormSection>
-              {/* Campos estudante */}
-
               <FormSection title="Seção 4 - Grupo de Estudo e Estudos Anteriores">
-                <Container >
-                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>Atualmente,você é estudante da casa?</InputLabel>
+                <Container>
+                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
+                    Atualmente,você é estudante da casa?
+                  </InputLabel>
                   <Select
                     variant="filled"
-
                     fullWidth
                     {...register("estudosAnteriores")}
                     sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
-                    defaultValue="nao">
+                    defaultValue="nao"
+                  >
                     <MenuItem value="sim">Sim</MenuItem>
                     <MenuItem value="nao">Não</MenuItem>
                   </Select>
-                  {getValues("estudosAnteriores") === "sim" && (
-                    <>
-                      <FormSection title="Seção 4.1 - Selecione o grupo de estudo em que você está estudando atualmente">
-                        <Grid container spacing={2}>
-                          <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
-                        </Grid>
-                      </FormSection>
-                      <FormSection title="Seção 4.2 - Informe abaixo os estudos que você já realizou">
-                        <>
-                          <Grid container spacing={2}  >
-                            {estudoFields.map((field, index) => (
-                              <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
-                                <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                  {/* Book Selection */}
-                                  <FormControl fullWidth>
-                                    <InputLabel>Selecione um livro que você já estudou</InputLabel>
-                                    <Controller
-                                      control={control}
-                                      name={`HistoricoEstudoField.${index}.livro`}
-                                      render={({ field }) => (
-                                        <Select
-                                          {...field}
-                                          label="Livro"
-                                          value={field.value || ''}
-                                          onChange={field.onChange}
-                                        >
-                                          {/* Assume we have an array named `livrosDisponiveis` */}
-                                          {livrosOrganizados.map(livro => (
-                                            <MenuItem key={livro} value={livro}>{livro}</MenuItem>
-                                          ))}
-                                        </Select>
-                                      )}
-                                    />
-                                  </FormControl>
-
-                                  {/* Year of Study */}
-                                  <TextField
-                                    {...register(`HistoricoEstudoField.${index}.ano`)}
-                                    label="Em qual ano/período você fez esse estudo?"
-                                    variant="outlined"
-                                    fullWidth
-                                  />
-
-                                  {/* Free Observations */}
-                                  <TextareaAutosize
-                                    {...register(`HistoricoEstudoField.${index}.observacoes`)}
-                                    placeholder="Escreva aqui os cursos/estudos que você realizou nesse período"
-                                    style={{
-                                      width: '100%',
-                                      padding: '8px',
-                                      border: '1px solid #ccc',
-                                      borderRadius: '4px',
-                                      resize: 'vertical',
-                                    }}
-                                  />
-
-                                </CardContent>
-                                <CardActions>
-                                  <IconButton color="error" onClick={() => removeEstudo(index)}>
-                                    <DeleteIcon />
-                                    <Typography sx={{ color: "red", ml: "2px" }}>Remover Estudos Adicionados</Typography>
-                                  </IconButton>
-                                </CardActions>
-                              </Card>
-                            ))}
-                          </Grid>
-                          {/* Button to Add a New Entry */}
-                          <Button
-                            startIcon={<AddCircleOutlineIcon />}
-                            variant="contained"
-                            color="success"
-                            onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
-                            sx={{ mt: 2, width: '100%' }}
-                          >
-                            Clique aqui para informar mais estudos que você realizou.
-                          </Button>
-                        </>
-                      </FormSection>
-                    </>
+                  {estudosAnteriores === "sim" && (
+                    <FormSection title="Seção 4.1 - Selecione o grupo de estudo em que você está estudando atualmente">
+                      <Grid container spacing={2}>
+                        <SelectGroupRegistration register={registerForGroup} setValue={setValue} />
+                      </Grid>
+                    </FormSection>
+                  )}
+                  <FormSection title="Seção 4.2 - Informe abaixo os estudos que você já realizou">
+                    <Grid container spacing={2}>
+                      {estudoFields.map((field, index) => (
+                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                          <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <FormControl fullWidth>
+                              <InputLabel>Selecione um livro que você já estudou</InputLabel>
+                              <Controller
+                                control={control}
+                                name={`HistoricoEstudoField.${index}.livro`}
+                                render={({ field }) => (
+                                  <Select
+                                    {...field}
+                                    label="Livro"
+                                    value={field.value || ''}
+                                    onChange={field.onChange}
+                                  >
+                                    {livrosOrganizados.map(livro => (
+                                      <MenuItem key={livro} value={livro}>{livro}</MenuItem>
+                                    ))}
+                                  </Select>
+                                )}
+                              />
+                            </FormControl>
+                            <TextField
+                              {...register(`HistoricoEstudoField.${index}.ano`)}
+                              label="Em qual ano/período você fez esse estudo?"
+                              variant="outlined"
+                              fullWidth
+                            />
+                            <TextareaAutosize
+                              {...register(`HistoricoEstudoField.${index}.observacoes`)}
+                              placeholder="Escreva aqui os cursos/estudos que você realizou nesse período"
+                              style={{
+                                width: '100%',
+                                padding: '8px',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                resize: 'vertical',
+                              }}
+                            />
+                          </CardContent>
+                          <CardActions>
+                            <IconButton color="error" onClick={() => removeEstudo(index)}>
+                              <DeleteIcon />
+                              <Typography sx={{ color: "red", ml: "2px" }}>Remover Estudos Adicionados</Typography>
+                            </IconButton>
+                          </CardActions>
+                        </Card>
+                      ))}
+                    </Grid>
+                    <Button
+                      startIcon={<AddCircleOutlineIcon />}
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => appendEstudo({ livro: "", ano: "", observacoes: "" })}
+                      sx={{ mt: 2, width: '100%' }}
+                    >
+                      Clique aqui para informar mais estudos que você realizou.
+                    </Button>
+                  </FormSection>
+                </Container>
+              </FormSection>
+              <FormSection title="Seção 5 - Trabalhos já realizados para a casa">
+                <Container>
+                  <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
+                    Você já realizou trabalhos anteriores para a casa?
+                  </InputLabel>
+                  <Select
+                    variant="filled"
+                    fullWidth
+                    {...register("trabalhosAnteriores")}
+                    sx={{ mb: "2px", marginLeft: '2px', mt: '12px', textAlign: "center" }}
+                    defaultValue="nao"
+                  >
+                    <MenuItem value="sim">Sim</MenuItem>
+                    <MenuItem value="nao">Não</MenuItem>
+                  </Select>
+                  {trabalhosAnteriores === "sim" && (
+                    <FormSection title="Informe abaixo os trabalhos que você já realizou">
+                      <Grid container spacing={2}>
+                        {trabalhoAnteriorFields.map((field, index) => (
+                          <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                            <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              <FormControl fullWidth>
+                                <TextField
+                                  {...register(`HistoricoTrabalhoField.${index}.funcao`)}
+                                  label="Descrição do trabalho. Ex: Eu trabalhei na portaria distribuindo fichas..."
+                                  variant="outlined"
+                                  fullWidth
+                                />
+                              </FormControl>
+                              <TextField
+                                {...register(`HistoricoTrabalhoField.${index}.ano`)}
+                                label="Em qual ano/período você fez esse trabalho?"
+                                variant="outlined"
+                                fullWidth
+                              />
+                              <TextareaAutosize
+                                {...register(`HistoricoTrabalhoField.${index}.observacoes`)}
+                                placeholder="Escreva aqui outras observações relevantes acerca do trabalho realizado"
+                                style={{
+                                  width: '100%',
+                                  padding: '8px',
+                                  border: '1px solid #ccc',
+                                  borderRadius: '4px',
+                                  resize: 'vertical',
+                                }}
+                              />
+                            </CardContent>
+                            <CardActions>
+                              <IconButton color="error" onClick={() => removeTrabalho(index)}>
+                                <DeleteIcon />
+                                <Typography sx={{ color: "red", ml: "2px" }}>Remover Trabalho Adicionado</Typography>
+                              </IconButton>
+                            </CardActions>
+                          </Card>
+                        ))}
+                      </Grid>
+                      <Button
+                        startIcon={<AddCircleOutlineIcon />}
+                        variant="contained"
+                        color="primary"
+                        onClick={() => appendTrabalhoAnterior({ funcao: "", ano: "", observacoes: "" })}
+                        sx={{ mt: 2, width: '100%' }}
+                      >
+                        Adicionar trabalho anterior
+                      </Button>
+                    </FormSection>
                   )}
                 </Container>
-
               </FormSection>
-
-            
-
-
-
-
-              {/* Campos trabalhador/voluntário */}
-              <FormSection title="Seção 5 - Trabalho na casa" >
+              <FormSection title="Seção 6 - Trabalho na casa">
                 <Grid container spacing={2}>
-                  <Container >
+                  <Container>
                     {trabahadorInfoField.map((field, index) => (
                       <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
                         <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
@@ -534,9 +547,6 @@ export default function FormRegistration() {
                                 </Select>
                               </FormControl>
                             </Grid>
-                           
-
-                           
                             <Grid item xs={12} sx={{ width: "100%" }}>
                               <FormControl fullWidth>
                                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
@@ -552,7 +562,6 @@ export default function FormRegistration() {
                                 </Select>
                               </FormControl>
                             </Grid>
-                            
                           </Grid>
                         </CardContent>
                         <CardActions>
@@ -573,14 +582,9 @@ export default function FormRegistration() {
                       Adicionar dia de trabalho
                     </Button>
                   </Container>
-
-
                 </Grid>
               </FormSection >
-
-           
-
-              <FormSection title="Seção 6 - Observações">
+              <FormSection title="Seção 7 - Observações">
                 <Grid item xs={12}>
                   <TextareaAutosize
                     aria-label="Observações"
@@ -603,12 +607,12 @@ export default function FormRegistration() {
                     }}
                   />
                   {isOtherSpecified && (
-                    <Typography color="error" sx={{ mt: 2 }}>Você escolheu "outro" no campo "função na casa", descreva aqui sua função.</Typography>
+                    <Typography color="error" sx={{ mt: 2 }}>
+                      Você escolheu "outro" no campo "função na casa", descreva aqui sua função.
+                    </Typography>
                   )}
                 </Grid>
-
               </FormSection>
-
               <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                 <Button
                   type="submit"
@@ -619,7 +623,6 @@ export default function FormRegistration() {
                 >
                   {isSubmitting ? "Enviando dados, aguarde..." : "Cadastrar Associado"}
                 </Button>
-
               </Box>
             </Box>
           </form>
@@ -629,4 +632,3 @@ export default function FormRegistration() {
     </>
   );
 }
-//fixed
