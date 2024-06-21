@@ -13,10 +13,9 @@ interface MonthlyReport {
 }
 
 interface ChartProps {
-  data: MonthlyReport[];
+  data?: MonthlyReport[]; // Make data optional with a default parameter
 }
 
-// Here we assume that `data` can have a default empty array if not provided
 const FinanceChart: React.FC<ChartProps> = ({ data = [] }) => {
   return (
     <Box sx={{ width: "90%", backgroundColor: 'rgba(255, 255, 255, 0.9)', mt: "8px" }}>

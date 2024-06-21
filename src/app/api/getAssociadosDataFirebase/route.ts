@@ -1,14 +1,12 @@
-// app/api/obterUsuarios.ts
 import { database } from "@/config/firebase";
 import { ref, get, child } from "firebase/database";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const userId = url.searchParams.get("id"); // Obtém o ID do usuário a partir dos parâmetros da URL
+  const userId = url.searchParams.get("id");
 
   try {
     if (userId) {
-      // Busca dados de um usuário específico
       const userRef = ref(database, `usuarios/${userId}`);
       const dataSnapshot = await get(userRef);
       console.log(dataSnapshot)
@@ -28,7 +26,6 @@ export async function GET(request: Request) {
         });
       }
     } else {
-      // Busca dados de todos os usuários
       const usersRef = ref(database, 'usuarios');
       const dataSnapshot = await get(usersRef);
       if (dataSnapshot.exists()) {
