@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, Container, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Typography } from '@mui/material';
 import { Associado } from '../interfaces/interfaces';
 import { GridColDef, GridToolbar } from '@mui/x-data-grid';
 import CustomPagination from '../components/TableCustomPagination';
@@ -36,9 +36,11 @@ export default function FinanceReport() {
     page: 0,
   });
   const [monthlyReports, setMonthlyReports] = useState<MonthlyReport[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>('');
-  const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
-  const [years, setYears] = useState<string[]>([]);
+  const [filteredReports, setFilteredReports] = useState<MonthlyReport[]>([]);
+  const [anos, setAnos] = useState<number[]>([]);
+  const [meses, setMeses] = useState<string[]>([]);
+  const [selectedAno, setSelectedAno] = useState<number | ''>('');
+  const [selectedMes, setSelectedMes] = useState<string | ''>('');
 
   useEffect(() => {
     axios.get<Record<string, Associado>>('/api/getAssociadosDataFirebase')
@@ -61,32 +63,35 @@ export default function FinanceReport() {
 
   const processFinanceData = (usuarios: Associado[]) => {
     let reports: { [key: string]: MonthlyReport } = {};
-    let yearsSet = new Set<string>();
+    let uniqueAnos: Set<number> = new Set();
+    let uniqueMeses: Set<string> = new Set();
 
     usuarios.forEach(user => {
       user.contribuicao?.forEach(({ dataContribuicao, tipoContribuicao, valorContribuicao }) => {
         if (isValidDate(dataContribuicao)) {
           const date = new Date(dataContribuicao);
-          const month = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-          const year = date.getFullYear().toString();
-          yearsSet.add(year);
+          const month = date.toLocaleString('pt-BR', { month: 'long' });
+          const year = date.getFullYear();
+          uniqueAnos.add(year);
+          uniqueMeses.add(month);
+          const key = `${month} de ${year}`;
           const value = parseFloat(valorContribuicao!);
-          if (!reports[month]) {
-            reports[month] = { id: month, month, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
+          if (!reports[key]) {
+            reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
           }
-          reports[month].totalContribuicoes += isNaN(value) ? 0 : value;
+          reports[key].totalContribuicoes += isNaN(value) ? 0 : value;
           switch (tipoContribuicao!.toLowerCase()) {
             case 'pix':
-              reports[month].pix += isNaN(value) ? 0 : value;
+              reports[key].pix += isNaN(value) ? 0 : value;
               break;
             case 'dinheiro':
-              reports[month].dinheiro += isNaN(value) ? 0 : value;
+              reports[key].dinheiro += isNaN(value) ? 0 : value;
               break;
             case 'cartao':
-              reports[month].cartao += isNaN(value) ? 0 : value;
+              reports[key].cartao += isNaN(value) ? 0 : value;
               break;
             case 'vale presente':
-              reports[month].valePresente += isNaN(value) ? 0 : value;
+              reports[key].valePresente += isNaN(value) ? 0 : value;
               break;
           }
         }
@@ -95,41 +100,32 @@ export default function FinanceReport() {
       user.possuiDebito?.forEach(({ dataDebito, valorDebito }) => {
         if (isValidDate(dataDebito)) {
           const date = new Date(dataDebito);
-          const month = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-          const year = date.getFullYear().toString();
-          yearsSet.add(year);
+          const month = date.toLocaleString('pt-BR', { month: 'long' });
+          const year = date.getFullYear();
+          uniqueAnos.add(year);
+          uniqueMeses.add(month);
+          const key = `${month} de ${year}`;
           const value = parseFloat(String(valorDebito).replace(',', '.'));
-          if (!reports[month]) {
-            reports[month] = { id: month, month, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
+          if (!reports[key]) {
+            reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
           }
-          reports[month].totalDebitos += isNaN(value) ? 0 : value;
+          reports[key].totalDebitos += isNaN(value) ? 0 : value;
         }
       });
     });
 
     setMonthlyReports(Object.values(reports));
-    setYears(Array.from(yearsSet).sort());
+    setAnos(Array.from(uniqueAnos).sort((a, b) => b - a));
+    setMeses(Array.from(uniqueMeses));
   };
 
-  const handleYearChange = (event: SelectChangeEvent<string>) => {
-    setSelectedYear(event.target.value);
-    setSelectedMonths([]); // Clear selected months when year changes
-  };
-
-  const handleMonthChange = (event: SelectChangeEvent<string[]>) => {
-    setSelectedMonths(event.target.value as string[]);
-  };
-
-  const filteredReports = monthlyReports.filter(report => {
-    const reportYear = report.month.split(' ')[2];
-    const reportMonth = report.month.split(' ')[0];
-    return reportYear === selectedYear && (selectedMonths.length === 0 || selectedMonths.includes(reportMonth));
-  });
-
-  const months = [
-    'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
-    'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
-  ];
+  useEffect(() => {
+    const filtered = monthlyReports.filter(report => {
+      const [mes, ano] = report.month.split(' de ');
+      return (selectedAno === '' || parseInt(ano) === selectedAno) && (selectedMes === '' || mes === selectedMes);
+    });
+    setFilteredReports(filtered);
+  }, [selectedAno, selectedMes, monthlyReports]);
 
   const columns: GridColDef[] = [
     { field: 'month', headerName: 'Mês', width: 150, cellClassName: 'column-month' },
@@ -142,85 +138,74 @@ export default function FinanceReport() {
   ];
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-      <Box sx={{display:"flex",width:"90%", backgroundColor:"white",justifyContent:"center",alignItems:"center",mt:"10px"}}>
-        <Typography sx={{color:"black"}}>Selecione o ano e o(s) mês(s) correspondente(s) ao lado:</Typography>
-      <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel>Ano</InputLabel>
-        <Select
-          value={selectedYear}
-          onChange={handleYearChange}
-          input={<OutlinedInput label="Ano" />}
-        >
-          {years.map((year) => (
-            <MenuItem key={year} value={year}>
-              {year}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      {selectedYear && (
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel>Meses</InputLabel>
-          <Select
-            multiple
-            value={selectedMonths}
-            onChange={handleMonthChange}
-            input={<OutlinedInput label="Meses" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} />
+    <Container>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+        <Typography variant="h4" component="h1" sx={{ my: 4 }}>
+          Relatórios Financeiros
+        </Typography>
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Ano</InputLabel>
+              <Select
+                value={selectedAno}
+                onChange={(e) => setSelectedAno(e.target.value as number)}
+              >
+                <MenuItem value=""><em>Todos os Anos</em></MenuItem>
+                {anos.map(ano => (
+                  <MenuItem key={ano} value={ano}>{ano}</MenuItem>
                 ))}
-              </Box>
-            )}
-          >
-            {months.map((month) => (
-              <MenuItem key={month} value={month}>
-                {month}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      )}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Meses</InputLabel>
+              <Select
+                value={selectedMes}
+                onChange={(e) => setSelectedMes(e.target.value as string)}
+              >
+                <MenuItem value=""><em>Todos os Meses</em></MenuItem>
+                {meses.map(mes => (
+                  <MenuItem key={mes} value={mes}>{mes}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Box sx={{ height: 400, width: '100%', mt: 4 }}>
+          <StyledDataGrid
+            rows={filteredReports}
+            columns={columns}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pageSizeOptions={[PAGE_SIZE]}
+            slots={{
+              pagination: CustomPagination,
+              toolbar: GridToolbar,
+            }}
+            disableRowSelectionOnClick
+            sx={{
+              '& .column-month': { backgroundColor: '#e1bee7', textAlign: "center" },
+              '& .column-pix': { backgroundColor: '#ffcdd2', textAlign: "center" },
+              '& .column-dinheiro': { backgroundColor: '#e1bee7', textAlign: "center" },
+              '& .column-cartao': { backgroundColor: '#ffcdd2', textAlign: "center" },
+              '& .column-valePresente': { backgroundColor: '#e1bee7', textAlign: "center" },
+              '& .column-totalContribuicoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
+              '& .column-totalDebitos': { backgroundColor: '#e1bee7', textAlign: "center" },
+              '& .MuiDataGrid-cell': {
+                fontSize: '14px',
+              },
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: '#eeeeee',
+                color: '#000',
+                fontSize: '16px',
+              },
+            }}
+          />
+        </Box>
+        <FinanceChart data={filteredReports} />
       </Box>
-      <Box style={{ marginTop: "20px", height: "auto", width: "90%" }}>
-        <StyledDataGrid
-          rows={filteredReports}
-          columns={columns}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          pageSizeOptions={[PAGE_SIZE]}
-          slots={{
-            pagination: CustomPagination,
-            toolbar: GridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
-          disableRowSelectionOnClick
-          sx={{
-            '& .column-month': { backgroundColor: '#e1bee7', textAlign: "center" },
-            '& .column-pix': { backgroundColor: '#ffcdd2', textAlign: "center" },
-            '& .column-dinheiro': { backgroundColor: '#e1bee7', textAlign: "center" },
-            '& .column-cartao': { backgroundColor: '#ffcdd2', textAlign: "center" },
-            '& .column-valePresente': { backgroundColor: '#e1bee7', textAlign: "center" },
-            '& .column-totalContribuicoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
-            '& .column-totalDebitos': { backgroundColor: '#e1bee7', textAlign: "center" },
-            '& .MuiDataGrid-cell': {
-              fontSize: '14px',
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#eeeeee',
-              color: '#000',
-              fontSize: '16px',
-            },
-          }}
-        />
-      </Box>
-      <FinanceChart data={filteredReports} />
-    </Box>
+    </Container>
   );
-}
+};
