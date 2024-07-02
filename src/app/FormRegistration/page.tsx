@@ -364,7 +364,7 @@ export default function FormRegistration() {
                     />
                   </Grid>
                   <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='string'  helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)}/>
-                  <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá!) " type='text' />
+                  <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá/carnê de contibuição ) " type='text' />
                 </Grid>
               </FormSection>
               <FormSection title="Seção 4 - Grupo de Estudo e Estudos Anteriores">
