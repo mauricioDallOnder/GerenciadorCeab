@@ -1,7 +1,7 @@
 import { BoxStyleCadastro, SubtituloDaPagina, TituloDaPagina } from "@/utils/styles"
 import { Box,Typography } from "@mui/material"
 import Image from 'next/image'
-import ceab from '../../../public/ceab.gif'
+import ceab from '../../../public/centroespirita.jpeg'
 export const FormHeader=({titulo}:{titulo:string})=>{
     return(
         
@@ -16,7 +16,7 @@ export const FormHeader=({titulo}:{titulo:string})=>{
                 }}
               >
                 <Image
-                  src="https://i.ibb.co/YZqhXzg/Whats-App-Image-2024-07-02-at-18-41-42.jpg"
+                  src={ceab}
                   alt=""
                   width={130}
                   height={130}
