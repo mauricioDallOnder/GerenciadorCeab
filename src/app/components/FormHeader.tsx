@@ -1,7 +1,7 @@
 import { BoxStyleCadastro, SubtituloDaPagina, TituloDaPagina } from "@/utils/styles"
 import { Box,Typography } from "@mui/material"
 import Image from 'next/image'
-import ceab from '../../../public/centroespirita.jpeg'
+import ceab from '../../../public/ceab.gif'
 export const FormHeader=({titulo}:{titulo:string})=>{
     return(
         
