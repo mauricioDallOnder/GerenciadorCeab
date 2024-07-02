@@ -16,7 +16,7 @@ export const FormHeader=({titulo}:{titulo:string})=>{
                 }}
               >
                 <Image
-                  src={ceab}
+                  src="https://i.ibb.co/YZqhXzg/Whats-App-Image-2024-07-02-at-18-41-42.jpg"
                   alt=""
                   width={130}
                   height={130}
