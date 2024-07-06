@@ -13,7 +13,7 @@ export default function FinanceManagement() {
   };
 
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4}}>
       <AppBar position="static" sx={{ marginBottom: 4, backgroundColor: theme.palette.primary.main }}>
         <Tabs 
           value={tabIndex} 

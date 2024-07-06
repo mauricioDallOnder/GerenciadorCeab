@@ -1,7 +1,8 @@
 import {
   DataGrid,
+  gridClasses,
 } from "@mui/x-data-grid";
-import { styled } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 export const BoxStyleCadastro = {
     backgroundColor: "#ffffff",
     border: "10px solid",
@@ -41,7 +42,7 @@ export const BoxStyleCadastro = {
     display: "flex",
     flexDirection: "column",
     padding: "2.5em",
-    marginTop:"40px",
+  
     '@media (max-width: 600px)': { 
       width: '90%', 
       padding: '1em',
@@ -247,4 +248,31 @@ export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-
+const ODD_OPACITY = 0.5;
+export const StyledDataGridFinanceiro = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.row-em-aberto`]: {
+    backgroundColor: alpha(theme.palette.error.main, ODD_OPACITY),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.error.dark, ODD_OPACITY),
+    },
+  },
+  [`& .${gridClasses.row}.row-pago`]: {
+    backgroundColor: alpha(theme.palette.success.main, ODD_OPACITY),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.success.dark, ODD_OPACITY),
+    },
+  },
+  "& .MuiDataGrid-columnHeader, .MuiDataGrid-cell": {
+    borderRight: `2px solid ${theme.palette.divider}`, // Bordas mais visíveis
+    textAlign:"center",
+    fontWeight:"bold"
+  },
+  [`& .${gridClasses.columnHeader}`]: {
+    borderRight: `1px solid ${theme.palette.divider} !important`,
+    borderBottom: `1px solid ${theme.palette.divider} !important`,
+  },
+  [`& .${gridClasses.columnSeparator}`]: {
+    visibility: 'visible',
+    color: theme.palette.divider,
+  },
+}));

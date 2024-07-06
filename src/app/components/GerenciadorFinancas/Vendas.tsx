@@ -1,5 +1,5 @@
-import React from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -12,31 +12,58 @@ interface Venda {
   quantidade: number;
   valor: number;
   formaPagamento: string;
+  valorTotal: number; // Adicionando valorTotal
 }
 
 const Vendas: React.FC = () => {
-  const { control, register, handleSubmit, reset } = useForm<{
-    vendas: Venda[];
-  }>({
+  const [rows, setRows] = useState<Venda[]>([]);
+
+  const { control, register, handleSubmit, reset } = useForm<Venda>({
     defaultValues: {
-      vendas: [],
+      id: '',
+      produto: '',
+      quantidade: 0,
+      valor: 0,
+      formaPagamento: '',
+      valorTotal: 0,
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'vendas',
-  });
+  const onSubmit = (data: Venda) => {
+    const newVenda = {
+      ...data,
+      id: String(Date.now()),
+      valorTotal: data.quantidade * data.valor,
+    };
+    setRows([...rows, newVenda]);
+    reset();
+  };
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const handleDelete = (id: string) => {
+    setRows(rows.filter(row => row.id !== id));
   };
 
   const columns: GridColDef[] = [
-    { field: 'produto', headerName: 'Produto', width: 150 },
+    { field: 'produto', headerName: 'Produto', width: 200 },
     { field: 'quantidade', headerName: 'Quantidade', width: 150 },
-    { field: 'valor', headerName: 'Valor', width: 150 },
+    { field: 'valor', headerName: 'Valor Unitário', width: 150 },
     { field: 'formaPagamento', headerName: 'Forma de Pagamento', width: 200 },
+    { field: 'valorTotal', headerName: 'Valor Total', width: 150 },
+    {
+      field: 'Deletar',
+      headerName: 'Deletar Registro',
+      width: 155,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleDelete(params.row.id)}
+        >
+          Deletar
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -45,87 +72,70 @@ const Vendas: React.FC = () => {
         Vendas
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {fields.map((field, index) => (
-          <Card key={field.id} sx={{ marginBottom: 2 }}>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    {...register(`vendas.${index}.produto`)}
-                    label="Produto"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    {...register(`vendas.${index}.quantidade`)}
-                    label="Quantidade"
-                    type="number"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    {...register(`vendas.${index}.valor`)}
-                    label="Valor"
-                    type="number"
-                    fullWidth
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Forma de Pagamento</InputLabel>
-                    <Controller
-                      render={({ field }) => (
-                        <Select {...field} fullWidth>
-                          <MenuItem value="debito">Débito</MenuItem>
-                          <MenuItem value="credito">Crédito</MenuItem>
-                          <MenuItem value="boleto">Boleto</MenuItem>
-                          <MenuItem value="pix">Pix</MenuItem>
-                        </Select>
-                      )}
-                      name={`vendas.${index}.formaPagamento`}
-                      control={control}
-                    />
-                  </FormControl>
-                </Grid>
+        <Card sx={{ marginBottom: 2 }}>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  {...register('produto')}
+                  label="Produto"
+                  fullWidth
+                />
               </Grid>
-            </CardContent>
-            <CardActions>
-              <Button
-                startIcon={<DeleteIcon />}
-                color="error"
-                onClick={() => remove(index)}
-              >
-                Remover
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
-        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <Button
-            startIcon={<AddCircleOutlineIcon />}
-            variant="contained"
-            color="primary"
-            onClick={() =>
-              append({
-                id: String(Date.now()),
-                produto: '',
-                quantidade: 0,
-                valor: 0,
-                formaPagamento: '',
-              })
-            }
-          >
-            Adicionar Venda
-          </Button>
-          <Button variant="contained" color="secondary" type="submit">
-            Salvar
-          </Button>
-        </Box>
+              <Grid item xs={12} sm={3}>
+                <TextField
+                  {...register('quantidade')}
+                  label="Quantidade"
+                  type="number"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={3}>
+                <TextField
+                  {...register('valor')}
+                  label="Valor"
+                  type="number"
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Forma de Pagamento</InputLabel>
+                  <Controller
+                    render={({ field }) => (
+                      <Select {...field} fullWidth>
+                        <MenuItem value="debito">Débito</MenuItem>
+                        <MenuItem value="credito">Crédito</MenuItem>
+                        <MenuItem value="boleto">Boleto</MenuItem>
+                        <MenuItem value="pix">Pix</MenuItem>
+                      </Select>
+                    )}
+                    name="formaPagamento"
+                    control={control}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+          </CardContent>
+          <CardActions>
+            <Button
+              startIcon={<AddCircleOutlineIcon />}
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Adicionar Venda
+            </Button>
+          </CardActions>
+        </Card>
       </form>
       <Box sx={{ height: 400, width: '100%' }}>
-        <StyledDataGrid rows={fields} columns={columns}  disableRowSelectionOnClick />
+        <StyledDataGrid
+          rows={rows}
+          columns={columns}
+          disableRowSelectionOnClick
+          getRowId={(row) => row.id}
+        />
       </Box>
     </Box>
   );
