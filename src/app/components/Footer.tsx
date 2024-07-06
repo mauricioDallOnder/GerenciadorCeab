@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Container, Grid, Typography, IconButton, Link, Avatar } from '@mui/material';
 import { Facebook, Instagram, Twitter, YouTube } from '@mui/icons-material';
 import Image from 'next/image';
-import logo from '../../../public/logo.jpeg'; // Ajuste o caminho conforme necessário
+import logo from '../../../public/centroespirita.jpeg'; // Ajuste o caminho conforme necessário
 
 const socialLinks = [
   { icon: <Facebook />, url: 'https://www.facebook.com/alunosdobem' },
