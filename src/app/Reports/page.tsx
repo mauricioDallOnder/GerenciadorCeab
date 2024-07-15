@@ -70,8 +70,8 @@ export default function FinanceReport() {
       user.contribuicao?.forEach(({ dataContribuicao, tipoContribuicao, valorContribuicao }) => {
         if (isValidDate(dataContribuicao)) {
           const date = new Date(dataContribuicao);
-          const month = date.toLocaleString('pt-BR', { month: 'long' });
-          const year = date.getFullYear();
+          const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+          const year = date.getUTCFullYear();
           uniqueAnos.add(year);
           uniqueMeses.add(month);
           const key = `${month} de ${year}`;
@@ -100,8 +100,8 @@ export default function FinanceReport() {
       user.possuiDebito?.forEach(({ dataDebito, valorDebito }) => {
         if (isValidDate(dataDebito)) {
           const date = new Date(dataDebito);
-          const month = date.toLocaleString('pt-BR', { month: 'long' });
-          const year = date.getFullYear();
+          const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+          const year = date.getUTCFullYear();
           uniqueAnos.add(year);
           uniqueMeses.add(month);
           const key = `${month} de ${year}`;

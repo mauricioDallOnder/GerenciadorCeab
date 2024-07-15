@@ -430,7 +430,7 @@ export default function UserUpdateForm() {
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
                                                         {...register(`possuiDebito.${index}.valorDebito` as const)}
-                                                        label="Valor devido"
+                                                        label="Valor da contribuição"
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
                                                         variant="outlined"
@@ -440,7 +440,7 @@ export default function UserUpdateForm() {
                                                 <Grid item xs={12} sx={{ width: '100%' }}>
                                                     <TextField
                                                         {...register(`possuiDebito.${index}.dataDebito` as const)}
-                                                        label="Data do débito"
+                                                        label="Data da contribuição"
                                                         type="date"
                                                         InputLabelProps={{ shrink: true }}
                                                         fullWidth
