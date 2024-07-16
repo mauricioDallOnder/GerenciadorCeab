@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { v4 as uuidv4 } from 'uuid';
+import { BoxStyleFinanca, StyledDataGridFinanceiro } from '@/utils/styles';
+import axios from 'axios';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { DataGrid, GridColDef, GridRowParams, gridClasses } from '@mui/x-data-grid';
-import { alpha, styled } from '@mui/material/styles';
-import { BoxStyleFinanca, StyledDataGridFinanceiro, TituloDaPagina } from '@/utils/styles';
 
 interface ContaPagar {
   id: string;
   empresa: string;
   valor: number;
   dataPagamento: string;
-  tituloNotaFiscal: string;
-  formaPagamento: string;
-  cnpj: string;
-  status: string;
+  nNotaFiscal: string;
+  FormaPagamento: string;
+  CNPJ: string;
+  Status: string;
 }
 
-
-
-export default function ContasPagar() {
+const ContasPagar: React.FC = () => {
   const [rows, setRows] = useState<ContaPagar[]>([]);
 
   const { control, register, handleSubmit, reset } = useForm<ContaPagar>({
@@ -29,44 +27,96 @@ export default function ContasPagar() {
       empresa: '',
       valor: 0,
       dataPagamento: '',
-      tituloNotaFiscal: '',
-      formaPagamento: '',
-      cnpj: '',
-      status: 'em aberto',
+      nNotaFiscal: '',
+      FormaPagamento: '',
+      CNPJ: '',
+      Status: 'em aberto',
     },
   });
+
+  useEffect(() => {
+    axios.get<ContaPagar[]>('/api/ApiContasPagar')
+      .then(response => {
+        if (Array.isArray(response.data)) {
+          const formattedData = response.data.map(row => ({
+            ...row,
+            dataPagamento: formatDate(row.dataPagamento),
+          }));
+          setRows(formattedData);
+        } else {
+          console.error('Data received is not an array:', response.data);
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao buscar dados:', error);
+      });
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const onSubmit = (data: ContaPagar) => {
     const newConta = {
       ...data,
-      id: String(Date.now()),
+      id: uuidv4(),
+      dataPagamento: formatDate(data.dataPagamento),
     };
-    setRows([...rows, newConta]);
+    setRows(prevRows => [...prevRows, newConta]);
+    axios.post('/api/ApiContasPagar', newConta)
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error('Erro ao adicionar conta a pagar:', error);
+      });
     reset();
   };
 
   const handleDelete = (id: string) => {
-    setRows(rows.filter(row => row.id !== id));
+    axios.delete('/api/ApiContasPagar', { data: { id } })
+      .then(response => {
+        console.log(response.data);
+        setRows(prevRows => prevRows.filter(row => row.id !== id));
+      })
+      .catch(error => {
+        console.error('Erro ao deletar conta a pagar:', error);
+      });
   };
 
   const handleStatusChange = (id: string, status: string) => {
-    setRows(rows.map(row => (row.id === id ? { ...row, status } : row)));
+    const updatedConta = rows.find(row => row.id === id);
+    if (updatedConta) {
+      const updatedRow = { ...updatedConta, Status: status };
+      axios.put('/api/ApiContasPagar', updatedRow)
+        .then(response => {
+          console.log(response.data);
+          setRows(prevRows => prevRows.map(row => row.id === id ? updatedRow : row));
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar status:', error);
+        });
+    }
   };
 
   const columns: GridColDef[] = [
     { field: 'empresa', headerName: 'Empresa', width: 300 },
     { field: 'valor', headerName: 'Valor', width: 100 },
     { field: 'dataPagamento', headerName: 'Data de Pagamento', width: 150 },
-    { field: 'tituloNotaFiscal', headerName: 'N° Título/Nota Fiscal', width: 180 },
-    { field: 'formaPagamento', headerName: 'Forma de Pagamento', width: 180 },
-    { field: 'cnpj', headerName: 'CNPJ', width: 150 },
+    { field: 'nNotaFiscal', headerName: 'N° Título/Nota Fiscal', width: 180 },
+    { field: 'FormaPagamento', headerName: 'Forma de Pagamento', width: 180 },
+    { field: 'CNPJ', headerName: 'CNPJ', width: 150 },
     {
-      field: 'status',
+      field: 'Status',
       headerName: 'Status',
       width: 150,
       renderCell: (params) => (
         <Select
-          value={params.row.status}
+          value={params.row.Status}
           onChange={(e) => handleStatusChange(params.row.id, e.target.value as string)}
           fullWidth
         >
@@ -92,13 +142,13 @@ export default function ContasPagar() {
     },
   ];
 
-  const getRowClassName = (params: GridRowParams) => {
-    return params.row.status === 'em aberto' ? 'row-em-aberto' : 'row-pago';
+  const getRowClassName = (params: any) => {
+    return params.row.Status === 'em aberto' ? 'row-em-aberto' : 'row-pago';
   };
 
   return (
     <Box sx={BoxStyleFinanca}>
-      <Typography variant="h6" gutterBottom sx={TituloDaPagina}>
+      <Typography variant="h6" gutterBottom>
         Contas a Pagar
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -113,11 +163,23 @@ export default function ContasPagar() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  {...register('valor')}
-                  label="Valor"
-                  type="number"
-                  fullWidth
+              <Controller
+                  name="valor"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Valor"
+                      type="number"
+                      inputMode="decimal"
+                      fullWidth
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(value);
+                      }}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -131,14 +193,14 @@ export default function ContasPagar() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  {...register('tituloNotaFiscal')}
+                  {...register('nNotaFiscal')}
                   label="N° Título/Nota Fiscal"
                   fullWidth
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  {...register('cnpj')}
+                  {...register('CNPJ')}
                   label="CNPJ"
                   fullWidth
                 />
@@ -154,7 +216,7 @@ export default function ContasPagar() {
                         <MenuItem value="boleto">Boleto</MenuItem>
                       </Select>
                     )}
-                    name="formaPagamento"
+                    name="FormaPagamento"
                     control={control}
                   />
                 </FormControl>
@@ -169,7 +231,7 @@ export default function ContasPagar() {
                         <MenuItem value="pago">Pago</MenuItem>
                       </Select>
                     )}
-                    name="status"
+                    name="Status"
                     control={control}
                   />
                 </FormControl>
@@ -193,10 +255,12 @@ export default function ContasPagar() {
           rows={rows}
           columns={columns}
           disableRowSelectionOnClick
-          getRowClassName={getRowClassName}
           getRowId={(row) => row.id}
+          getRowClassName={getRowClassName}
         />
       </Box>
     </Box>
   );
-}
+};
+
+export default ContasPagar;

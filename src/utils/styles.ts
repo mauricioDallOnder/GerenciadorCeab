@@ -38,7 +38,7 @@ export const BoxStyleCadastro = {
     fontSize: "16px",
     maxWidth: '100%', // Remove o limite fixo de largura
    
-    margin: '30px auto',
+   
     display: "flex",
     flexDirection: "column",
     padding: "2.5em",

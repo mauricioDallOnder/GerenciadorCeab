@@ -20,7 +20,8 @@ export const tipoVinculoComCeab = [
   "Expositor/Palestrante",
   "Evangelizador",
   "Monitor de Evangelizador",
-  "outro-informe nas observações!"
+  "outro-informe nas observações!",
+  "Associado que frequenta a casa"
 ]
 
 export const livrosOrganizados = [

@@ -13,8 +13,8 @@ export default function FinanceManagement() {
   };
 
   return (
-    <Container sx={{ mt: 4}}>
-      <AppBar position="static" sx={{ marginBottom: 4, backgroundColor: theme.palette.primary.main }}>
+    <Container sx={{ bgcolor: 'transparent', borderRadius: 2, p: 2 }}>
+      <AppBar position="static" sx={{ backgroundColor: '#2e3b55' }}>
         <Tabs 
           value={tabIndex} 
           onChange={handleTabChange} 
@@ -48,7 +48,7 @@ function TabPanel(props: any) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, bgcolor: 'transparent', borderRadius: 2 }}>
           {children}
         </Box>
       )}
