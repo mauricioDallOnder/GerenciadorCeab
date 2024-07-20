@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography } from '@mui/material';
+import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { v4 as uuidv4 } from 'uuid';
 import { BoxStyleFinanca, StyledDataGridFinanceiro } from '@/utils/styles';
@@ -20,6 +20,8 @@ interface ContaPagar {
 
 const ContasPagar: React.FC = () => {
   const [rows, setRows] = useState<ContaPagar[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
 
   const { control, register, handleSubmit, reset } = useForm<ContaPagar>({
     defaultValues: {
@@ -35,6 +37,7 @@ const ContasPagar: React.FC = () => {
   });
 
   useEffect(() => {
+    setLoading(true);
     axios.get<ContaPagar[]>('/api/ApiContasPagar')
       .then(response => {
         if (Array.isArray(response.data)) {
@@ -49,6 +52,9 @@ const ContasPagar: React.FC = () => {
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -66,25 +72,31 @@ const ContasPagar: React.FC = () => {
       id: uuidv4(),
       dataPagamento: formatDate(data.dataPagamento),
     };
-    setRows(prevRows => [...prevRows, newConta]);
+    setLoading(true);
     axios.post('/api/ApiContasPagar', newConta)
       .then(response => {
-        console.log(response.data);
+        setRows(prevRows => [...prevRows, newConta]);
+        reset();
       })
       .catch(error => {
         console.error('Erro ao adicionar conta a pagar:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    reset();
   };
 
   const handleDelete = (id: string) => {
+    setDeleteLoading(prev => ({ ...prev, [id]: true }));
     axios.delete('/api/ApiContasPagar', { data: { id } })
       .then(response => {
-        console.log(response.data);
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
         console.error('Erro ao deletar conta a pagar:', error);
+      })
+      .finally(() => {
+        setDeleteLoading(prev => ({ ...prev, [id]: false }));
       });
   };
 
@@ -92,13 +104,16 @@ const ContasPagar: React.FC = () => {
     const updatedConta = rows.find(row => row.id === id);
     if (updatedConta) {
       const updatedRow = { ...updatedConta, Status: status };
+      setLoading(true);
       axios.put('/api/ApiContasPagar', updatedRow)
         .then(response => {
-          console.log(response.data);
           setRows(prevRows => prevRows.map(row => row.id === id ? updatedRow : row));
         })
         .catch(error => {
           console.error('Erro ao atualizar status:', error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
@@ -119,6 +134,7 @@ const ContasPagar: React.FC = () => {
           value={params.row.Status}
           onChange={(e) => handleStatusChange(params.row.id, e.target.value as string)}
           fullWidth
+          disabled={loading}
         >
           <MenuItem value="em aberto">Em Aberto</MenuItem>
           <MenuItem value="pago">Pago</MenuItem>
@@ -135,8 +151,9 @@ const ContasPagar: React.FC = () => {
           variant="contained"
           color="error"
           onClick={() => handleDelete(params.row.id)}
+          disabled={deleteLoading[params.row.id] || loading}
         >
-          Deletar
+          {deleteLoading[params.row.id] ? <CircularProgress size={24} /> : 'Deletar'}
         </Button>
       ),
     },
@@ -211,7 +228,7 @@ const ContasPagar: React.FC = () => {
                   <Controller
                     render={({ field }) => (
                       <Select {...field} fullWidth>
-                       <MenuItem value="debito">Débito</MenuItem>
+                        <MenuItem value="debito">Débito</MenuItem>
                         <MenuItem value="credito">Crédito</MenuItem>
                         <MenuItem value="boleto">Boleto</MenuItem>
                         <MenuItem value="pix">Pix</MenuItem>
@@ -248,8 +265,9 @@ const ContasPagar: React.FC = () => {
               variant="contained"
               color="primary"
               type="submit"
+              disabled={loading}
             >
-              Adicionar Conta a Pagar
+              {loading ? <CircularProgress size={24} /> : 'Adicionar Conta a Pagar'}
             </Button>
           </CardActions>
         </Card>
@@ -261,6 +279,7 @@ const ContasPagar: React.FC = () => {
           disableRowSelectionOnClick
           getRowId={(row) => row.id}
           getRowClassName={getRowClassName}
+          loading={loading}
         />
       </Box>
     </Box>

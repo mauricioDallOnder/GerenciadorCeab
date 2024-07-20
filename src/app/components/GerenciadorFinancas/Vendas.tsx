@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography } from '@mui/material';
+import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { v4 as uuidv4 } from 'uuid';
 import { BoxStyleFinanca, StyledDataGridFinanceiro } from '@/utils/styles';
@@ -19,6 +19,8 @@ interface Venda {
 
 const Vendas: React.FC = () => {
   const [rows, setRows] = useState<Venda[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
 
   const { control, register, handleSubmit, reset } = useForm<Venda>({
     defaultValues: {
@@ -33,6 +35,7 @@ const Vendas: React.FC = () => {
   });
 
   useEffect(() => {
+    setLoading(true);
     axios.get<Venda[]>('/api/ApiVendas')
       .then(response => {
         if (Array.isArray(response.data)) {
@@ -47,6 +50,9 @@ const Vendas: React.FC = () => {
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -65,25 +71,31 @@ const Vendas: React.FC = () => {
       valorTotal: data.quantidade * data.valor,
       dataVenda: formatDate(data.dataVenda), // Formatação da data
     };
-    setRows(prevRows => [...prevRows, newVenda]);
+    setLoading(true);
     axios.post('/api/ApiVendas', newVenda)
       .then(response => {
-        console.log(response.data);
+        setRows(prevRows => [...prevRows, newVenda]);
+        reset();
       })
       .catch(error => {
         console.error('Erro ao adicionar venda:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    reset();
   };
 
   const handleDelete = (id: string) => {
+    setDeleteLoading(prev => ({ ...prev, [id]: true }));
     axios.delete('/api/ApiVendas', { data: { id } })
       .then(response => {
-        console.log(response.data);
         setRows(prevRows => prevRows.filter(row => row.id !== id));
       })
       .catch(error => {
         console.error('Erro ao deletar venda:', error);
+      })
+      .finally(() => {
+        setDeleteLoading(prev => ({ ...prev, [id]: false }));
       });
   };
 
@@ -94,7 +106,6 @@ const Vendas: React.FC = () => {
     { field: 'valor', headerName: 'Valor Unitário', width: 150 },
     { field: 'formaPagamento', headerName: 'Forma de Pagamento', width: 200 },
     { field: 'valorTotal', headerName: 'Valor Total', width: 150 },
-  
     {
       field: 'Deletar',
       headerName: 'Deletar Registro',
@@ -105,8 +116,9 @@ const Vendas: React.FC = () => {
           variant="contained"
           color="error"
           onClick={() => handleDelete(params.row.id)}
+          disabled={deleteLoading[params.row.id] || loading}
         >
-          Deletar
+          {deleteLoading[params.row.id] ? <CircularProgress size={24} /> : 'Deletar'}
         </Button>
       ),
     },
@@ -199,8 +211,9 @@ const Vendas: React.FC = () => {
               variant="contained"
               color="primary"
               type="submit"
+              disabled={loading}
             >
-              Adicionar Venda
+              {loading ? <CircularProgress size={24} /> : 'Adicionar Venda'}
             </Button>
           </CardActions>
         </Card>
@@ -211,6 +224,7 @@ const Vendas: React.FC = () => {
           columns={columns}
           disableRowSelectionOnClick
           getRowId={(row) => row.id}
+          loading={loading}
         />
       </Box>
     </Box>
