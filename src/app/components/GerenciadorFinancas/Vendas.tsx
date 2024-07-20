@@ -166,6 +166,8 @@ const Vendas: React.FC = () => {
                         <MenuItem value="credito">Crédito</MenuItem>
                         <MenuItem value="boleto">Boleto</MenuItem>
                         <MenuItem value="pix">Pix</MenuItem>
+                        <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                        <MenuItem value="vale">Vale</MenuItem>
                       </Select>
                     )}
                     name="formaPagamento"

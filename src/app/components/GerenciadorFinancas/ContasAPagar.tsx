@@ -211,9 +211,13 @@ const ContasPagar: React.FC = () => {
                   <Controller
                     render={({ field }) => (
                       <Select {...field} fullWidth>
-                        <MenuItem value="debito">Débito</MenuItem>
+                       <MenuItem value="debito">Débito</MenuItem>
                         <MenuItem value="credito">Crédito</MenuItem>
                         <MenuItem value="boleto">Boleto</MenuItem>
+                        <MenuItem value="pix">Pix</MenuItem>
+                        <MenuItem value="dinheiro">Dinheiro</MenuItem>
+                        <MenuItem value="vale">Vale</MenuItem>
+                        <MenuItem value="transferencia bancária">Transferência Bancária</MenuItem>
                       </Select>
                     )}
                     name="FormaPagamento"
