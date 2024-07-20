@@ -115,7 +115,7 @@ const Vendas: React.FC = () => {
   return (
     <Box sx={BoxStyleFinanca}>
       <Typography variant="h6" gutterBottom>
-        Vendas
+        Vendas/Doações
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card sx={{ marginBottom: 2 }}>
