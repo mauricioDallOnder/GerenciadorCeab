@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { v4 as uuidv4 } from 'uuid';
-import { BoxStyleFinanca, StyledDataGridFinanceiro } from '@/utils/styles';
+import { BoxStyleFinanca, StyledDataGrid, StyledDataGridFinanceiro } from '@/utils/styles';
 import axios from 'axios';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CustomPagination from '../TableCustomPagination';
 
 interface Venda {
   id: string;
@@ -219,12 +220,16 @@ const Vendas: React.FC = () => {
         </Card>
       </form>
       <Box sx={{ height: 400, width: '100%' }}>
-        <StyledDataGridFinanceiro
+        <StyledDataGrid
           rows={rows}
           columns={columns}
           disableRowSelectionOnClick
           getRowId={(row) => row.id}
           loading={loading}
+          slots={{
+            pagination: CustomPagination,
+            toolbar: GridToolbar,
+          }}
         />
       </Box>
     </Box>
