@@ -9,11 +9,10 @@ interface MonthlyReport {
   id: string;
   month: string;
   totalContribuicoes: number;
-  totalDebitos: number;
 }
 
 interface ChartProps {
-  data?: MonthlyReport[]; // Make data optional with a default parameter
+  data?: MonthlyReport[]; // Tornar data opcional com um parâmetro padrão
 }
 
 const FinanceChart: React.FC<ChartProps> = ({ data = [] }) => {

@@ -1,8 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Container, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Grid, Typography } from '@mui/material';
-import { Associado } from '../interfaces/interfaces';
+import { Box, Container, FormControl, InputLabel, MenuItem, Select, Grid, Typography, CircularProgress } from '@mui/material';
 import { GridColDef, GridToolbar } from '@mui/x-data-grid';
 import CustomPagination from '../components/TableCustomPagination';
 import FinanceChart from '../components/FinanceChart';
@@ -14,7 +13,6 @@ interface MonthlyReport {
   id: string;
   month: string;
   totalContribuicoes: number;
-  totalDebitos: number;
   pix: number;
   dinheiro: number;
   cartao: number;
@@ -41,77 +39,63 @@ export default function FinanceReport() {
   const [meses, setMeses] = useState<string[]>([]);
   const [selectedAno, setSelectedAno] = useState<number | ''>('');
   const [selectedMes, setSelectedMes] = useState<string | ''>('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get<Record<string, Associado>>('/api/getAssociadosDataFirebase')
+    axios.get('/api/ApiVendas')
       .then(response => {
-        const usuarios = Object.entries(response.data).map(([key, value]) => ({
-          id: key,
-          ...value
-        }));
-        processFinanceData(usuarios);
+        const vendas = response.data;
+        processFinanceData(vendas);
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const isValidDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toString() !== 'Invalid Date' && dateString !== "09/09/9999";
+    return date.toString() !== 'Invalid Date';
   };
 
-  const processFinanceData = (usuarios: Associado[]) => {
+  const processFinanceData = (vendas: any[]) => {
     let reports: { [key: string]: MonthlyReport } = {};
     let uniqueAnos: Set<number> = new Set();
     let uniqueMeses: Set<string> = new Set();
 
-    usuarios.forEach(user => {
-      user.contribuicao?.forEach(({ dataContribuicao, tipoContribuicao, valorContribuicao }) => {
-        if (isValidDate(dataContribuicao)) {
-          const date = new Date(dataContribuicao);
-          const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
-          const year = date.getUTCFullYear();
-          uniqueAnos.add(year);
-          uniqueMeses.add(month);
-          const key = `${month} de ${year}`;
-          const value = parseFloat(valorContribuicao!);
-          if (!reports[key]) {
-            reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
-          }
-          reports[key].totalContribuicoes += isNaN(value) ? 0 : value;
-          switch (tipoContribuicao!.toLowerCase()) {
-            case 'pix':
-              reports[key].pix += isNaN(value) ? 0 : value;
-              break;
-            case 'dinheiro':
-              reports[key].dinheiro += isNaN(value) ? 0 : value;
-              break;
-            case 'cartao':
-              reports[key].cartao += isNaN(value) ? 0 : value;
-              break;
-            case 'vale presente':
-              reports[key].valePresente += isNaN(value) ? 0 : value;
-              break;
-          }
-        }
-      });
+    vendas.forEach(venda => {
+      if (isValidDate(venda.dataVenda)) {
+        const date = new Date(venda.dataVenda);
+        const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+        const year = date.getUTCFullYear();
+        uniqueAnos.add(year);
+        uniqueMeses.add(month);
+        const key = `${month} de ${year}`;
+        const value = parseFloat(venda.valorTotal);
 
-      user.possuiDebito?.forEach(({ dataDebito, valorDebito }) => {
-        if (isValidDate(dataDebito)) {
-          const date = new Date(dataDebito);
-          const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
-          const year = date.getUTCFullYear();
-          uniqueAnos.add(year);
-          uniqueMeses.add(month);
-          const key = `${month} de ${year}`;
-          const value = parseFloat(String(valorDebito).replace(',', '.'));
-          if (!reports[key]) {
-            reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDebitos: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
-          }
-          reports[key].totalDebitos += isNaN(value) ? 0 : value;
+        if (!reports[key]) {
+          reports[key] = { id: key, month: key, totalContribuicoes: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
         }
-      });
+
+        reports[key].totalContribuicoes += isNaN(value) ? 0 : value;
+
+        switch (venda.formaPagamento.toLowerCase()) {
+          case 'pix':
+            reports[key].pix += isNaN(value) ? 0 : value;
+            break;
+          case 'dinheiro':
+            reports[key].dinheiro += isNaN(value) ? 0 : value;
+            break;
+          case 'cartao':
+            reports[key].cartao += isNaN(value) ? 0 : value;
+            break;
+          case 'vale':
+            reports[key].valePresente += isNaN(value) ? 0 : value;
+            break;
+        }
+      }
     });
 
     setMonthlyReports(Object.values(reports));
@@ -132,16 +116,15 @@ export default function FinanceReport() {
     { field: 'pix', headerName: 'Valor Total em Pix', type: 'number', width: 200, cellClassName: 'column-pix' },
     { field: 'dinheiro', headerName: 'Valor Total em Dinheiro', type: 'number', width: 200, cellClassName: 'column-dinheiro' },
     { field: 'cartao', headerName: 'Valor Total em Cartão', type: 'number', width: 200, cellClassName: 'column-cartao' },
-    { field: 'valePresente', headerName: 'Valor Total em Vale Presente', type: 'number', width: 230, cellClassName: 'column-valePresente' },
+    { field: 'valePresente', headerName: 'Valor Total em Vale', type: 'number', width: 230, cellClassName: 'column-valePresente' },
     { field: 'totalContribuicoes', headerName: 'Valor Total de Contribuições', type: 'number', width: 230, cellClassName: 'column-totalContribuicoes' },
-    { field: 'totalDebitos', headerName: 'Valor Total em Débitos', type: 'number', width: 200, cellClassName: 'column-totalDebitos' },
   ];
 
   return (
     <Container>
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
         <Typography variant="h4" component="h1" sx={{ my: 4 }}>
-          Relatórios Financeiros
+          Relatório de Vendas
         </Typography>
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6}>
@@ -173,39 +156,42 @@ export default function FinanceReport() {
             </FormControl>
           </Grid>
         </Grid>
-        <Box sx={{ height: 400, width: '100%', mt: 4 }}>
-          <StyledDataGrid
-            rows={filteredReports}
-            columns={columns}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            pageSizeOptions={[PAGE_SIZE]}
-            slots={{
-              pagination: CustomPagination,
-              toolbar: GridToolbar,
-            }}
-            disableRowSelectionOnClick
-            sx={{
-              '& .column-month': { backgroundColor: '#e1bee7', textAlign: "center" },
-              '& .column-pix': { backgroundColor: '#ffcdd2', textAlign: "center" },
-              '& .column-dinheiro': { backgroundColor: '#e1bee7', textAlign: "center" },
-              '& .column-cartao': { backgroundColor: '#ffcdd2', textAlign: "center" },
-              '& .column-valePresente': { backgroundColor: '#e1bee7', textAlign: "center" },
-              '& .column-totalContribuicoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
-              '& .column-totalDebitos': { backgroundColor: '#e1bee7', textAlign: "center" },
-              '& .MuiDataGrid-cell': {
-                fontSize: '14px',
-              },
-              '& .MuiDataGrid-columnHeaders': {
-                backgroundColor: '#eeeeee',
-                color: '#000',
-                fontSize: '16px',
-              },
-            }}
-          />
-        </Box>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Box sx={{ height: 400, width: '100%', mt: 4 }}>
+            <StyledDataGrid
+              rows={filteredReports}
+              columns={columns}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              pageSizeOptions={[PAGE_SIZE]}
+              slots={{
+                pagination: CustomPagination,
+                toolbar: GridToolbar,
+              }}
+              disableRowSelectionOnClick
+              sx={{
+                '& .column-month': { backgroundColor: '#e1bee7', textAlign: "center" },
+                '& .column-pix': { backgroundColor: '#ffcdd2', textAlign: "center" },
+                '& .column-dinheiro': { backgroundColor: '#e1bee7', textAlign: "center" },
+                '& .column-cartao': { backgroundColor: '#ffcdd2', textAlign: "center" },
+                '& .column-valePresente': { backgroundColor: '#e1bee7', textAlign: "center" },
+                '& .column-totalContribuicoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
+                '& .MuiDataGrid-cell': {
+                  fontSize: '14px',
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                  color: '#000',
+                  fontSize: '16px',
+                },
+              }}
+            />
+          </Box>
+        )}
         <FinanceChart data={filteredReports} />
       </Box>
     </Container>
   );
-};
+}
