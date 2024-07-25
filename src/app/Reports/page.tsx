@@ -117,7 +117,7 @@ export default function FinanceReport() {
     { field: 'dinheiro', headerName: 'Valor Total em Dinheiro', type: 'number', width: 200, cellClassName: 'column-dinheiro' },
     { field: 'cartao', headerName: 'Valor Total em Cartão', type: 'number', width: 200, cellClassName: 'column-cartao' },
     { field: 'valePresente', headerName: 'Valor Total em Vale', type: 'number', width: 230, cellClassName: 'column-valePresente' },
-    { field: 'totalContribuicoes', headerName: 'Valor Total de Contribuições', type: 'number', width: 230, cellClassName: 'column-totalContribuicoes' },
+    { field: 'totalContribuicoes', headerName: 'Valor Total em vendas no mês', type: 'number', width: 230, cellClassName: 'column-totalContribuicoes' },
   ];
 
   return (

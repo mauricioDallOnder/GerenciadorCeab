@@ -32,7 +32,6 @@ const FinanceChart: React.FC<ChartProps> = ({ data = [] }) => {
           <Tooltip formatter={(value: number) => value.toFixed(2)} />
           <Legend wrapperStyle={{ paddingTop: '20px' }} />
           <Bar dataKey="totalContribuicoes" fill="#4158d0" barSize={20} radius={[10, 10, 0, 0]} />
-          <Bar dataKey="totalDebitos" fill="#e11919" barSize={20} radius={[10, 10, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </Box>
