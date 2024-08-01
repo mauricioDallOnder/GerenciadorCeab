@@ -30,6 +30,10 @@ export const associadoSchema = z.object({
     TipoMediunidade: z.array(z.string().min(1, { message: "Informe seu tipo de mediunidade" })),
     dataEntrada: z.string().min(1, { message: "Informe a data de entrada na casa" }),
     Tiposocio:z.string().min(1, { message: "Informe seu tipo de associação com a casa" }),
+    assinoutermo: z.enum(['Sim', 'Não'])
+    .refine(value => value === 'Sim' || value === 'Não', {
+      message: "Resposta obrigatória"
+    })
   }),
   GrupoEstudoInfoField: z.object({
     livro: z.string(),

@@ -60,7 +60,7 @@ export default function ListOfUsers() {
         { field: "col12", headerName: "Data de Entrada na casa", width: 200 },
         { field: "col13", headerName: "Tipo de Vínculo", width: 250 },
         { field: "col14", headerName: "Tipo de Sócio", width: 250 },
-
+        { field: "col15", headerName: "Assinatura do termo de voluntário", width: 250 },
         {
             field: "details",
             headerName: "Consultar Dias de Trabalho",
@@ -140,6 +140,7 @@ export default function ListOfUsers() {
         col12: formatDate(usuario.associacao?.dataEntrada),
         col13: usuario.associacao?.tipo,
         col14:usuario.associacao?.Tiposocio,
+        col15:usuario.associacao?.assinoutermo,
         details: usuario.trabahadorInfoField,
     }));
 

@@ -21,6 +21,8 @@ import {
     Chip,
     OutlinedInput,
     FormHelperText,
+    Checkbox,
+    FormControlLabel,
 } from "@mui/material";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -174,7 +176,7 @@ export default function UserUpdateForm() {
                             <UpdateInputField register={register} name="estadoCivil" label="Estado Civil" type='text' />
                             <UpdateInputField register={register} name="naturalidade.cidade" label="Naturalidade" type='text' />
                             <UpdateInputField register={register} name="naturalidade.uf" label="UF de Naturalidade" type='text' />
-                            <UpdateInputField register={register} name="dataCadastro" label="Data de Cadastro no aplicativo" type='text'/>
+                            <UpdateInputField register={register} name="dataCadastro" label="Data de Cadastro no aplicativo" type='text' />
                         </Grid>
                     </FormSection>
 
@@ -260,8 +262,46 @@ export default function UserUpdateForm() {
                                 />
                             </Grid>
                             <UpdateInputField register={register} name="associacao.Tiposocio" label="Tipo de associação" />
-                            <UpdateInputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='date' />
+                            <UpdateInputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='string' />
                             <UpdateInputField register={register} name="numeroRegistroAssociado" label="Número do Associado " type='number' />
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ color: "black" }}>
+                                    O usuário assinou o termo de voluntário?
+                                </Typography>
+                                <Grid container alignItems="center">
+                                    <Controller
+                                        name="associacao.assinoutermo"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={field.value === 'Sim'}
+                                                            onChange={(e) => field.onChange(e.target.checked ? 'Sim' : '')}
+                                                        />
+                                                    }
+                                                    label="Sim"
+                                                    style={{ color: "black" }}
+                                                />
+                                                <FormControlLabel
+                                                    control={
+                                                        <Checkbox
+                                                            checked={field.value === 'Não'}
+                                                            onChange={(e) => field.onChange(e.target.checked ? 'Não' : '')}
+                                                        />
+                                                    }
+                                                    label="Não"
+                                                    style={{ color: "black" }}
+                                                />
+                                            </>
+                                        )}
+                                    />
+                                </Grid>
+                                <Typography sx={{ color: "red", fontSize: "0.75rem" }}>
+                                    {errors.associacao?.assinoutermo ? "Resposta obrigatória" : ""}
+                                </Typography>
+                            </Grid>
                         </Grid>
                     </FormSection>
                     <>
@@ -302,7 +342,7 @@ export default function UserUpdateForm() {
                                                                 value={field.value || ''}
                                                                 onChange={field.onChange}
                                                             >
-                                                                { livrosOrganizados.map(livro => (
+                                                                {livrosOrganizados.map(livro => (
                                                                     <MenuItem key={livro} value={livro}>{livro}</MenuItem>
                                                                 ))}
                                                             </Select>
@@ -370,7 +410,7 @@ export default function UserUpdateForm() {
                                                 <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
                                                     <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                                         <FormControl fullWidth>
-                                                            
+
                                                             <TextField
                                                                 {...register(`HistoricoTrabalhoField.${index}.funcao`)}
                                                                 label="Exemplo: Eu trabalhei na portaria distribuindo fichas..."
@@ -420,7 +460,7 @@ export default function UserUpdateForm() {
                         </FormSection>
                     </>
 
-                    
+
 
                     <FormSection title="Seção 7 - Observações">
                         <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>

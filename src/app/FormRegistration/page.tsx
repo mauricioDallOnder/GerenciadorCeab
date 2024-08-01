@@ -16,6 +16,8 @@ import {
   SelectChangeEvent,
   Card, CardContent, CardActions, IconButton,
   Chip,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -24,7 +26,7 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import {
   BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoMediunidade, tipoVinculoComCeab} from "@/utils/ultils";
+import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, normalizeString, siglas, tipoMediunidade, tipoVinculoComCeab } from "@/utils/ultils";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { FormHeader } from "../components/FormHeader";
@@ -82,6 +84,7 @@ export default function FormRegistration() {
     setValue,
     watch,
     getValues,
+    reset, // Adicione a função reset aqui
     formState: { errors, isValid },
   } = methods;
 
@@ -103,7 +106,7 @@ export default function FormRegistration() {
   const [estadoCivil, setEstadoCivil] = useState('');
   const [VinculoCasa, setVinculoCasa] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const handleChangeSelectEstadoCivil = (event: SelectChangeEvent) => {
     const value = event.target.value;
     setEstadoCivil(value);
@@ -210,6 +213,7 @@ export default function FormRegistration() {
         console.log(error);
         setIsSubmitting(false);
       });
+      reset(); // Limpa os campos do formulário após a submissão
     alert('dados cadastrados com sucesso');
     setIsSubmitting(false);
   };
@@ -270,14 +274,14 @@ export default function FormRegistration() {
               </FormSection>
               <FormSection title="Seção 2 - Endereço e Contatos">
                 <Grid container spacing={2}>
-                  <InputField register={register} name="endereco.logradouro" label="Rua" type='text' helperText={errors.endereco?.logradouro?.message} error={Boolean(errors.endereco?.logradouro)}/>
-                  <InputField register={register} name="endereco.numero" label="Número" type='text' helperText={errors.endereco?.numero?.message} error={Boolean(errors.endereco?.numero)}/>
+                  <InputField register={register} name="endereco.logradouro" label="Rua" type='text' helperText={errors.endereco?.logradouro?.message} error={Boolean(errors.endereco?.logradouro)} />
+                  <InputField register={register} name="endereco.numero" label="Número" type='text' helperText={errors.endereco?.numero?.message} error={Boolean(errors.endereco?.numero)} />
                   <InputField register={register} name="endereco.cidade" label="Cidade" type='text' helperText={errors.endereco?.cidade?.message} error={Boolean(errors.endereco?.cidade)} />
                   <InputField register={register} name="endereco.cep" label="CEP" type='text' helperText={errors.endereco?.cep?.message} error={Boolean(errors.endereco?.cep)} />
                   <InputField register={register} name="endereco.uf" label="UF" type='text' helperText={errors.endereco?.uf?.message} error={Boolean(errors.endereco?.uf)} />
-                  <InputField register={register} name="endereco.complemento" label="Bairro" type='text' helperText={errors.endereco?.complemento?.message} error={Boolean(errors.endereco?.complemento)}  />
+                  <InputField register={register} name="endereco.complemento" label="Bairro" type='text' helperText={errors.endereco?.complemento?.message} error={Boolean(errors.endereco?.complemento)} />
                   <InputField register={register} name="endereco.telefone" label="Telefone" type='text' helperText={errors.endereco?.telefone?.message} error={Boolean(errors.endereco?.telefone)} />
-                  <InputField register={register} name="endereco.email" label="Email" type='email' helperText={errors.endereco?.email?.message} error={Boolean(errors.endereco?.email)}  />
+                  <InputField register={register} name="endereco.email" label="Email" type='email' helperText={errors.endereco?.email?.message} error={Boolean(errors.endereco?.email)} />
                 </Grid>
               </FormSection >
               <FormSection title="Seção 3 - Dados de Associação">
@@ -323,7 +327,7 @@ export default function FormRegistration() {
                         <MenuItem value="Sim">Sim</MenuItem>
                         <MenuItem value="Não">Não</MenuItem>
                       </Select>
-                      <Typography sx={{color:"red",fontSize:"0.75rem"}}>
+                      <Typography sx={{ color: "red", fontSize: "0.75rem" }}>
                         {errors.associacao?.Tiposocio ? "Informe seu tipo de associação com a casa" : ""}
                       </Typography>
                     </FormControl>
@@ -356,15 +360,54 @@ export default function FormRegistration() {
                               </MenuItem>
                             ))}
                           </Select>
-                          <Typography sx={{color:"red",fontSize:"0.75rem"}}>
+                          <Typography sx={{ color: "red", fontSize: "0.75rem" }}>
                             {errors.associacao?.tipo ? "Informe sua função na casa" : ""}
                           </Typography>
                         </FormControl>
                       )}
                     />
                   </Grid>
-                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='string'  helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)}/>
+
+                  <InputField register={register} name="associacao.dataEntrada" label="Data de entrada na casa" type='string' helperText={errors.associacao?.dataEntrada?.message} error={Boolean(errors.associacao?.dataEntrada)} />
                   <InputField register={register} name="numeroRegistroAssociado" label="Nº do Associado(verificar no crachá/carnê de contibuição ) " type='text' />
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" gutterBottom sx={{ color: "black" }}>
+                      Você assinou o termo de voluntáriado?
+                    </Typography>
+                    <Grid container alignItems="center">
+                      <Controller
+                        name="associacao.assinoutermo"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={field.value === 'Sim'}
+                                  onChange={(e) => field.onChange(e.target.checked ? 'Sim' : '')}
+                                />
+                              }
+                              label="Sim"
+                              style={{ color: "black" }}
+                            />
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={field.value === 'Não'}
+                                  onChange={(e) => field.onChange(e.target.checked ? 'Não' : '')}
+                                />
+                              }
+                              label="Não"
+                              style={{ color: "black" }}
+                            />
+                          </>
+                        )}
+                      />
+                    </Grid>
+                    <Typography sx={{ color: "red", fontSize: "0.75rem" }}>
+                      {errors.associacao?.assinoutermo ? "Resposta obrigatória" : ""}
+                    </Typography>
+                  </Grid>
                 </Grid>
               </FormSection>
               <FormSection title="Seção 4 - Grupo de Estudo e Estudos Anteriores">

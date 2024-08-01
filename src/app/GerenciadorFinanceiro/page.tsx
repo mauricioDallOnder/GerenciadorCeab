@@ -1,8 +1,9 @@
-'use client';
+'use client'
 import React, { useState } from 'react';
 import { AppBar, Tabs, Tab, Box, Container, Typography, useTheme } from '@mui/material';
 import ContasPagar from '../components/GerenciadorFinancas/ContasAPagar';
 import Vendas from '../components/GerenciadorFinancas/Vendas';
+import ContribuicoesDoacoes from '../components/GerenciadorFinancas/ContribuicoesDoacoes';
 
 export default function FinanceManagement() {
   const [tabIndex, setTabIndex] = useState(0);
@@ -24,6 +25,7 @@ export default function FinanceManagement() {
         >
           <Tab label="Contas a Pagar" />
           <Tab label="Vendas" />
+          <Tab label="Contribuições/Doações" /> {/* Adicione a aba aqui */}
         </Tabs>
       </AppBar>
       <TabPanel value={tabIndex} index={0}>
@@ -31,6 +33,9 @@ export default function FinanceManagement() {
       </TabPanel>
       <TabPanel value={tabIndex} index={1}>
         <Vendas />
+      </TabPanel>
+      <TabPanel value={tabIndex} index={2}> {/* Certifique-se de que o índice é 2 */}
+        <ContribuicoesDoacoes />
       </TabPanel>
     </Container>
   );
