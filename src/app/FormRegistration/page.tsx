@@ -495,10 +495,73 @@ export default function FormRegistration() {
                   </FormSection>
                 </Container>
               </FormSection>
-              <FormSection title="Seção 5 - Trabalhos já realizados para a casa">
+              <FormSection title="Seção 5 -Trabalhos que você realiza ATUALMENTE na casa!">
+                <Grid container spacing={2}>
+                  <Container>
+                    {trabahadorInfoField.map((field, index) => (
+                      <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                        <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sx={{ width: "100%" }}>
+                              <FormControl fullWidth>
+                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
+                                <Select
+                                  label="Selecione o Dia de Trabalho"
+                                  {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
+                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                  defaultValue="-">
+                                  <MenuItem value="-">-</MenuItem>
+                                  <MenuItem value="Segunda">Segunda</MenuItem>
+                                  <MenuItem value="Terça">Terça</MenuItem>
+                                  <MenuItem value="Quarta">Quarta</MenuItem>
+                                  <MenuItem value="Quinta">Quinta</MenuItem>
+                                  <MenuItem value="Sexta">Sexta</MenuItem>
+                                  <MenuItem value="Sábado">Sábado</MenuItem>
+                                  <MenuItem value="Domingo">Domingo</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sx={{ width: "100%" }}>
+                              <FormControl fullWidth>
+                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                                <Select
+                                  label='Selecione o Turno de Trabalho'
+                                  {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
+                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                  defaultValue="-">
+                                  <MenuItem value="-">-</MenuItem>
+                                  <MenuItem value="Manhã">Manhã</MenuItem>
+                                  <MenuItem value="Tarde">Tarde</MenuItem>
+                                  <MenuItem value="Noite">Noite</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                        <CardActions>
+                          <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
+                            <DeleteIcon />
+                            <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
+                          </IconButton>
+                        </CardActions>
+                      </Card>
+                    ))}
+                    <Button
+                      startIcon={<AddCircleOutlineIcon />}
+                      variant="contained"
+                      color="success"
+                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
+                      sx={{ mt: 2, width: '100%' }}
+                    >
+                      Adicionar dia de trabalho
+                    </Button>
+                  </Container>
+                </Grid>
+              </FormSection >
+              <FormSection title="Seção 6 - Trabalhos que você já realizou para a casa(trabalhos que você fez mas não faz mais atualmente)">
                 <Container>
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
-                    Você já realizou trabalhos anteriores para a casa?
+                    Se você já realizou trabalhos anteriores para a casa, selecione "sim"
                   </InputLabel>
                   <Select
                     variant="filled"
@@ -564,69 +627,7 @@ export default function FormRegistration() {
                   )}
                 </Container>
               </FormSection>
-              <FormSection title="Seção 6 - Trabalho na casa">
-                <Grid container spacing={2}>
-                  <Container>
-                    {trabahadorInfoField.map((field, index) => (
-                      <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
-                        <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} sx={{ width: "100%" }}>
-                              <FormControl fullWidth>
-                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
-                                <Select
-                                  label="Selecione o Dia de Trabalho"
-                                  {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
-                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                  defaultValue="-">
-                                  <MenuItem value="-">-</MenuItem>
-                                  <MenuItem value="Segunda">Segunda</MenuItem>
-                                  <MenuItem value="Terça">Terça</MenuItem>
-                                  <MenuItem value="Quarta">Quarta</MenuItem>
-                                  <MenuItem value="Quinta">Quinta</MenuItem>
-                                  <MenuItem value="Sexta">Sexta</MenuItem>
-                                  <MenuItem value="Sábado">Sábado</MenuItem>
-                                  <MenuItem value="Domingo">Domingo</MenuItem>
-                                </Select>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sx={{ width: "100%" }}>
-                              <FormControl fullWidth>
-                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
-                                <Select
-                                  label='Selecione o Turno de Trabalho'
-                                  {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
-                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                  defaultValue="-">
-                                  <MenuItem value="-">-</MenuItem>
-                                  <MenuItem value="Manhã">Manhã</MenuItem>
-                                  <MenuItem value="Tarde">Tarde</MenuItem>
-                                  <MenuItem value="Noite">Noite</MenuItem>
-                                </Select>
-                              </FormControl>
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                        <CardActions>
-                          <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
-                            <DeleteIcon />
-                            <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
-                          </IconButton>
-                        </CardActions>
-                      </Card>
-                    ))}
-                    <Button
-                      startIcon={<AddCircleOutlineIcon />}
-                      variant="contained"
-                      color="success"
-                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
-                      sx={{ mt: 2, width: '100%' }}
-                    >
-                      Adicionar dia de trabalho
-                    </Button>
-                  </Container>
-                </Grid>
-              </FormSection >
+            
               <FormSection title="Seção 7 - Observações">
                 <Grid item xs={12}>
                   <TextareaAutosize
