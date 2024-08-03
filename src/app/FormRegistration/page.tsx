@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import React, { useEffect, useState } from "react";
 import { useForm, useFieldArray, FormProvider, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -84,7 +85,7 @@ export default function FormRegistration() {
     setValue,
     watch,
     getValues,
-    reset, // Adicione a função reset aqui
+    reset,
     formState: { errors, isValid },
   } = methods;
 
@@ -147,6 +148,31 @@ export default function FormRegistration() {
       appendTrabalhoAnterior({ funcao: "", ano: "", observacoes: "" });
     }
   }, [trabalhosAnteriores, trabalhoAnteriorFields, appendTrabalhoAnterior]);
+
+  useEffect(() => {
+    const savedData = localStorage.getItem('formData');
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      reset(parsedData);
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [reset]);
+
+  useEffect(() => {
+    const formData = getValues();
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [getValues, watch]);
 
   const onSubmit = (data: Associado) => {
     const nomeJaExiste = usuariosData.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
@@ -213,7 +239,8 @@ export default function FormRegistration() {
         console.log(error);
         setIsSubmitting(false);
       });
-      reset(); // Limpa os campos do formulário após a submissão
+    localStorage.removeItem('formData'); // Limpa os dados salvos no localStorage
+    reset(); // Limpa os campos do formulário após a submissão
     alert('dados cadastrados com sucesso');
     setIsSubmitting(false);
   };
@@ -495,7 +522,7 @@ export default function FormRegistration() {
                   </FormSection>
                 </Container>
               </FormSection>
-              <FormSection title="Seção 5 -Trabalhos que você realiza ATUALMENTE na casa!">
+              <FormSection title="Seção 5 - Trabalhos que você realiza ATUALMENTE na casa!">
                 <Grid container spacing={2}>
                   <Container>
                     {trabahadorInfoField.map((field, index) => (
@@ -505,35 +532,49 @@ export default function FormRegistration() {
                             <Grid item xs={12} sx={{ width: "100%" }}>
                               <FormControl fullWidth>
                                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
-                                <Select
-                                  label="Selecione o Dia de Trabalho"
-                                  {...register(`trabahadorInfoField.${index}.diaTrabalha` as const)}
-                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                  defaultValue="-">
-                                  <MenuItem value="-">-</MenuItem>
-                                  <MenuItem value="Segunda">Segunda</MenuItem>
-                                  <MenuItem value="Terça">Terça</MenuItem>
-                                  <MenuItem value="Quarta">Quarta</MenuItem>
-                                  <MenuItem value="Quinta">Quinta</MenuItem>
-                                  <MenuItem value="Sexta">Sexta</MenuItem>
-                                  <MenuItem value="Sábado">Sábado</MenuItem>
-                                  <MenuItem value="Domingo">Domingo</MenuItem>
-                                </Select>
+                                <Controller
+                                  name={`trabahadorInfoField.${index}.diaTrabalha`}
+                                  control={control}
+                                  defaultValue={field.diaTrabalha}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      label="Selecione o Dia de Trabalho"
+                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                    >
+                                      <MenuItem value="-">-</MenuItem>
+                                      <MenuItem value="Segunda">Segunda</MenuItem>
+                                      <MenuItem value="Terça">Terça</MenuItem>
+                                      <MenuItem value="Quarta">Quarta</MenuItem>
+                                      <MenuItem value="Quinta">Quinta</MenuItem>
+                                      <MenuItem value="Sexta">Sexta</MenuItem>
+                                      <MenuItem value="Sábado">Sábado</MenuItem>
+                                      <MenuItem value="Domingo">Domingo</MenuItem>
+                                    </Select>
+                                  )}
+                                />
                               </FormControl>
                             </Grid>
                             <Grid item xs={12} sx={{ width: "100%" }}>
                               <FormControl fullWidth>
                                 <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
-                                <Select
-                                  label='Selecione o Turno de Trabalho'
-                                  {...register(`trabahadorInfoField.${index}.turnoDeTrabalho` as const)}
-                                  sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                  defaultValue="-">
-                                  <MenuItem value="-">-</MenuItem>
-                                  <MenuItem value="Manhã">Manhã</MenuItem>
-                                  <MenuItem value="Tarde">Tarde</MenuItem>
-                                  <MenuItem value="Noite">Noite</MenuItem>
-                                </Select>
+                                <Controller
+                                  name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
+                                  control={control}
+                                  defaultValue={field.turnoDeTrabalho}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      label='Selecione o Turno de Trabalho'
+                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                    >
+                                      <MenuItem value="-">-</MenuItem>
+                                      <MenuItem value="Manhã">Manhã</MenuItem>
+                                      <MenuItem value="Tarde">Tarde</MenuItem>
+                                      <MenuItem value="Noite">Noite</MenuItem>
+                                    </Select>
+                                  )}
+                                />
                               </FormControl>
                             </Grid>
                           </Grid>
@@ -558,7 +599,7 @@ export default function FormRegistration() {
                   </Container>
                 </Grid>
               </FormSection >
-              <FormSection title="Seção 6 - Trabalhos que você já realizou para a casa(trabalhos que você fez mas não faz mais atualmente)">
+              <FormSection title="Seção 6 - Trabalhos que você já realizou para a casa (trabalhos que você fez mas não faz mais atualmente)">
                 <Container>
                   <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
                     Se você já realizou trabalhos anteriores para a casa, selecione "sim"
