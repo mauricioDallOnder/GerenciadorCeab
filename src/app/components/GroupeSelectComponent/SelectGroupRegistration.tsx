@@ -179,6 +179,7 @@ const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
                     label="Facilitador"
                     onChange={handleFacilitatorChange}
                     disabled={!selectedBook}
+                    required
                 >
                     {filteredFacilitators.map(facilitator => (
                         <MenuItem key={facilitator} value={facilitator}>{facilitator}</MenuItem>
@@ -196,6 +197,7 @@ const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
                     disabled={!selectedFacilitator}
                     onChange={handleDiaChange}
                     value={selectedDia}
+                    required
                 >
                     {uniqueOptions('dia').map(dia => (
                         <MenuItem key={dia} value={dia}>{dia}</MenuItem>
@@ -213,6 +215,7 @@ const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
                     disabled={!selectedFacilitator}
                     onChange={handleTurnoChange}
                     value={selectedTurno}
+                    required
                 >
                     {uniqueOptions('turno').map(turno => (
                         <MenuItem key={turno} value={turno}>{turno}</MenuItem>
@@ -230,6 +233,7 @@ const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
                     disabled={!selectedFacilitator}
                     onChange={handleHorarioChange}
                     value={selectedHorario}
+                    required
 
                 >
                     {uniqueOptions('horario').map(horario => (
@@ -248,6 +252,7 @@ const uniqueBooks = Array.from(new Set(gruposEstudo.map(grupo => grupo.livro)));
                     disabled={!selectedFacilitator}
                     onChange={handleSalaChange}
                     value={selectedSala}
+                    required
                 >
                     {uniqueOptions('sala').map(sala => (
                         <MenuItem key={sala} value={sala}>{sala}</MenuItem>
