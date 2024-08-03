@@ -29,25 +29,21 @@ const WorkerDetailsModal: React.FC<WorkerDetailsModalProps> = ({ open, onClose, 
                     Dia de Trabalho:
                 </Typography>
                 <Box sx={{ mt: 2 }}>
-                    {details.map((worker, index) => (
-                        <>
-                        <Box key={worker.id} sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}> 
-                            <Typography variant="body1" color="textPrimary"><strong>Dia de Trabalho:</strong> {worker.diaTrabalha}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Função:</strong> {worker.funcao}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Horário:</strong> {worker.horarioDeTrabalho}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Turno:</strong> {worker.turnoDeTrabalho}</Typography>
-                            <Typography variant="body1" color="textPrimary"><strong>Dirigente:</strong> {worker.nomeDirigente}</Typography>
-                          
-                        </Box>
-                        <Divider sx={{ my: 2, bgcolor: 'secondary.main' }} />
-                        </>
+                    {details.map((worker) => (
+                        <React.Fragment key={worker.id}>
+                            <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: '8px' }}>
+                                <Typography variant="body1" color="textPrimary"><strong>Dia de Trabalho:</strong> {worker.diaTrabalha}</Typography>
+                                <Typography variant="body1" color="textPrimary"><strong>Turno:</strong> {worker.turnoDeTrabalho}</Typography>
+                            </Box>
+                            <Divider sx={{ my: 2, bgcolor: 'secondary.main' }} />
+                        </React.Fragment>
                     ))}
                 </Box>
                 <Button color='error' variant='contained' onClick={onClose} sx={{
-                    position: 'fixed', 
-                    top: 10, 
-                    right: '20%', 
-                    transform: 'translateX(50%)', 
+                    position: 'fixed',
+                    top: 10,
+                    right: '20%',
+                    transform: 'translateX(50%)',
                     '&:hover': { bgcolor: 'secondary.dark' },
                 }}>
                     Fechar

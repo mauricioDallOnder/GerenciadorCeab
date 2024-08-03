@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler, useFieldArray, FormProvider, Controller } from 'react-hook-form';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -90,6 +91,8 @@ export default function UserUpdateForm() {
         if (selectedUser) {
             reset(selectedUser);
             setValue('estadoCivil', selectedUser.estadoCivil);
+            setValue('trabahadorInfoField', selectedUser.trabahadorInfoField || []);
+            setValue('HistoricoTrabalhoField', selectedUser.HistoricoTrabalhoField || []);
         }
     }, [selectedUser, reset, setValue]);
 
@@ -387,8 +390,85 @@ export default function UserUpdateForm() {
                                 </Button>
                             </Container>
                         </FormSection>
+                        <FormSection title="Seção 6 - Trabalho na casa">
+                <Grid container spacing={2}>
+                  <Container>
+                    {trabahadorInfoField.map((field, index) => (
+                      <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                        <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sx={{ width: "100%" }}>
+                              <FormControl fullWidth>
+                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
+                                <Controller
+                                  name={`trabahadorInfoField.${index}.diaTrabalha`}
+                                  control={control}
+                                  defaultValue={field.diaTrabalha}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      label="Selecione o Dia de Trabalho"
+                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                    >
+                                      <MenuItem value="-">-</MenuItem>
+                                      <MenuItem value="Segunda">Segunda</MenuItem>
+                                      <MenuItem value="Terça">Terça</MenuItem>
+                                      <MenuItem value="Quarta">Quarta</MenuItem>
+                                      <MenuItem value="Quinta">Quinta</MenuItem>
+                                      <MenuItem value="Sexta">Sexta</MenuItem>
+                                      <MenuItem value="Sábado">Sábado</MenuItem>
+                                      <MenuItem value="Domingo">Domingo</MenuItem>
+                                    </Select>
+                                  )}
+                                />
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sx={{ width: "100%" }}>
+                              <FormControl fullWidth>
+                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                                <Controller
+                                  name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
+                                  control={control}
+                                  defaultValue={field.turnoDeTrabalho}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      label='Selecione o Turno de Trabalho'
+                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                    >
+                                      <MenuItem value="-">-</MenuItem>
+                                      <MenuItem value="Manhã">Manhã</MenuItem>
+                                      <MenuItem value="Tarde">Tarde</MenuItem>
+                                      <MenuItem value="Noite">Noite</MenuItem>
+                                    </Select>
+                                  )}
+                                />
+                              </FormControl>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                        <CardActions>
+                          <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
+                            <DeleteIcon />
+                            <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
+                          </IconButton>
+                        </CardActions>
+                      </Card>
+                    ))}
+                    <Button
+                      startIcon={<AddCircleOutlineIcon />}
+                      variant="contained"
+                      color="success"
+                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
+                      sx={{ mt: 2, width: '100%' }}
+                    >
+                      Adicionar dia de trabalho
+                    </Button>
+                  </Container>
+                </Grid>
+              </FormSection >
 
-                        <FormSection title="Seção 6 - Trabalhos já realizados para a casa">
+                        <FormSection title="Seção 7 - Trabalhos já realizados para a casa">
                             <Container>
                                 <InputLabel sx={{ color: "black", mb: '2px', mt: '16px', textAlign: "center" }}>
                                     Você já realizou trabalhos anteriores para a casa?
@@ -462,7 +542,7 @@ export default function UserUpdateForm() {
 
 
 
-                    <FormSection title="Seção 7 - Observações">
+                    <FormSection title="Seção 8 - Observações">
                         <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <Box
                                 sx={{
