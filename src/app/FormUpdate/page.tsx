@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm, SubmitHandler, useFieldArray, FormProvider, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, useFieldArray, Controller } from 'react-hook-form';
 import Autocomplete from '@mui/material/Autocomplete';
 import axios from 'axios';
 import { Associado, GrupoEstudoInfoFields } from '../interfaces/interfaces';
@@ -24,6 +24,8 @@ import {
     FormHelperText,
     Checkbox,
     FormControlLabel,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,13 +33,13 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {
     BoxStyleCadastro,
 } from "@/utils/styles";
-import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, refreshPage, tipoMediunidade, tipoVinculoComCeab } from "@/utils/ultils";
+import { DiasSemanas, livrosOrganizados, MenuPropsMultiSelect, normalizeFloatInputValue, tipoMediunidade, tipoVinculoComCeab } from "@/utils/ultils";
 import { FormHeader } from "../components/FormHeader";
 import { FormSection } from "../components/FormSection";
 import { UpdateInputField } from "../components/UpdateInputFields";
 import GrupoDeEstudoSelect from '../components/GroupeSelectComponent/UpdateSelectGroupe';
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { useCeabContext } from '@/context/context';
 
 export default function UserUpdateForm() {
@@ -86,6 +88,7 @@ export default function UserUpdateForm() {
     const [loading, setLoading] = useState(false);
     const [VinculoCasa, setVinculoCasa] = React.useState<string[]>([]);
     const [selectedUser, setSelectedUser] = useState<Associado | null>(null);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         if (selectedUser) {
@@ -138,15 +141,19 @@ export default function UserUpdateForm() {
 
         axios.put('/api/updateDataOnFirebase', { nome, novosDados })
             .then(response => {
-                alert('Usuário atualizado com sucesso!');
-                reset();
-                console.log(response.data);
+                setSuccessMessage('Usuário atualizado com sucesso!');
             })
             .catch(error => {
                 alert('Erro ao atualizar usuário');
                 console.error('Erro:', error);
             })
             .finally(() => setLoading(false));
+    };
+
+    const handleCloseSnackbar = () => {
+        setSuccessMessage('');
+        reset();
+        window.location.reload(); // Recarregar a página
     };
 
     return (
@@ -391,82 +398,82 @@ export default function UserUpdateForm() {
                             </Container>
                         </FormSection>
                         <FormSection title="Seção 6 - Trabalho na casa">
-                <Grid container spacing={2}>
-                  <Container>
-                    {trabahadorInfoField.map((field, index) => (
-                      <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
-                        <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} sx={{ width: "100%" }}>
-                              <FormControl fullWidth>
-                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
-                                <Controller
-                                  name={`trabahadorInfoField.${index}.diaTrabalha`}
-                                  control={control}
-                                  defaultValue={field.diaTrabalha}
-                                  render={({ field }) => (
-                                    <Select
-                                      {...field}
-                                      label="Selecione o Dia de Trabalho"
-                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                            <Grid container spacing={2}>
+                                <Container>
+                                    {trabahadorInfoField.map((field, index) => (
+                                        <Card key={field.id} variant="outlined" sx={{ marginBottom: 2, mt: 4, width: '100%' }}>
+                                            <CardContent sx={{ mt: 1, display: "flex", gap: "10px" }}>
+                                                <Grid container spacing={2}>
+                                                    <Grid item xs={12} sx={{ width: "100%" }}>
+                                                        <FormControl fullWidth>
+                                                            <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Dia de Trabalho</InputLabel>
+                                                            <Controller
+                                                                name={`trabahadorInfoField.${index}.diaTrabalha`}
+                                                                control={control}
+                                                                defaultValue={field.diaTrabalha}
+                                                                render={({ field }) => (
+                                                                    <Select
+                                                                        {...field}
+                                                                        label="Selecione o Dia de Trabalho"
+                                                                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                                    >
+                                                                        <MenuItem value="-">-</MenuItem>
+                                                                        <MenuItem value="Segunda">Segunda</MenuItem>
+                                                                        <MenuItem value="Terça">Terça</MenuItem>
+                                                                        <MenuItem value="Quarta">Quarta</MenuItem>
+                                                                        <MenuItem value="Quinta">Quinta</MenuItem>
+                                                                        <MenuItem value="Sexta">Sexta</MenuItem>
+                                                                        <MenuItem value="Sábado">Sábado</MenuItem>
+                                                                        <MenuItem value="Domingo">Domingo</MenuItem>
+                                                                    </Select>
+                                                                )}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                    <Grid item xs={12} sx={{ width: "100%" }}>
+                                                        <FormControl fullWidth>
+                                                            <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
+                                                            <Controller
+                                                                name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
+                                                                control={control}
+                                                                defaultValue={field.turnoDeTrabalho}
+                                                                render={({ field }) => (
+                                                                    <Select
+                                                                        {...field}
+                                                                        label='Selecione o Turno de Trabalho'
+                                                                        sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
+                                                                    >
+                                                                        <MenuItem value="-">-</MenuItem>
+                                                                        <MenuItem value="Manhã">Manhã</MenuItem>
+                                                                        <MenuItem value="Tarde">Tarde</MenuItem>
+                                                                        <MenuItem value="Noite">Noite</MenuItem>
+                                                                    </Select>
+                                                                )}
+                                                            />
+                                                        </FormControl>
+                                                    </Grid>
+                                                </Grid>
+                                            </CardContent>
+                                            <CardActions>
+                                                <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
+                                                    <DeleteIcon />
+                                                    <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
+                                                </IconButton>
+                                            </CardActions>
+                                        </Card>
+                                    ))}
+                                    <Button
+                                        startIcon={<AddCircleOutlineIcon />}
+                                        variant="contained"
+                                        color="success"
+                                        onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
+                                        sx={{ mt: 2, width: '100%' }}
                                     >
-                                      <MenuItem value="-">-</MenuItem>
-                                      <MenuItem value="Segunda">Segunda</MenuItem>
-                                      <MenuItem value="Terça">Terça</MenuItem>
-                                      <MenuItem value="Quarta">Quarta</MenuItem>
-                                      <MenuItem value="Quinta">Quinta</MenuItem>
-                                      <MenuItem value="Sexta">Sexta</MenuItem>
-                                      <MenuItem value="Sábado">Sábado</MenuItem>
-                                      <MenuItem value="Domingo">Domingo</MenuItem>
-                                    </Select>
-                                  )}
-                                />
-                              </FormControl>
+                                        Adicionar dia de trabalho
+                                    </Button>
+                                </Container>
                             </Grid>
-                            <Grid item xs={12} sx={{ width: "100%" }}>
-                              <FormControl fullWidth>
-                                <InputLabel sx={{ mb: '2px', mt: '16px' }}>Selecione o Turno de Trabalho</InputLabel>
-                                <Controller
-                                  name={`trabahadorInfoField.${index}.turnoDeTrabalho`}
-                                  control={control}
-                                  defaultValue={field.turnoDeTrabalho}
-                                  render={({ field }) => (
-                                    <Select
-                                      {...field}
-                                      label='Selecione o Turno de Trabalho'
-                                      sx={{ mb: "2px", marginLeft: '2px', mt: '12px' }}
-                                    >
-                                      <MenuItem value="-">-</MenuItem>
-                                      <MenuItem value="Manhã">Manhã</MenuItem>
-                                      <MenuItem value="Tarde">Tarde</MenuItem>
-                                      <MenuItem value="Noite">Noite</MenuItem>
-                                    </Select>
-                                  )}
-                                />
-                              </FormControl>
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                        <CardActions>
-                          <IconButton color="error" onClick={() => removetrabahadorInfo(index)}>
-                            <DeleteIcon />
-                            <Typography sx={{ color: "red", ml: "2px" }}>Remover dia de trabalho</Typography>
-                          </IconButton>
-                        </CardActions>
-                      </Card>
-                    ))}
-                    <Button
-                      startIcon={<AddCircleOutlineIcon />}
-                      variant="contained"
-                      color="success"
-                      onClick={() => appendtrabahadorInfo({ diaTrabalha: "", turnoDeTrabalho: "", id: uuidv4() })}
-                      sx={{ mt: 2, width: '100%' }}
-                    >
-                      Adicionar dia de trabalho
-                    </Button>
-                  </Container>
-                </Grid>
-              </FormSection >
+                        </FormSection >
 
                         <FormSection title="Seção 7 - Trabalhos já realizados para a casa">
                             <Container>
@@ -540,8 +547,6 @@ export default function UserUpdateForm() {
                         </FormSection>
                     </>
 
-
-
                     <FormSection title="Seção 8 - Observações">
                         <Grid container spacing={2} sx={{ mt: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <Box
@@ -577,17 +582,22 @@ export default function UserUpdateForm() {
                         type="submit"
                         variant="contained"
                         color="secondary"
-                        disabled={isSubmitted}
+                        disabled={loading}
                         sx={{ width: "100%" }}
                     >
-                        {isSubmitted ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
-                    </Button>
-                    <Button variant="contained"
-                        color="primary" sx={{ mt: 3 }} onClick={refreshPage}>
-                        Limpar Formulário e Recarregar Página
+                        {loading ? "Atualizando dados, aguarde..." : "Atualizar Cadastro"}
                     </Button>
                 </Box>
             </form>
+            <Snackbar
+                open={!!successMessage}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    {successMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }
