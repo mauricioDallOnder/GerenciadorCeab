@@ -1,25 +1,25 @@
-'use client'
+'use client';
+import React, { useState } from 'react';
 import {
     GridColDef,
     GridRowsProp,
-    GridToolbar
+    GridToolbar,
+    GridRowSelectionModel
 } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { Associado, TrabahadorInfoField } from "../interfaces/interfaces";
-
-import { Box, Button} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import CustomPagination from "../components/TableCustomPagination";
-import {StyledDataGrid } from "@/utils/styles";
+import { StyledDataGrid } from "@/utils/styles";
 import WorkerDetailsModal from "../components/Modais/WorkerDetailsModal";
-import { useSession} from "next-auth/react";
-import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useCeabContext } from "@/context/context";
 import { CreateVolunteerAgreement, Volunteer } from "../../utils/TermoPDF";
 import { CreateCarnes, IISocio } from "@/utils/Carnes";
 import { formatDate } from "@/utils/ultils";
+import { TrabahadorInfoField } from '../interfaces/interfaces';
+
 export default function ListOfUsers() {
     const { usuariosData } = useCeabContext();
-   
     const [selectedWorkers, setSelectedWorkers] = useState<TrabahadorInfoField[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const PAGE_SIZE = 15;
@@ -27,8 +27,9 @@ export default function ListOfUsers() {
         pageSize: PAGE_SIZE,
         page: 0,
     });
+    const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]); // Estado para armazenar as linhas selecionadas
 
-   const router = useRouter();
+    const router = useRouter();
     const { status } = useSession({
         required: true, // Indica que a sessão é necessária
         onUnauthenticated() {
@@ -37,13 +38,14 @@ export default function ListOfUsers() {
         }
     });
 
-   
-
     const handleOpenModal = (trabahadorInfoField: TrabahadorInfoField[] | undefined) => {
         setSelectedWorkers(trabahadorInfoField || []);  // Garantir que seja um array
         setModalOpen(true);
     };
 
+    const handleRowSelection = (selectionModel: GridRowSelectionModel) => {
+        setSelectedRows(selectionModel);
+    };
 
     const columns: GridColDef[] = [
         { field: "col1", headerName: "Nº do Associado", width: 130 },
@@ -80,48 +82,47 @@ export default function ListOfUsers() {
             headerName: "Termo de Voluntariado",
             width: 200,
             renderCell: (params) => {
-              const data: Volunteer = {
-                  campoNome: params.row.col2,
-                  campoRG: params.row.col5,
-                  campoCPF: params.row.col4,
-                  campoRua: params.row.col6,
-                  campoNumero: params.row.col7,
-                  campoBairro: params.row.col8,
-              };
-          
-              return (
-                <Button
-                  variant="contained"
-                  color='secondary'
-                  onClick={() => CreateVolunteerAgreement(data)}
-                >
-                  Gerar Termo
-                </Button>
-              );
+                const data: Volunteer = {
+                    campoNome: params.row.col2,
+                    campoRG: params.row.col5,
+                    campoCPF: params.row.col4,
+                    campoRua: params.row.col6,
+                    campoNumero: params.row.col7,
+                    campoBairro: params.row.col8,
+                };
+
+                return (
+                    <Button
+                        variant="contained"
+                        color='secondary'
+                        onClick={() => CreateVolunteerAgreement(data)}
+                    >
+                        Gerar Termo
+                    </Button>
+                );
             },
-          },
-          {
+        },
+        {
             field: "Carne",
             headerName: "Carnê de Contribuição",
             width: 200,
             renderCell: (params) => {
-                
-              const data: IISocio = {
-                campoNome: params.row.col2,
-                numbS: params.row.col1,
-              };
-          
-              return (
-                <Button
-                  variant="contained"
-                  color='warning'
-                  onClick={() => CreateCarnes(data)}
-                >
-                  Gerar Carnê
-                </Button>
-              );
+                const data: IISocio = {
+                    campoNome: params.row.col2,
+                    numbS: params.row.col1,
+                };
+
+                return (
+                    <Button
+                        variant="contained"
+                        color='warning'
+                        onClick={() => CreateCarnes(data)}
+                    >
+                        Gerar Carnê
+                    </Button>
+                );
             },
-          },          
+        },
     ];
 
     const rows: GridRowsProp = usuariosData.map(usuario => ({
@@ -139,16 +140,17 @@ export default function ListOfUsers() {
         col11: usuario.associacao?.TipoMediunidade,
         col12: formatDate(usuario.associacao?.dataEntrada),
         col13: usuario.associacao?.tipo,
-        col14:usuario.associacao?.Tiposocio,
-        col15:usuario.associacao?.assinoutermo,
+        col14: usuario.associacao?.Tiposocio,
+        col15: usuario.associacao?.assinoutermo,
         details: usuario.trabahadorInfoField,
     }));
 
-   
+    const getRowClassName = (params: any) => {
+        return selectedRows.includes(params.id) ? 'selected-row' : '';
+    };
 
     return (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-
             <Box
                 style={{ marginTop: "30px", height: "auto", width: "97%" }}
             >
@@ -166,9 +168,10 @@ export default function ListOfUsers() {
                             showQuickFilter: true,
                         },
                     }}
-                    
                     rows={rows}
                     columns={columns}
+                    onRowSelectionModelChange={handleRowSelection}
+                    getRowClassName={getRowClassName} // Adicione esta linha
                 />
             </Box>
             <WorkerDetailsModal
@@ -176,15 +179,6 @@ export default function ListOfUsers() {
                 onClose={() => setModalOpen(false)}
                 details={selectedWorkers}
             />
-           
         </Box>
     );
-
-
-
-
-
-
 }
-
-

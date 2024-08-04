@@ -211,7 +211,6 @@ export const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     backgroundColor: "#3e3e3e", // Cabeçalho escuro
     color: "#ffffff", // Texto claro no cabeçalho
   },
-  
   "& .MuiDataGrid-columnHeader, .MuiDataGrid-cell": {
     borderRight: `1px solid ${theme.palette.divider}`, // Bordas mais visíveis
   },
