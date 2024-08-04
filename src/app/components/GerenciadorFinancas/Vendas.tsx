@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar, GridRowModel, GridCellEditStopParams } from '@mui/x-data-grid';
 import { v4 as uuidv4 } from 'uuid';
 import { BoxStyleFinanca, StyledDataGrid, StyledDataGridFinanceiro } from '@/utils/styles';
 import axios from 'axios';
@@ -100,12 +102,38 @@ const Vendas: React.FC = () => {
       });
   };
 
+  const processRowUpdate = (newRow: GridRowModel) => {
+    const updatedRow = newRow as Venda;
+    updatedRow.valorTotal = updatedRow.quantidade * updatedRow.valor;
+    setRows((prevRows) =>
+      prevRows.map((row) => (row.id === updatedRow.id ? updatedRow : row))
+    );
+    return updatedRow;
+  };
+
+  const handleSaveChanges = () => {
+    setLoading(true);
+    const promises = rows.map(row =>
+      axios.put('/api/ApiVendas', row)
+    );
+    Promise.all(promises)
+      .then(() => {
+        alert('Dados atualizados com sucesso!');
+      })
+      .catch(error => {
+        console.error('Erro ao atualizar dados:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const columns: GridColDef[] = [
-    { field: 'dataVenda', headerName: 'Data da Venda', width: 150 }, // Adicionando a coluna para a data da venda
-    { field: 'produto', headerName: 'Produto', width: 200 },
-    { field: 'quantidade', headerName: 'Quantidade', width: 150 },
-    { field: 'valor', headerName: 'Valor Unitário', width: 150 },
-    { field: 'formaPagamento', headerName: 'Forma de Pagamento', width: 200 },
+    { field: 'dataVenda', headerName: 'Data da Venda', width: 150, editable: true },
+    { field: 'produto', headerName: 'Produto', width: 200, editable: true },
+    { field: 'quantidade', headerName: 'Quantidade', width: 150, editable: true },
+    { field: 'valor', headerName: 'Valor Unitário', width: 150, editable: true },
+    { field: 'formaPagamento', headerName: 'Forma de Pagamento', width: 200, editable: true },
     { field: 'valorTotal', headerName: 'Valor Total', width: 150 },
     {
       field: 'Deletar',
@@ -123,7 +151,30 @@ const Vendas: React.FC = () => {
         </Button>
       ),
     },
+    {
+      field: 'Atualizar',
+      headerName: 'Atualizar Registro',
+      width: 155,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSaveChanges}
+        disabled={loading}
+       
+      >
+        {loading ? <CircularProgress size={24} /> : 'Atualizar'}
+      </Button>
+      ),
+    },
+
   ];
+
+
+ 
+
+
 
   return (
     <Box sx={BoxStyleFinanca}>
@@ -219,6 +270,7 @@ const Vendas: React.FC = () => {
           </CardActions>
         </Card>
       </form>
+     
       <Box sx={{ height: 400, width: '100%' }}>
         <StyledDataGrid
           rows={rows}
@@ -226,6 +278,7 @@ const Vendas: React.FC = () => {
           disableRowSelectionOnClick
           getRowId={(row) => row.id}
           loading={loading}
+          processRowUpdate={processRowUpdate}
           slots={{
             pagination: CustomPagination,
             toolbar: GridToolbar,

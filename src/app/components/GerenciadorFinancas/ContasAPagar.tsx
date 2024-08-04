@@ -22,6 +22,8 @@ const ContasPagar: React.FC = () => {
   const [rows, setRows] = useState<ContaPagar[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
+  const [editMode, setEditMode] = useState(false);
+  const [currentRow, setCurrentRow] = useState<ContaPagar | null>(null);
 
   const { control, register, handleSubmit, reset } = useForm<ContaPagar>({
     defaultValues: {
@@ -43,7 +45,7 @@ const ContasPagar: React.FC = () => {
         if (Array.isArray(response.data)) {
           const formattedData = response.data.map(row => ({
             ...row,
-            dataPagamento: formatDate(row.dataPagamento),
+            dataPagamento: formatDateForDisplay(row.dataPagamento),
           }));
           setRows(formattedData);
         } else {
@@ -58,7 +60,15 @@ const ContasPagar: React.FC = () => {
       });
   }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDateForInput = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatDateForDisplay = (dateString: string) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -67,23 +77,43 @@ const ContasPagar: React.FC = () => {
   };
 
   const onSubmit = (data: ContaPagar) => {
-    const newConta = {
-      ...data,
-      id: uuidv4(),
-      dataPagamento: formatDate(data.dataPagamento),
-    };
-    setLoading(true);
-    axios.post('/api/ApiContasPagar', newConta)
-      .then(response => {
-        setRows(prevRows => [...prevRows, newConta]);
-        reset();
-      })
-      .catch(error => {
-        console.error('Erro ao adicionar conta a pagar:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (editMode && currentRow) {
+      const updatedConta = {
+        ...data,
+        id: currentRow.id,
+      };
+      setLoading(true);
+      axios.put('/api/ApiContasPagar', updatedConta)
+        .then(response => {
+          setRows(prevRows => prevRows.map(row => row.id === currentRow.id ? { ...updatedConta, dataPagamento: formatDateForDisplay(updatedConta.dataPagamento) } : row));
+          reset();
+          setEditMode(false);
+          setCurrentRow(null);
+        })
+        .catch(error => {
+          console.error('Erro ao atualizar conta a pagar:', error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      const newConta = {
+        ...data,
+        id: uuidv4(),
+      };
+      setLoading(true);
+      axios.post('/api/ApiContasPagar', newConta)
+        .then(response => {
+          setRows(prevRows => [...prevRows, { ...newConta, dataPagamento: formatDateForDisplay(newConta.dataPagamento) }]);
+          reset();
+        })
+        .catch(error => {
+          console.error('Erro ao adicionar conta a pagar:', error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -98,6 +128,16 @@ const ContasPagar: React.FC = () => {
       .finally(() => {
         setDeleteLoading(prev => ({ ...prev, [id]: false }));
       });
+  };
+
+  const handleEdit = (row: ContaPagar) => {
+    const formattedRow = {
+      ...row,
+      dataPagamento: formatDateForInput(row.dataPagamento),
+    };
+    setCurrentRow(formattedRow);
+    setEditMode(true);
+    reset(formattedRow);
   };
 
   const handleStatusChange = (id: string, status: string) => {
@@ -142,6 +182,21 @@ const ContasPagar: React.FC = () => {
       ),
     },
     {
+      field: 'Editar',
+      headerName: 'Editar',
+      width: 150,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleEdit(params.row)}
+        >
+          Editar
+        </Button>
+      ),
+    },
+    {
       field: 'Deletar',
       headerName: 'Deletar Registro',
       width: 200,
@@ -177,10 +232,11 @@ const ContasPagar: React.FC = () => {
                   {...register('empresa')}
                   label="Empresa"
                   fullWidth
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-              <Controller
+                <Controller
                   name="valor"
                   control={control}
                   rules={{ required: true }}
@@ -190,6 +246,7 @@ const ContasPagar: React.FC = () => {
                       label="Valor"
                       type="number"
                       inputMode="decimal"
+                      InputLabelProps={{ shrink: true }}
                       fullWidth
                       onChange={(e) => {
                         const value = parseFloat(e.target.value);
@@ -200,12 +257,20 @@ const ContasPagar: React.FC = () => {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  {...register('dataPagamento')}
-                  label="Data de Pagamento"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  fullWidth
+                <Controller
+                  name="dataPagamento"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Data de Pagamento"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                      value={field.value}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -213,6 +278,7 @@ const ContasPagar: React.FC = () => {
                   {...register('nNotaFiscal')}
                   label="N° Título/Nota Fiscal"
                   fullWidth
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -220,6 +286,7 @@ const ContasPagar: React.FC = () => {
                   {...register('CNPJ')}
                   label="CNPJ"
                   fullWidth
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -267,7 +334,7 @@ const ContasPagar: React.FC = () => {
               type="submit"
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Adicionar Conta a Pagar'}
+              {loading ? <CircularProgress size={24} /> : (editMode ? 'Atualizar Conta' : 'Adicionar Conta a Pagar')}
             </Button>
           </CardActions>
         </Card>
