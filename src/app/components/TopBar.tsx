@@ -26,6 +26,7 @@ const pages = [
   { title: "Lista de Associados", link: "/ListOfUsers" },
   { title: "Lista de Estudantes", link: "/ListOfStudents" },
   { title: "Relatórios", link: "/Reports" },
+  { title: "Gerenciamento de Turmas", link: "/ManagementTurmasEstudo" },
 ];
 //teste
 //link atualizado

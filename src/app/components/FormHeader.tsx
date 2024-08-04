@@ -24,9 +24,7 @@ export const FormHeader=({titulo}:{titulo:string})=>{
                 <Typography sx={TituloDaPagina}>
                   {titulo}
                 </Typography>
-                <Typography sx={SubtituloDaPagina}>
-                  Centro Espírita Alunos do Bem
-                </Typography>
+               
               </Box>
             </Box>
         
