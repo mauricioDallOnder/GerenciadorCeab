@@ -70,22 +70,23 @@ export default function ListOfStudents() {
         },
     ];
 
-    const filtroEstudantes=usuariosData.filter(item=>item.GrupoEstudoInfoField.livro!=="Não está estudando atualmente")
+    const filtroEstudantes = usuariosData.filter(item => item.GrupoEstudoInfoField?.livro !== "Não está estudando atualmente");
 
     const rows: GridRowsProp = filtroEstudantes.map(usuario => ({
         id: usuario.id,
         col1: usuario.nome,
-        col2: usuario.endereco.telefone,
-        col3: usuario.endereco.email,
-        col4: usuario.GrupoEstudoInfoField?.livro,
-        col5: usuario.GrupoEstudoInfoField?.facilitador,
-        col6: usuario.GrupoEstudoInfoField?.dia,
-        col7: usuario.GrupoEstudoInfoField?.turno,
-        col8: usuario.GrupoEstudoInfoField?.horario,
-        col9: usuario.GrupoEstudoInfoField?.sala,
-        col10: usuario.associacao?.TipoMediunidade,
-        details: usuario.HistoricoEstudoField, 
+        col2: usuario.endereco?.telefone || "",
+        col3: usuario.endereco?.email || "",
+        col4: usuario.GrupoEstudoInfoField?.livro || "",
+        col5: usuario.GrupoEstudoInfoField?.facilitador || "",
+        col6: usuario.GrupoEstudoInfoField?.dia || "",
+        col7: usuario.GrupoEstudoInfoField?.turno || "",
+        col8: usuario.GrupoEstudoInfoField?.horario || "",
+        col9: usuario.GrupoEstudoInfoField?.sala || "",
+        col10: usuario.associacao?.TipoMediunidade || "",
+        details: usuario.HistoricoEstudoField,
     }));
+    
 
 
 
