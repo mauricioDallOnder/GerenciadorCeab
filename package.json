@@ -35,6 +35,7 @@
     "react-hook-form": "^7.51.2",
     "recharts": "^2.12.5",
     "uuid": "^9.0.1",
+    "uuidv4": "^6.2.13",
     "zod": "^3.22.4"
   },
   "devDependencies": {

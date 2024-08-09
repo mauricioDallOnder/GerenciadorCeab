@@ -14,8 +14,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <XContextProvider>
+        <TopAppBar />
           <FirebaseConnectionManager />
-          <TopAppBar />
           <Providers>{children}</Providers>
         </XContextProvider>
       </body>
