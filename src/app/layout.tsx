@@ -3,6 +3,7 @@ import { Providers } from "./providers/provider";
 import "./globals.css";
 import TopAppBar from "./components/TopBar";
 import { XContextProvider } from "@/context/context";
+import FirebaseConnectionManager from "./components/FirebaseConnectionManager";
 
 export default function RootLayout({
   children,
@@ -13,9 +14,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <XContextProvider>
-      <TopAppBar/>
+          <FirebaseConnectionManager />
+          <TopAppBar />
           <Providers>{children}</Providers>
-          </XContextProvider>
+        </XContextProvider>
       </body>
     </html>
   );
