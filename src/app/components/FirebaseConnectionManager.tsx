@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { onDisconnect, ref, get, query, orderByChild, limitToFirst, remove } from 'firebase/database';
+import { useSession } from "next-auth/react";
+import { onDisconnect, ref, get, query, orderByChild, limitToFirst, remove, set } from 'firebase/database';
 import { database } from '@/config/firebase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,15 +10,16 @@ const MAX_CONNECTIONS = 80; // Limite de conexões para começar a desconectar a
 type UserStatus = {
   sessionId: string;
   status: 'online' | 'offline';
-  lastActive: number;
+  lastActive: number | null;
 };
 
 const FirebaseConnectionManager: React.FC = () => {
+  const { data: session, status } = useSession();
+
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [users, setUsers] = useState<UserStatus[]>([]);
 
   useEffect(() => {
-    // Somente execute no lado do cliente
     if (typeof window !== 'undefined') {
       const id = getSessionId();
       setSessionId(id);
@@ -25,7 +27,7 @@ const FirebaseConnectionManager: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!sessionId) return;
+    if (!sessionId || status !== 'authenticated') return;
 
     const userStatusDatabaseRef = ref(database, `/status/${sessionId}`);
 
@@ -37,10 +39,14 @@ const FirebaseConnectionManager: React.FC = () => {
     };
 
     const handleActivity = () => {
-      onDisconnect(userStatusDatabaseRef).cancel(); // Cancela o disconnect se houver atividade
-      onDisconnect(userStatusDatabaseRef).set({
-        status: 'online',
-        lastActive: Date.now(),
+      // Remove a entrada antiga para garantir que não haja duplicatas
+      remove(ref(database, `/status/${sessionId}`)).then(() => {
+        // Registra a nova conexão
+        onDisconnect(userStatusDatabaseRef).cancel();
+        set(userStatusDatabaseRef, {
+          status: 'online',
+          lastActive: Date.now(),
+        });
       });
     };
 
@@ -57,7 +63,6 @@ const FirebaseConnectionManager: React.FC = () => {
       handleDisconnect();
     }, INACTIVITY_TIMEOUT);
 
-    // Função para monitorar conexões e desconectar inativos
     const monitorConnections = async () => {
       const statusRef = ref(database, '/status');
       const statusSnapshot = await get(statusRef);
@@ -71,30 +76,54 @@ const FirebaseConnectionManager: React.FC = () => {
 
         const userList: UserStatus[] = Object.keys(connections).map((key) => ({
           sessionId: key,
-          status: connections[key].status,
-          lastActive: connections[key].lastActive,
+          status: connections[key].status || 'offline',
+          lastActive: connections[key].lastActive || null,
         }));
         setUsers(userList);
+        console.log("Usuários Conectados:", userList);
       }
     };
 
     const disconnectInactiveUsers = async () => {
       const statusRef = ref(database, '/status');
-      const inactiveUsersQuery = query(statusRef, orderByChild('lastActive'), limitToFirst(10)); // Ordena por inatividade e pega os 10 primeiros
+      const inactiveUsersQuery = query(statusRef, orderByChild('lastActive'), limitToFirst(10));
       const snapshot = await get(inactiveUsersQuery);
 
       if (snapshot.exists()) {
         const usersToDisconnect = snapshot.val();
         Object.keys(usersToDisconnect).forEach(async (userId) => {
           const userRef = ref(database, `/status/${userId}`);
-          await remove(userRef); // Desconecta o usuário removendo sua conexão
+          await remove(userRef);
         });
       }
     };
 
     const connectionCheckInterval = setInterval(() => {
       monitorConnections();
-    }, 10000); // Verifica a cada 10 segundos
+    }, 10000);
+
+    // Função de limpeza aprimorada para remover entradas inválidas ou antigas
+    const cleanupOldConnections = async () => {
+      const statusRef = ref(database, '/status');
+      const snapshot = await get(statusRef);
+      if (snapshot.exists()) {
+        const connections = snapshot.val();
+        const now = Date.now();
+
+        Object.keys(connections).forEach(async (key) => {
+          const lastActive = connections[key].lastActive;
+          const status = connections[key].status;
+
+          // Remove entradas que estão offline por muito tempo ou têm dados inválidos
+          if ((status === 'offline' && now - lastActive > INACTIVITY_TIMEOUT) || !lastActive) {
+            const userRef = ref(database, `/status/${key}`);
+            await remove(userRef);
+          }
+        });
+      }
+    };
+
+    cleanupOldConnections(); // Executa a limpeza ao iniciar
 
     return () => {
       clearTimeout(inactivityTimeout);
@@ -103,28 +132,21 @@ const FirebaseConnectionManager: React.FC = () => {
         window.removeEventListener(event, handleActivity);
       });
     };
-  }, [sessionId]);
+  }, [sessionId, status]);
 
-  // Renderiza a lista de usuários online e desconectados
-  return (
-    <div>
-      <h3>Usuários Conectados</h3>
-      <ul>
-        {users.map((user) => (
-          <li key={user.sessionId}>
-            ID: {user.sessionId} - Status: {user.status} - Última Atividade: {new Date(user.lastActive).toLocaleString()}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  if (status === 'loading') {
+    console.log("Carregando...");
+    return null;
+  }
+
+  return null;
 };
 
 export default FirebaseConnectionManager;
 
 // Função para gerar ou recuperar um Session ID
 const getSessionId = (): string => {
-  if (typeof document === 'undefined') return ''; // Verifica se está no ambiente do navegador
+  if (typeof document === 'undefined') return '';
 
   let sessionId = document.cookie
     .split('; ')
@@ -132,7 +154,7 @@ const getSessionId = (): string => {
     ?.split('=')[1];
 
   if (!sessionId) {
-    sessionId = uuidv4(); // Gera um UUID único
+    sessionId = uuidv4();
     const expires = new Date();
     expires.setTime(expires.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 dias
     document.cookie = `sessionId=${sessionId};expires=${expires.toUTCString()};path=/`;

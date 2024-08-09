@@ -1,4 +1,6 @@
-'use client'
+'use client';
+
+import { SessionProvider } from 'next-auth/react';
 import { Providers } from "./providers/provider";
 import "./globals.css";
 import TopAppBar from "./components/TopBar";
@@ -13,11 +15,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <XContextProvider>
-        <TopAppBar />
-          <FirebaseConnectionManager />
-          <Providers>{children}</Providers>
-        </XContextProvider>
+        <SessionProvider>
+          <XContextProvider>
+            <TopAppBar />
+            <FirebaseConnectionManager />
+            <Providers>{children}</Providers>
+          </XContextProvider>
+        </SessionProvider>
       </body>
     </html>
   );
