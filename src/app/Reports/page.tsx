@@ -70,7 +70,7 @@ export default function FinanceReport() {
     let reports: { [key: string]: MonthlyReport } = {};
     let uniqueAnos: Set<number> = new Set();
     let uniqueMeses: Set<string> = new Set();
-
+  
     // Processar Vendas
     vendas.forEach(venda => {
       if (isValidDate(venda.dataVenda)) {
@@ -81,15 +81,15 @@ export default function FinanceReport() {
         uniqueMeses.add(month);
         const key = `${month} de ${year}`;
         const value = parseFloat(venda.valorTotal);
-
+  
         if (!reports[key]) {
           reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
         }
-
+  
         reports[key].totalVendas += isNaN(value) ? 0 : value;
       }
     });
-
+  
     // Processar Contas a Pagar
     contasPagar.forEach(conta => {
       if (isValidDate(conta.dataPagamento)) {
@@ -100,15 +100,15 @@ export default function FinanceReport() {
         uniqueMeses.add(month);
         const key = `${month} de ${year}`;
         const value = parseFloat(conta.valor);
-
+  
         if (!reports[key]) {
           reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
         }
-
+  
         reports[key].totalContasAPagar += isNaN(value) ? 0 : value;
       }
     });
-
+  
     // Processar Contribuições e Doações
     contribuicoesDoacoes.forEach(contribuicao => {
       if (isValidDate(contribuicao.data)) {
@@ -120,20 +120,21 @@ export default function FinanceReport() {
         const key = `${month} de ${year}`;
         const valueContrib = parseFloat(contribuicao.valorTotalPagoContribuicao);
         const valueDoacao = parseFloat(contribuicao.valorPagoDoacao);
-
+  
         if (!reports[key]) {
           reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
         }
-
+  
         reports[key].totalContribuicoes += isNaN(valueContrib) ? 0 : valueContrib;
         reports[key].totalDoacoes += isNaN(valueDoacao) ? 0 : valueDoacao;
       }
     });
-
+  
     setMonthlyReports(Object.values(reports));
     setAnos(Array.from(uniqueAnos).sort((a, b) => b - a));
     setMeses(Array.from(uniqueMeses));
   };
+  
 
   useEffect(() => {
     const filtered = monthlyReports.filter(report => {
