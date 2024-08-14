@@ -13,10 +13,9 @@ interface MonthlyReport {
   id: string;
   month: string;
   totalContribuicoes: number;
-  pix: number;
-  dinheiro: number;
-  cartao: number;
-  valePresente: number;
+  totalDoacoes: number;
+  totalContasAPagar: number;
+  totalVendas: number;
 }
 
 export default function FinanceReport() {
@@ -42,10 +41,17 @@ export default function FinanceReport() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/ApiVendas')
-      .then(response => {
-        const vendas = response.data;
-        processFinanceData(vendas);
+    setLoading(true);
+    Promise.all([
+      axios.get('/api/ApiVendas'),
+      axios.get('/api/ApiContasPagar'),
+      axios.get('/api/ApiContribuicoesDoacoes')
+    ])
+      .then(([vendasResponse, contasPagarResponse, contribuicoesDoacoesResponse]) => {
+        const vendas = vendasResponse.data;
+        const contasPagar = contasPagarResponse.data;
+        const contribuicoesDoacoes = contribuicoesDoacoesResponse.data;
+        processFinanceData(vendas, contasPagar, contribuicoesDoacoes);
       })
       .catch(error => {
         console.error('Erro ao buscar dados:', error);
@@ -60,11 +66,12 @@ export default function FinanceReport() {
     return date.toString() !== 'Invalid Date';
   };
 
-  const processFinanceData = (vendas: any[]) => {
+  const processFinanceData = (vendas: any[], contasPagar: any[], contribuicoesDoacoes: any[]) => {
     let reports: { [key: string]: MonthlyReport } = {};
     let uniqueAnos: Set<number> = new Set();
     let uniqueMeses: Set<string> = new Set();
 
+    // Processar Vendas
     vendas.forEach(venda => {
       if (isValidDate(venda.dataVenda)) {
         const date = new Date(venda.dataVenda);
@@ -76,25 +83,50 @@ export default function FinanceReport() {
         const value = parseFloat(venda.valorTotal);
 
         if (!reports[key]) {
-          reports[key] = { id: key, month: key, totalContribuicoes: 0, pix: 0, dinheiro: 0, cartao: 0, valePresente: 0 };
+          reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
         }
 
-        reports[key].totalContribuicoes += isNaN(value) ? 0 : value;
+        reports[key].totalVendas += isNaN(value) ? 0 : value;
+      }
+    });
 
-        switch (venda.formaPagamento.toLowerCase()) {
-          case 'pix':
-            reports[key].pix += isNaN(value) ? 0 : value;
-            break;
-          case 'dinheiro':
-            reports[key].dinheiro += isNaN(value) ? 0 : value;
-            break;
-          case 'cartao':
-            reports[key].cartao += isNaN(value) ? 0 : value;
-            break;
-          case 'vale':
-            reports[key].valePresente += isNaN(value) ? 0 : value;
-            break;
+    // Processar Contas a Pagar
+    contasPagar.forEach(conta => {
+      if (isValidDate(conta.dataPagamento)) {
+        const date = new Date(conta.dataPagamento);
+        const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+        const year = date.getUTCFullYear();
+        uniqueAnos.add(year);
+        uniqueMeses.add(month);
+        const key = `${month} de ${year}`;
+        const value = parseFloat(conta.valor);
+
+        if (!reports[key]) {
+          reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
         }
+
+        reports[key].totalContasAPagar += isNaN(value) ? 0 : value;
+      }
+    });
+
+    // Processar Contribuições e Doações
+    contribuicoesDoacoes.forEach(contribuicao => {
+      if (isValidDate(contribuicao.data)) {
+        const date = new Date(contribuicao.data);
+        const month = date.toLocaleString('pt-BR', { month: 'long', timeZone: 'UTC' });
+        const year = date.getUTCFullYear();
+        uniqueAnos.add(year);
+        uniqueMeses.add(month);
+        const key = `${month} de ${year}`;
+        const valueContrib = parseFloat(contribuicao.valorTotalPagoContribuicao);
+        const valueDoacao = parseFloat(contribuicao.valorPagoDoacao);
+
+        if (!reports[key]) {
+          reports[key] = { id: key, month: key, totalContribuicoes: 0, totalDoacoes: 0, totalContasAPagar: 0, totalVendas: 0 };
+        }
+
+        reports[key].totalContribuicoes += isNaN(valueContrib) ? 0 : valueContrib;
+        reports[key].totalDoacoes += isNaN(valueDoacao) ? 0 : valueDoacao;
       }
     });
 
@@ -113,49 +145,88 @@ export default function FinanceReport() {
 
   const columns: GridColDef[] = [
     { field: 'month', headerName: 'Mês', width: 150, cellClassName: 'column-month' },
-    { field: 'pix', headerName: 'Valor Total em Pix', type: 'number', width: 200, cellClassName: 'column-pix' },
-    { field: 'dinheiro', headerName: 'Valor Total em Dinheiro', type: 'number', width: 200, cellClassName: 'column-dinheiro' },
-    { field: 'cartao', headerName: 'Valor Total em Cartão', type: 'number', width: 200, cellClassName: 'column-cartao' },
-    { field: 'valePresente', headerName: 'Valor Total em Vale', type: 'number', width: 230, cellClassName: 'column-valePresente' },
-    { field: 'totalContribuicoes', headerName: 'Valor Total em vendas no mês', type: 'number', width: 230, cellClassName: 'column-totalContribuicoes' },
+    { field: 'totalVendas', headerName: 'Valor Total de Vendas', type: 'number', width: 200, cellClassName: 'column-vendas' },
+    { field: 'totalContribuicoes', headerName: 'Valor Total em Contribuições', type: 'number', width: 250, cellClassName: 'column-contribuicoes' },
+    { field: 'totalDoacoes', headerName: 'Valor Total em Doações', type: 'number', width: 200, cellClassName: 'column-doacoes' },
+    { field: 'totalContasAPagar', headerName: 'Valor Total de Contas a Pagar', type: 'number', width: 250, cellClassName: 'column-contas' },
   ];
 
   return (
     <Container>
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-        <Typography variant="h4" component="h1" sx={{ my: 4 }}>
-          Relatório de Vendas
-        </Typography>
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Ano</InputLabel>
-              <Select
-                value={selectedAno}
-                onChange={(e) => setSelectedAno(e.target.value as number)}
-              >
-                <MenuItem value=""><em>Todos os Anos</em></MenuItem>
-                {anos.map(ano => (
-                  <MenuItem key={ano} value={ano}>{ano}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Meses</InputLabel>
-              <Select
-                value={selectedMes}
-                onChange={(e) => setSelectedMes(e.target.value as string)}
-              >
-                <MenuItem value=""><em>Todos os Meses</em></MenuItem>
-                {meses.map(mes => (
-                  <MenuItem key={mes} value={mes}>{mes}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+
+        <Grid
+          container
+          spacing={3}
+          sx={{
+            backgroundColor: "white",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            mt: 4,
+            p: 3, // Padding interno para espaçamento
+            borderRadius: 2, // Bordas arredondadas
+            boxShadow: 3 // Sombra para destaque
+          }}
+        >
+          <Typography
+            variant="h4"
+            component="h1"
+            sx={{
+              color: "black",
+              mb: 3, // Margin-bottom para separar do formulário
+              textAlign: "center"
+            }}
+          >
+            Relatório Financeiro
+          </Typography>
+
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              width: "100%",
+              maxWidth: "600px" // Limitar a largura do formulário
+            }}
+          >
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Ano</InputLabel>
+                <Select
+                  value={selectedAno}
+                  onChange={(e) => setSelectedAno(e.target.value as number)}
+                >
+                  <MenuItem value="">
+                    <em>Todos os Anos</em>
+                  </MenuItem>
+                  {anos.map(ano => (
+                    <MenuItem key={ano} value={ano}>{ano}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Meses</InputLabel>
+                <Select
+                  value={selectedMes}
+                  onChange={(e) => setSelectedMes(e.target.value as string)}
+                >
+                  <MenuItem value="">
+                    <em>Todos os Meses</em>
+                  </MenuItem>
+                  {meses.map(mes => (
+                    <MenuItem key={mes} value={mes}>{mes}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
         </Grid>
+
+
         {loading ? (
           <CircularProgress />
         ) : (
@@ -173,11 +244,10 @@ export default function FinanceReport() {
               disableRowSelectionOnClick
               sx={{
                 '& .column-month': { backgroundColor: '#e1bee7', textAlign: "center" },
-                '& .column-pix': { backgroundColor: '#ffcdd2', textAlign: "center" },
-                '& .column-dinheiro': { backgroundColor: '#e1bee7', textAlign: "center" },
-                '& .column-cartao': { backgroundColor: '#ffcdd2', textAlign: "center" },
-                '& .column-valePresente': { backgroundColor: '#e1bee7', textAlign: "center" },
-                '& .column-totalContribuicoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
+                '& .column-vendas': { backgroundColor: '#c8e6c9', textAlign: "center" },
+                '& .column-contribuicoes': { backgroundColor: '#bbdefb', textAlign: "center" },
+                '& .column-doacoes': { backgroundColor: '#ffcdd2', textAlign: "center" },
+                '& .column-contas': { backgroundColor: '#ffe0b2', textAlign: "center" },
                 '& .MuiDataGrid-cell': {
                   fontSize: '14px',
                 },

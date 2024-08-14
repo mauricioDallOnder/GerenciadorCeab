@@ -1,11 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
 export async function POST(request: Request) {
   try {
     const contribuicoes = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbxeyJ5Cd8577NVpWUFQPYcxowoxU1fTdaujwLO6A5a7smNaYjajyU2XYbe9xqhjVZUT/exec', {
-        ...contribuicoes,
-        action: 'create'
+    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
+        ...contribuicoes
       });
 
     return new Response(JSON.stringify({ message: 'Conta a pagar adicionada com sucesso!' }), {
@@ -30,10 +29,8 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const response = await axios.get('https://script.google.com/macros/s/AKfycbxeyJ5Cd8577NVpWUFQPYcxowoxU1fTdaujwLO6A5a7smNaYjajyU2XYbe9xqhjVZUT/exec', {
-      params: { action: 'read' }
-    });
-
+    const response = await axios.get('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec');
+    
     return new Response(JSON.stringify(response.data), {
       status: 200,
       headers: {
@@ -57,9 +54,9 @@ export async function GET() {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbxeyJ5Cd8577NVpWUFQPYcxowoxU1fTdaujwLO6A5a7smNaYjajyU2XYbe9xqhjVZUT/exec', {
+    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
         id,
-        action: 'delete'
+        method: 'delete'
       });
 
     return new Response(JSON.stringify({ message: 'Conta a pagar deletada com sucesso!' }), {
@@ -84,10 +81,10 @@ export async function DELETE(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const contaPagar = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbxeyJ5Cd8577NVpWUFQPYcxowoxU1fTdaujwLO6A5a7smNaYjajyU2XYbe9xqhjVZUT/exec', {
-        ...contaPagar,
-        action: 'update'
+    const contribuicoes = await request.json();
+    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
+        ...contribuicoes,
+        method: 'put'
       });
 
     return new Response(JSON.stringify({ message: 'Conta a pagar atualizada com sucesso!' }), {
