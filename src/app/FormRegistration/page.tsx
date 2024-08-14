@@ -37,6 +37,7 @@ import { Associado, associadoSchema, AssociadosResponse, GrupoEstudoInfoFields }
 import Footer from "../components/Footer";
 import { SelectGroupRegistration } from "../components/GroupeSelectComponent/SelectGroupRegistration";
 import { useCeabContext } from "@/context/context";
+import FirebaseConnectionManager from "../components/FirebaseConnectionManager";
 
 export default function FormRegistration() {
   const { usuariosData } = useCeabContext();
@@ -248,6 +249,9 @@ export default function FormRegistration() {
   console.log(errors);
 
   return (
+    <>
+      <FirebaseConnectionManager />
+   
     <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 0 }}>
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
@@ -712,5 +716,6 @@ export default function FormRegistration() {
       </FormProvider>
       <Footer />
     </Container>
+    </>
   );
 }

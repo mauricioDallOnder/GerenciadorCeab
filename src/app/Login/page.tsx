@@ -54,17 +54,23 @@ export default function LoginPage({ searchParams }: PageProps) {
       password: data.password,
       callbackUrl: '/'
     });
-
+  
+    setLoading(false);
+  
     if (result?.error) {
       alert(result.error);
+    } else {
+      window.location.reload(); // Força a recarga da página para refletir o login
     }
-
-    setLoading(false);
   };
-
+  
   const handleLogout = async () => {
+    setLoading(true);
     await signOut({ redirect: false });
+    setLoading(false);
+    window.location.reload(); // Força a recarga da página para refletir o logout
   };
+  
 
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>

@@ -18,7 +18,6 @@ export default function RootLayout({
         <SessionProvider>
           <XContextProvider>
             <TopAppBar />
-            <FirebaseConnectionManager />
             <Providers>{children}</Providers>
           </XContextProvider>
         </SessionProvider>
