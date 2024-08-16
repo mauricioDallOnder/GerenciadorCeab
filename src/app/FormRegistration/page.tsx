@@ -250,7 +250,7 @@ export default function FormRegistration() {
 
   return (
     <>
-      <FirebaseConnectionManager />
+     
    
     <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 0 }}>
       <FormProvider {...methods}>
@@ -719,3 +719,4 @@ export default function FormRegistration() {
     </>
   );
 }
+// <FirebaseConnectionManager />
