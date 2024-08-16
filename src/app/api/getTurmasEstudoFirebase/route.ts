@@ -12,7 +12,7 @@ export async function GET() {
 
           // Converta o objeto em um array de valores
           const dataArray = Object.values(data);
-
+          console.log(dataArray)
           return new Response(JSON.stringify(dataArray), {
               status: 200,
               headers: {
@@ -39,6 +39,7 @@ export async function GET() {
           },
       });
   }
+  
 }
 
 
