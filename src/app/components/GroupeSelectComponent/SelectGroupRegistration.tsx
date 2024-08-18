@@ -6,6 +6,7 @@ import { IIgruposDeEstudo } from '@/utils/ultils';
 
 export const SelectGroupRegistration: React.FC<GrupoDeEstudoSelectProps> = ({ register, setValue, initialValues }) => {
     const { gruposEstudo, gruposEstudoCarregado } = useCeabContext();
+    console.log(gruposEstudo)
     const [selectedBook, setSelectedBook] = useState<string>(initialValues?.livro || '');
     const [selectedFacilitator, setSelectedFacilitator] = useState<string>(initialValues?.facilitador || '');
     const [selectedDia, setSelectedDia] = useState<string>(initialValues?.dia || '');
