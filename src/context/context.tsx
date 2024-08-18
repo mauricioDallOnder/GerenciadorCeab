@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { Associado, TrabahadorInfoField } from "../app/interfaces/interfaces";
-import { IIgruposDeEstudo } from "@/utils/ultils";
+import { Associado, IIgruposDeEstudo } from "../app/interfaces/interfaces";
 
 type Props = {
   children: React.ReactNode;
@@ -29,7 +28,7 @@ export const XContextProvider = ({ children }: Props) => {
   useEffect(() => {
     const fetchGruposEstudo = async () => {
       try {
-        const response = await axios.get(`/api/getTurmasEstudoFirebase?timestamp=${new Date().getTime()}`);
+        const response = await axios.get('/api/getTurmasEstudoFirebase');
         if (response.data && Array.isArray(response.data)) {
           setGruposEstudo(response.data);
         } else {
@@ -40,9 +39,9 @@ export const XContextProvider = ({ children }: Props) => {
         console.error('Erro ao buscar grupos de estudo:', error);
       }
     };
-    console.log(gruposEstudo)
-    fetchGruposEstudo();
-  }, []);
+
+    fetchGruposEstudo(); // Chamando a função para buscar os dados
+  }, []); // useEffect será chamado apenas uma vez, ao montar o componente
 
   // Buscar usuários
   useEffect(() => {
@@ -66,8 +65,8 @@ export const XContextProvider = ({ children }: Props) => {
       }
     };
 
-    fetchUsuarios();
-  }, []);
+    fetchUsuarios(); // Chamando a função para buscar os dados
+  }, []); // useEffect será chamado apenas uma vez, ao montar o componente
 
   return (
     <CeabContext.Provider value={{ usuariosData, gruposEstudo, gruposEstudoCarregado }}>
