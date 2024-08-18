@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { Associado, IIgruposDeEstudo } from "../app/interfaces/interfaces";
+import { Associado, TrabahadorInfoField } from "../app/interfaces/interfaces";
+import { IIgruposDeEstudo } from "@/utils/ultils";
 
 type Props = {
   children: React.ReactNode;
