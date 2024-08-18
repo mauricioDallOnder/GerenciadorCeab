@@ -29,7 +29,7 @@ export const XContextProvider = ({ children }: Props) => {
   useEffect(() => {
     const fetchGruposEstudo = async () => {
       try {
-        const response = await axios.get('/api/getTurmasEstudoFirebase');
+        const response = await axios.get(`/api/getTurmasEstudoFirebase?timestamp=${new Date().getTime()}`);
         if (response.data && Array.isArray(response.data)) {
           setGruposEstudo(response.data);
         } else {
@@ -40,7 +40,7 @@ export const XContextProvider = ({ children }: Props) => {
         console.error('Erro ao buscar grupos de estudo:', error);
       }
     };
-
+    console.log(gruposEstudo)
     fetchGruposEstudo();
   }, []);
 
