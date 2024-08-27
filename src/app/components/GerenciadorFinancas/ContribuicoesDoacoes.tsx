@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
@@ -30,6 +28,7 @@ interface ContribuicaoDoacao {
   ValorContribOut: number;
   ValorContribNov: number;
   ValorContribDez: number;
+  observação?:string;
 }
 
 const ContribuicoesDoacoes: React.FC = () => {
@@ -57,6 +56,7 @@ const ContribuicoesDoacoes: React.FC = () => {
       ValorContribOut: 0,
       ValorContribNov: 0,
       ValorContribDez: 0,
+      observação:""
     },
   });
 
@@ -205,6 +205,7 @@ const ContribuicoesDoacoes: React.FC = () => {
                   {...register('nome')}
                   label="Nome"
                   fullWidth
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -440,6 +441,13 @@ const ContribuicoesDoacoes: React.FC = () => {
                       )}
                     />
                   </Grid>
+                  <Grid item xs={12} sm={6}>
+                <TextField
+                  {...register('observação')}
+                  label="observações"
+                  fullWidth
+                />
+              </Grid>
                 </>
               )}
               {selectedTipo === 'doacao' && (
@@ -478,6 +486,14 @@ const ContribuicoesDoacoes: React.FC = () => {
               disabled={loading}
             >
               {loading ? <CircularProgress size={24} /> : 'Atualizar'}
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => reset()} // Usando a função reset do react-hook-form
+              disabled={loading}
+            >
+              Limpar os campos do formulário!
             </Button>
           </CardActions>
         </Card>

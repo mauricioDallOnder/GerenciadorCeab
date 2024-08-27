@@ -47,7 +47,11 @@ const ContasPagar: React.FC = () => {
             ...row,
             dataPagamento: formatDateForDisplay(row.dataPagamento),
           }));
-          setRows(formattedData);
+
+          // Ordenar as contas por data de pagamento em ordem crescente
+          const sortedData = formattedData.sort((a, b) => new Date(a.dataPagamento).getTime() - new Date(b.dataPagamento).getTime());
+
+          setRows(sortedData);
         } else {
           console.error('Data received is not an array:', response.data);
         }
@@ -68,7 +72,6 @@ const ContasPagar: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
   
-
   const formatDateForDisplay = (dateString: string) => {
     const date = new Date(dateString);
     const day = String(date.getUTCDate()).padStart(2, '0');
@@ -77,7 +80,6 @@ const ContasPagar: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
   
-
   const onSubmit = (data: ContaPagar) => {
     if (editMode && currentRow) {
       const updatedConta = {
@@ -88,7 +90,10 @@ const ContasPagar: React.FC = () => {
       setLoading(true);
       axios.put('/api/ApiContasPagar', updatedConta)
         .then(response => {
-          setRows(prevRows => prevRows.map(row => row.id === currentRow.id ? { ...updatedConta, dataPagamento: formatDateForDisplay(updatedConta.dataPagamento) } : row));
+          setRows(prevRows => {
+            const updatedRows = prevRows.map(row => row.id === currentRow.id ? { ...updatedConta, dataPagamento: formatDateForDisplay(updatedConta.dataPagamento) } : row);
+            return updatedRows.sort((a, b) => new Date(a.dataPagamento).getTime() - new Date(b.dataPagamento).getTime());
+          });
           reset();
           setEditMode(false);
           setCurrentRow(null);
@@ -107,7 +112,10 @@ const ContasPagar: React.FC = () => {
       setLoading(true);
       axios.post('/api/ApiContasPagar', newConta)
         .then(response => {
-          setRows(prevRows => [...prevRows, { ...newConta, dataPagamento: formatDateForDisplay(newConta.dataPagamento) }]);
+          setRows(prevRows => {
+            const updatedRows = [...prevRows, { ...newConta, dataPagamento: formatDateForDisplay(newConta.dataPagamento) }];
+            return updatedRows.sort((a, b) => new Date(a.dataPagamento).getTime() - new Date(b.dataPagamento).getTime());
+          });
           reset();
         })
         .catch(error => {

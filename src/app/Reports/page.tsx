@@ -7,7 +7,7 @@ import CustomPagination from '../components/TableCustomPagination';
 import FinanceChart from '../components/FinanceChart';
 import { StyledDataGrid } from '@/utils/styles';
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 
 interface MonthlyReport {
   id: string;
@@ -130,11 +130,21 @@ export default function FinanceReport() {
       }
     });
   
-    setMonthlyReports(Object.values(reports));
-    setAnos(Array.from(uniqueAnos).sort((a, b) => b - a));
-    setMeses(Array.from(uniqueMeses));
-  };
+    // Ordenar os relatórios por mês e ano
+    const monthOrder = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    
+    const orderedReports = Object.values(reports).sort((a, b) => {
+      const [monthA, yearA] = a.month.split(' de ');
+      const [monthB, yearB] = b.month.split(' de ');
+      const yearComparison = parseInt(yearA) - parseInt(yearB);
+      if (yearComparison !== 0) return yearComparison;
+      return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+    });
   
+    setMonthlyReports(orderedReports);
+    setAnos(Array.from(uniqueAnos).sort((a, b) => b - a));
+    setMeses(Array.from(uniqueMeses).sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b)));
+  };
 
   useEffect(() => {
     const filtered = monthlyReports.filter(report => {
@@ -226,7 +236,6 @@ export default function FinanceReport() {
             </Grid>
           </Grid>
         </Grid>
-
 
         {loading ? (
           <CircularProgress />

@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, TextField, Grid, Card, CardContent, CardActions, Select, MenuItem, InputLabel, FormControl, Typography, CircularProgress } from '@mui/material';
@@ -46,7 +44,11 @@ const Vendas: React.FC = () => {
             ...row,
             dataVenda: formatDate(row.dataVenda),
           }));
-          setRows(formattedData);
+
+          // Ordenar as vendas por dataVenda em ordem crescente
+          const sortedData = formattedData.sort((a, b) => new Date(a.dataVenda).getTime() - new Date(b.dataVenda).getTime());
+
+          setRows(sortedData);
         } else {
           console.error('Data received is not an array:', response.data);
         }
@@ -77,7 +79,10 @@ const Vendas: React.FC = () => {
     setLoading(true);
     axios.post('/api/ApiVendas', newVenda)
       .then(response => {
-        setRows(prevRows => [...prevRows, newVenda]);
+        setRows(prevRows => {
+          const updatedRows = [...prevRows, newVenda];
+          return updatedRows.sort((a, b) => new Date(a.dataVenda).getTime() - new Date(b.dataVenda).getTime());
+        });
         reset();
       })
       .catch(error => {
@@ -158,23 +163,16 @@ const Vendas: React.FC = () => {
       sortable: false,
       renderCell: (params) => (
         <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSaveChanges}
-        disabled={loading}
-       
-      >
-        {loading ? <CircularProgress size={24} /> : 'Atualizar'}
-      </Button>
+          variant="contained"
+          color="primary"
+          onClick={handleSaveChanges}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Atualizar'}
+        </Button>
       ),
     },
-
   ];
-
-
- 
-
-
 
   return (
     <Box sx={BoxStyleFinanca}>

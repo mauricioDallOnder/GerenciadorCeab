@@ -3,7 +3,7 @@ import axios from "axios";
 export async function POST(request: Request) {
   try {
     const contribuicoes = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
+    await axios.post('https://script.google.com/macros/s/AKfycbxPYTq-vyUhbTa04FZT8FIuAK86HtCRuGn-ACo_4CB-F1T01I_lK_hG5XEyYPOz16NwCQ/exec', {
         ...contribuicoes
       });
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const response = await axios.get('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec');
+    const response = await axios.get('https://script.google.com/macros/s/AKfycbxPYTq-vyUhbTa04FZT8FIuAK86HtCRuGn-ACo_4CB-F1T01I_lK_hG5XEyYPOz16NwCQ/exec');
     
     return new Response(JSON.stringify(response.data), {
       status: 200,
@@ -54,7 +54,7 @@ export async function GET() {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
+    await axios.post('https://script.google.com/macros/s/AKfycbxPYTq-vyUhbTa04FZT8FIuAK86HtCRuGn-ACo_4CB-F1T01I_lK_hG5XEyYPOz16NwCQ/exec', {
         id,
         method: 'delete'
       });
@@ -82,7 +82,7 @@ export async function DELETE(request: Request) {
 export async function PUT(request: Request) {
   try {
     const contribuicoes = await request.json();
-    await axios.post('https://script.google.com/macros/s/AKfycbyC-YC0xEgqqS_2XZET6JUjkicr8iHZDNtoJ5OSWp0Driyd427jiuuSFnxUOn1nxpxHJg/exec', {
+    await axios.post('https://script.google.com/macros/s/AKfycbxPYTq-vyUhbTa04FZT8FIuAK86HtCRuGn-ACo_4CB-F1T01I_lK_hG5XEyYPOz16NwCQ/exec', {
         ...contribuicoes,
         method: 'put'
       });
