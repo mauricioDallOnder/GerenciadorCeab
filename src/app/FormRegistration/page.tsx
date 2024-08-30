@@ -104,10 +104,76 @@ export default function FormRegistration() {
     control,
     name: "HistoricoTrabalhoField",
   });
+// salvar dados no local storage:
+useEffect(() => {
+  // Restaura os dados do formulário a partir do localStorage quando o componente for montado
+  const savedData = localStorage.getItem('formData');
+  if (savedData) {
+    const parsedData = JSON.parse(savedData);
+    reset(parsedData);
+  }
+
+  // Salva os dados do formulário no localStorage sempre que houver uma mudança
+  const subscription = watch((value) => {
+    localStorage.setItem('formData', JSON.stringify(value));
+  });
+
+  // Limpa o localStorage ao submeter os dados com sucesso
+  const clearLocalStorageOnSubmit = () => {
+    localStorage.removeItem('formData');
+  };
+
+  // Event listener para salvar dados ao clicar no botão de voltar do navegador
+  const handlePopState = () => {
+    const formData = getValues();
+    localStorage.setItem('formData', JSON.stringify(formData));
+  };
+
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    subscription.unsubscribe();
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [reset, watch, getValues]);
+
+
+//----------------------------------------
+
 
   const [estadoCivil, setEstadoCivil] = useState('');
   const [VinculoCasa, setVinculoCasa] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [backButtonClicks, setBackButtonClicks] = useState(0);
+
+
+
+// volta o formulario apenas se o usuario clicar 2 vezes no botao de voltar:
+
+useEffect(() => {
+  const handleBackButtonClick = () => {
+    setBackButtonClicks((prev) => prev + 1);
+  };
+
+  window.addEventListener('popstate', handleBackButtonClick);
+
+  return () => {
+    window.removeEventListener('popstate', handleBackButtonClick);
+  };
+}, []);
+useEffect(() => {
+  if (backButtonClicks === 1) {
+    alert("Clique novamente para voltar à página anterior.");
+    const timer = setTimeout(() => setBackButtonClicks(0), 3000); // Reseta após 3 segundos
+    return () => clearTimeout(timer);
+  } else if (backButtonClicks >= 2) {
+    window.history.back(); // Navega para a página anterior
+  }
+}, [backButtonClicks]);
+
+//-------------------
+
+
 
   const handleChangeSelectEstadoCivil = (event: SelectChangeEvent) => {
     const value = event.target.value;
@@ -150,31 +216,10 @@ export default function FormRegistration() {
     }
   }, [trabalhosAnteriores, trabalhoAnteriorFields, appendTrabalhoAnterior]);
 
-  useEffect(() => {
-    const savedData = localStorage.getItem('formData');
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      reset(parsedData);
-    }
 
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-      return '';
-    };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [reset]);
-
-  useEffect(() => {
-    const formData = getValues();
-    localStorage.setItem('formData', JSON.stringify(formData));
-  }, [getValues, watch]);
-
+  
+  
   const onSubmit = (data: Associado) => {
     const nomeJaExiste = usuariosData.some(usuario => normalizeString(usuario.nome) === normalizeString(data.nome));
 
