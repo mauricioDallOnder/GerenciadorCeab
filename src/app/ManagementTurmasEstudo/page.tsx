@@ -1,5 +1,5 @@
-'use client';
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+'use client'
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Container, TextField, Button, Select, MenuItem, FormControl, InputLabel, Typography, SelectChangeEvent, Box, AppBar, Tabs, Tab, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { useCeabContext } from '@/context/context';
@@ -47,7 +47,8 @@ export default function ManageTurmas() {
     }
   });
 
-  const { gruposEstudo } = useCeabContext();
+  const { gruposEstudoCarregado } = useCeabContext(); // Modifique para apenas carregar dados uma vez
+  const [gruposEstudo, setGruposEstudo] = useState<Turma[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
   const [selectedTurma, setSelectedTurma] = useState<Turma | null>(null);
   const [formValues, setFormValues] = useState<Omit<Turma, 'uuid'>>({
@@ -60,6 +61,22 @@ export default function ManageTurmas() {
   });
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Função para carregar os dados das turmas
+  const loadTurmas = async () => {
+    try {
+      const response = await axios.get('/api/getTurmasEstudoFirebase');
+      setGruposEstudo(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar turmas:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!gruposEstudoCarregado) {
+      loadTurmas(); // Carrega turmas se não estiverem carregadas ainda
+    }
+  }, [gruposEstudoCarregado]);
 
   const turmas = gruposEstudo.map(grupo => ({
     ...grupo,
@@ -111,7 +128,7 @@ export default function ManageTurmas() {
         await axios.post('/api/CRUDTurmasOnFirebase', newTurma);
         setSuccessMessage('Turma criada com sucesso!');
       }
-     
+      await loadTurmas(); // Recarrega as turmas para atualizar a lista
     } catch (error) {
       console.error('Erro ao realizar operação:', error);
     } finally {
@@ -137,6 +154,7 @@ export default function ManageTurmas() {
         });
         setSuccessMessage('Turma deletada com sucesso!');
       }
+      await loadTurmas(); // Recarrega as turmas para atualizar a lista
     } catch (error) {
       console.error('Erro ao deletar turma:', error);
     } finally {
@@ -155,14 +173,15 @@ export default function ManageTurmas() {
 
   const handleCloseSnackbar = () => {
     setSuccessMessage('');
-    window.location.reload(); // Recarregar a página
+    // Não recarregar a página inteira, apenas atualizar a lista
+    loadTurmas();
   };
 
   return (
     <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 0 }}>
       <Box sx={BoxStyleCadastro}>
         <FormHeader titulo='Gerenciador de Turmas' />
-        <AppBar position="static" sx={{ backgroundColor: '#2e3b55',mt:"10px" }}>
+        <AppBar position="static" sx={{ backgroundColor: '#2e3b55', mt:"10px" }}>
           <Tabs 
             value={tabIndex} 
             onChange={handleTabChange} 
@@ -176,7 +195,6 @@ export default function ManageTurmas() {
           </Tabs>
         </AppBar>
         <TabPanel value={tabIndex} index={0}>
-          
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
@@ -233,12 +251,11 @@ export default function ManageTurmas() {
               required
             />
             <Button type="submit" variant="contained" color="primary" disabled={loading}>
-            {loading? "Aguarde, criando a nova turma": "Criar Nova Turma"}
+              {loading ? "Aguarde, criando a nova turma" : "Criar Nova Turma"}
             </Button>
           </form>
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
-         
           <FormControl fullWidth>
             <InputLabel id="turma-select-label">Selecionar Turma para Atualizar</InputLabel>
             <Select
@@ -308,12 +325,11 @@ export default function ManageTurmas() {
               required
             />
             <Button type="submit" variant="contained" color="primary" disabled={loading}>
-            {loading? "Aguarde, atualizando turma": "Atualizar Turma"}
+              {loading ? "Aguarde, atualizando turma" : "Atualizar Turma"}
             </Button>
           </form>
         </TabPanel>
         <TabPanel value={tabIndex} index={2}>
-         
           <FormControl fullWidth>
             <InputLabel id="turma-delete-select-label">Selecionar Turma para Excluir</InputLabel>
             <Select
@@ -336,7 +352,7 @@ export default function ManageTurmas() {
               sx={{ marginTop: '10px' }}
               disabled={loading}
             >
-             {loading? "Aguarde, deletando turma": "Deletar Turma"}
+              {loading ? "Aguarde, deletando turma" : "Deletar Turma"}
             </Button>
           )}
         </TabPanel>
