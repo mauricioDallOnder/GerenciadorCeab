@@ -12,7 +12,7 @@ interface ContribuicaoDoacao {
   id: string;
   tipo: string;
   nome: string;
-  data: string;
+  data: string; // Mantenha como string
   formaPagamento: string;
   valorPagoDoacao: number;
   valorTotalPagoContribuicao: number;
@@ -62,35 +62,49 @@ const ContribuicoesDoacoes: React.FC = () => {
 
   const selectedTipo = watch("tipo");
 
+  const parseDateToSort = (dateString: string) => {
+    const [day, month, year] = dateString.split('/');
+    return new Date(`${year}-${month}-${day}`);
+  };
+  
+
   useEffect(() => {
     setLoading(true);
     axios.get<ContribuicaoDoacao[]>('/api/ApiContribuicoesDoacoes')
-      .then(response => {
-        if (Array.isArray(response.data)) {
-          const formattedData = response.data.map(row => ({
-            ...row,
-            data: formatDate(row.data),
-          }));
-          setRows(formattedData);
-        } else {
-          console.error('Data received is not an array:', response.data);
-        }
-      })
-      .catch(error => {
-        console.error('Erro ao buscar dados:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+        .then(response => {
+            if (Array.isArray(response.data)) {
+                const formattedData = response.data.map(row => ({
+                    ...row,
+                    data: formatDate(new Date(row.data)), // Formata para dd/MM/yyyy
+                }));
+                const sortedData = formattedData.sort(
+                    (a, b) => new Date(a.data.split('/').reverse().join('-')).getTime() - new Date(b.data.split('/').reverse().join('-')).getTime()
+                );
+                console.log(sortedData);
+                setRows(sortedData); // Garante que data é string formatada
+            } else {
+                console.error('Data received is not an array:', response.data);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao buscar dados:', error);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+}, []);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const year = date.getUTCFullYear();
+  
+
+
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
+    const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  };
+};
+
+
 
   const calculateTotalContributions = (data: ContribuicaoDoacao) => {
     return Object.keys(data)
@@ -100,25 +114,28 @@ const ContribuicoesDoacoes: React.FC = () => {
   
 
   const onSubmit = (data: ContribuicaoDoacao) => {
+    const dateObj = new Date(data.data); // Converte string para objeto Date
+    const formattedDate = formatDate(dateObj); // Formata para dd/MM/yyyy
+
     const newContribuicaoDoacao = {
-      ...data,
-      id: uuidv4(),
-      data: formatDate(data.data), // Formatação da data
-      valorTotalPagoContribuicao: calculateTotalContributions(data),
+        ...data,
+        id: uuidv4(),
+        data: formattedDate, // Usa a data formatada
+        valorTotalPagoContribuicao: calculateTotalContributions(data),
     };
     setLoading(true);
     axios.post('/api/ApiContribuicoesDoacoes', newContribuicaoDoacao)
-      .then(response => {
-        setRows(prevRows => [...prevRows, newContribuicaoDoacao]);
-        reset();
-      })
-      .catch(error => {
-        console.error('Erro ao adicionar contribuição/doação:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+        .then(response => {
+            setRows(prevRows => [...prevRows, newContribuicaoDoacao]);
+            reset();
+        })
+        .catch(error => {
+            console.error('Erro ao adicionar contribuição/doação:', error);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+};
 
   const handleDelete = (id: string) => {
     setDeleteLoading(prev => ({ ...prev, [id]: true }));
