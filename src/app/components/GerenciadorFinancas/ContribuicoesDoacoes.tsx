@@ -37,28 +37,29 @@ const ContribuicoesDoacoes: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState<{ [key: string]: boolean }>({});
   const { control, register, handleSubmit, reset, setValue, watch } = useForm<ContribuicaoDoacao>({
     defaultValues: {
-      id: '',
-      tipo: '',
-      nome: '',
-      data: '',
-      formaPagamento: '',
-      valorPagoDoacao: 0,
-      valorTotalPagoContribuicao: 0,
-      ValorContribJan: 0,
-      ValorContribFev: 0,
-      ValorContribMar: 0,
-      ValorContribAbr: 0,
-      ValorContribMai: 0,
-      ValorContribJun: 0,
-      ValorContribJul: 0,
-      ValorContribAgo: 0,
-      ValorContribSet: 0,
-      ValorContribOut: 0,
-      ValorContribNov: 0,
-      ValorContribDez: 0,
-      observação:""
+        id: '',
+        tipo: '',
+        nome: '',
+        data: '', // String vazia para evitar data padrão
+        formaPagamento: '',
+        valorPagoDoacao: 0,
+        valorTotalPagoContribuicao: 0,
+        ValorContribJan: 0,
+        ValorContribFev: 0,
+        ValorContribMar: 0,
+        ValorContribAbr: 0,
+        ValorContribMai: 0,
+        ValorContribJun: 0,
+        ValorContribJul: 0,
+        ValorContribAgo: 0,
+        ValorContribSet: 0,
+        ValorContribOut: 0,
+        ValorContribNov: 0,
+        ValorContribDez: 0,
+        observação: ""
     },
-  });
+});
+
 
   const selectedTipo = watch("tipo");
 
@@ -95,14 +96,22 @@ const ContribuicoesDoacoes: React.FC = () => {
 }, []);
 
   
-
-
-  const formatDate = (date: Date) => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+const parseDateStringToUTC = (dateString:string) => {
+  const [day, month, year] = dateString.split('/');
+  return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 };
+
+
+const formatDate = (date: Date) => {
+  if (isNaN(date.getTime())) {
+      return ''; // Retorna uma string vazia se a data não for válida
+  }
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Mês em UTC
+  const year = date.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 
 
 
@@ -114,8 +123,13 @@ const ContribuicoesDoacoes: React.FC = () => {
   
 
   const onSubmit = (data: ContribuicaoDoacao) => {
-    const dateObj = new Date(data.data); // Converte string para objeto Date
-    const formattedDate = formatDate(dateObj); // Formata para dd/MM/yyyy
+    const dateObj = parseDateStringToUTC(data.data); // Converte string para objeto Date
+    const formattedDate = formatDate(dateObj); // Formata para dd/MM/yyyy, ou retorna '' se inválido
+
+    if (!formattedDate) {
+        alert('Por favor, insira uma data válida.');
+        return;
+    }
 
     const newContribuicaoDoacao = {
         ...data,
@@ -123,6 +137,7 @@ const ContribuicoesDoacoes: React.FC = () => {
         data: formattedDate, // Usa a data formatada
         valorTotalPagoContribuicao: calculateTotalContributions(data),
     };
+
     setLoading(true);
     axios.post('/api/ApiContribuicoesDoacoes', newContribuicaoDoacao)
         .then(response => {
@@ -136,6 +151,7 @@ const ContribuicoesDoacoes: React.FC = () => {
             setLoading(false);
         });
 };
+
 
   const handleDelete = (id: string) => {
     setDeleteLoading(prev => ({ ...prev, [id]: true }));
@@ -268,7 +284,7 @@ const ContribuicoesDoacoes: React.FC = () => {
                     <TextField
                       {...field}
                       label="Data"
-                      type="date"
+                      type="text"
                       InputLabelProps={{ shrink: true }}
                       fullWidth
                     />
